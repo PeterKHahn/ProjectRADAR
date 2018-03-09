@@ -1,3 +1,5 @@
+_All ideas approved by Joe._
+
 # s18-ahitt1-efu2-phahn1--ckim34
 Team Name: Dream Team (!)
 Group Members:
