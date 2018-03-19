@@ -116,6 +116,12 @@ Uses backend's representations of item and player locations within the AI player
 
 ### Main algorithms
   - Predict encountered player's movements
+    - [Hidden Semi-Markov Models, Section IV.A](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf): discretize game map into a grid and treat each state as an opponent occupying a grid cell at time t.
+      - Used for entire map
+      - Code representtion: 2D array corresponding to each cell in the map  
+      - Prior: Probability of a player starting at a position.
+      - Transition and duration: built from game logs.
+    - [Particle Filters, Section IV.B](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf): adjusting weights 
   - Avoid obstacles and calculate shortest distance route (either to items, or to/away from other players)
 
 ### Behavior modes
