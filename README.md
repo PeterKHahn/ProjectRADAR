@@ -130,8 +130,10 @@ Uses backend's representations of item and player locations within the AI player
       - Code representtion: 2D array corresponding to each cell in the map  
       - Prior: Probability of a player starting at a position.
       - Transition and duration: built from game logs.
-    - [Particle Filters, Section IV.B](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf): adjusting weights 
+    - [Particle Filters, Section IV.B](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf)
+    - [Baum-Welsch algorithm to adjust HSMM's transition matrix with each new game log, p6](https://arxiv.org/pdf/1802.03417.pdf)
   - Avoid obstacles and calculate shortest distance route (either to items, or to/away from other players)
+    - A* search: convert grid into graph with nodes at every cell and edges between cells that can be traversed to from each other
 
 ### Behavior modes
 #### Defensive mode
