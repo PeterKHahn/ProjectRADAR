@@ -3,6 +3,7 @@ package edu.brown.cs.dreamteam.main;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.game.GameEngine;
 
 public class Architect implements Runnable, GameEventListener {

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.event.GameEventListener;
 
 public class GameEngine implements Runnable {
 
@@ -51,6 +52,10 @@ public class GameEngine implements Runnable {
       }
 
     }
+  }
+
+  public void addGameEventListener(GameEventListener gel) {
+
   }
 
   private void tick() {
