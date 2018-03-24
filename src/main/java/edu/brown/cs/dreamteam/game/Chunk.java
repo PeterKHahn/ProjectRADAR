@@ -43,7 +43,7 @@ public class Chunk implements Tickable {
   @Override
   public void tick() {
     for (Entity e : entities) {
-      e.tick();
+
     }
 
   }

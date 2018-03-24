@@ -1,34 +1,69 @@
 package edu.brown.cs.dreamteam.entity;
 
-public class GamePlayer extends Entity {
+import java.util.HashSet;
+import java.util.Set;
 
-  private int xVelocity = 0;
-  private int yVelocity = 0;
+import edu.brown.cs.dreamteam.event.ClientState;
 
-  public GamePlayer(String id, int row, int col) {
-    super(id, row, col);
+public class GamePlayer extends DynamicEntity {
+
+  private boolean itemPickedFlag;
+  private Set<Integer> itemsDropped;
+  private boolean primaryActionFlag;
+
+  private boolean isAlive;
+
+  public GamePlayer(String id, double xPos, double yPos) {
+    super(id, xPos, yPos);
+    init();
 
   }
 
-  public void setXVelocity(int xVelocity) {
-    this.xVelocity = xVelocity;
+  private void init() {
+    itemPickedFlag = false;
+    itemsDropped = new HashSet<Integer>();
+    primaryActionFlag = false;
+    isAlive = true;
   }
 
-  public void setYVelocity(int yVelocity) {
-    this.yVelocity = yVelocity;
+  public boolean itemPickedFlag() {
+    return itemPickedFlag;
   }
 
-  public int getXVelocity() {
-    return xVelocity;
+  public boolean primaryActionFlag() {
+    return primaryActionFlag;
+
   }
 
-  public int getYVelocity() {
-    return yVelocity;
+  public Set<Integer> itemsDroppedFlag() {
+    return itemsDropped;
+  }
+
+  public void update(ClientState state) {
+    updatePlayer(state);
+    updateDynamic(state);
+  }
+
+  private void updatePlayer(ClientState state) {
+    itemPickedFlag = state.retrieveItemPicked();
+    primaryActionFlag = state.retrievePrimaryAction();
+    itemsDropped = state.retrieveItemsDropped();
+  }
+
+  public boolean isAlive() {
+    return isAlive;
+  }
+
+  @Override
+  public void kill() {
+    isAlive = false;
   }
 
   @Override
   public void tick() {
-    System.out.println("I AM A PLAYER");
+    System.out.println("GamePlayer 40: I AM A PLAYER");
+    updatePosition();
+    System.out.println("xVel: " + getXVelocity() + " yVel: " + getYVelocity());
 
   }
 

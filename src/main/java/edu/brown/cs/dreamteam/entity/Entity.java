@@ -2,31 +2,37 @@ package edu.brown.cs.dreamteam.entity;
 
 import java.util.Objects;
 
-import edu.brown.cs.dreamteam.game.Tickable;
-
-public abstract class Entity implements Tickable {
+public abstract class Entity {
 
   private final String id;
 
-  private int row;
-  private int col;
+  private double x;
+  private double y;
 
-  public Entity(String id, int row, int col) {
+  public Entity(String id, double x, double y) {
     this.id = id;
-    this.row = row;
-    this.col = col;
+    this.x = x;
+    this.y = y;
   }
 
   public String getId() {
     return id;
   }
 
-  public int getRow() {
-    return row;
+  public double getXPos() {
+    return x;
   }
 
-  public int getCol() {
-    return col;
+  public double getYPos() {
+    return y;
+  }
+
+  public void setXPos(double x) {
+    this.x = x;
+  }
+
+  public void setYPos(double y) {
+    this.y = y;
   }
 
   @Override
@@ -47,5 +53,7 @@ public abstract class Entity implements Tickable {
   public int hashCode() {
     return Objects.hash(id);
   }
+
+  public abstract void kill();
 
 }

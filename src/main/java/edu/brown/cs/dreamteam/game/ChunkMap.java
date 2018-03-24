@@ -1,6 +1,16 @@
 package edu.brown.cs.dreamteam.game;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
+
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.event.ClientState;
 
 public class ChunkMap implements Tickable {
 
@@ -10,13 +20,24 @@ public class ChunkMap implements Tickable {
 
   private Chunk[][] chunks;
 
+  private Map<String, GamePlayer> players;
+  private Map<String, Chunk> idsToChunks;
+  private Map<DynamicEntity, Chunk> dynamicToChunk;
+
   public ChunkMap(int width, int height, int chunkSize) {
     this.height = height;
     this.width = width;
     this.chunkSize = chunkSize;
-    chunks = new Chunk[height][width];
+    init();
+  }
 
+  private void init() {
+    chunks = new Chunk[height][width];
+    players = new HashMap<String, GamePlayer>();
+    idsToChunks = new HashMap<String, Chunk>();
+    dynamicToChunk = new HashMap<DynamicEntity, Chunk>();
     initChunks();
+
   }
 
   private void initChunks() {
@@ -29,9 +50,52 @@ public class ChunkMap implements Tickable {
     }
   }
 
+  public void updateClients(Set<ClientState> clientStates) {
+
+    Queue<Chunk> updated = new LinkedList<Chunk>();
+
+    for (ClientState state : clientStates) {
+      String clientId = state.getClientId();
+      GamePlayer player = players.get(clientId);
+      Chunk chunk = idsToChunks.get(clientId);
+      updated.add(chunk);
+
+      player.update(state);
+
+    }
+  }
+
+  private void transfer(DynamicEntity dynamic, Chunk from, Chunk to) {
+    from.removeEntity(dynamic);
+    to.addEntity(dynamic);
+  }
+
   @Override
   public void tick() {
-    updateAllChunks();
+    tickDynamic();
+    // updateAllChunks();
+  }
+
+  private void tickDynamic() {
+    Queue<Chunk> updated = new LinkedList<Chunk>();
+
+    for (Entry<DynamicEntity, Chunk> entry : dynamicToChunk.entrySet()) {
+      DynamicEntity dynamic = entry.getKey();
+      Chunk chunk = entry.getValue();
+
+      try {
+        Chunk chunk2 = positionToChunk(dynamic);
+        if (chunk != chunk2) {
+          // The player moved to another chunk
+          transfer(dynamic, chunk, chunk2);
+          updated.add(chunk2);
+        }
+      } catch (IllegalChunkException e) {
+        // The player went out of bounds
+        dynamic.kill();
+
+      }
+    }
   }
 
   /**
@@ -48,24 +112,25 @@ public class ChunkMap implements Tickable {
    * @throws IllegalChunkException
    *           If the given position is not valid
    */
-  private Chunk positionToChunk(int rPos, int cPos)
+  private Chunk positionToChunk(int xPos, int yPos)
       throws IllegalChunkException {
-    int chunkRow = rPos / chunkSize;
-    int chunkCol = cPos / chunkSize;
+    // TODO FIX
+    int chunkRow = -1 * yPos / chunkSize;
+    int chunkCol = xPos / chunkSize;
 
     try {
       return chunks[chunkRow][chunkCol];
 
     } catch (ArrayIndexOutOfBoundsException aioob) {
-      throw new IllegalChunkException(rPos, cPos);
+      throw new IllegalChunkException(xPos, yPos);
     }
 
   }
 
   private Chunk positionToChunk(Entity e) throws IllegalChunkException {
-    int rPos = e.getRow();
-    int cPos = e.getCol();
-    return positionToChunk(rPos, cPos);
+    int xPos = (int) e.getXPos();
+    int yPos = (int) e.getYPos();
+    return positionToChunk(xPos, yPos);
   }
 
   public void addEntity(Entity e) {
@@ -75,6 +140,7 @@ public class ChunkMap implements Tickable {
       c.addEntity(e);
     } catch (IllegalChunkException e1) {
       // TODO log this, but nothing really needs to be done.
+
     }
 
   }
@@ -96,9 +162,9 @@ public class ChunkMap implements Tickable {
      */
     private static final long serialVersionUID = -1057201821085086384L;
 
-    public IllegalChunkException(int rPos, int cPos) {
-      super("The given entity was not in bounds of the map. " + "Row: " + rPos
-          + " Col: " + cPos);
+    public IllegalChunkException(int xPos, int yPos) {
+      super("The given entity was not in bounds of the map. " + "xPos: " + xPos
+          + " xPos: " + yPos);
     }
   }
 

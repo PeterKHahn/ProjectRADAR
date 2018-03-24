@@ -4,7 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
+import edu.brown.cs.dreamteam.main.Architect;
 
 public class GameEngine implements Runnable {
 
@@ -15,19 +19,24 @@ public class GameEngine implements Runnable {
   private static final int WIDTH = 10;
   private static final int CHUNK_SIZE = 100;
 
+  private GameEventEmitter eventEmitter;
+  private Architect architect;
+
   private Set<Entity> entities;
   private ChunkMap chunks;
 
   private boolean running = false;
   private int ticks = 0;
 
-  public GameEngine() {
+  public GameEngine(Architect architect) {
     init();
+    this.architect = architect;
   }
 
   private void init() {
     entities = new HashSet<Entity>();
     chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
+    eventEmitter = new GameEventEmitter();
 
   }
 
@@ -49,21 +58,28 @@ public class GameEngine implements Runnable {
           log();
         }
         delta -= 1.0;
+        eventEmitter.emit(chunks);
       }
 
     }
   }
 
-  public void addGameEventListener(GameEventListener gel) {
-
+  public void addGameEventListener(GameEventListener listener) {
+    eventEmitter.addGameEventListener(listener);
   }
 
   private void tick() {
+    Set<ClientState> updatedClientStates = architect.retrieveClientStates();
+    chunks.updateClients(updatedClientStates);
     chunks.tick();
   }
 
   private void addEntity(Entity e) {
     entities.add(e);
+  }
+
+  public void addPlayer(GamePlayer p) {
+    addEntity(p);
   }
 
   private void log() {
