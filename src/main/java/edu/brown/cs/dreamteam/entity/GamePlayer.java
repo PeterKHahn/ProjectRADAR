@@ -64,6 +64,7 @@ public class GamePlayer extends DynamicEntity {
     System.out.println("GamePlayer 40: I AM A PLAYER");
     updatePosition();
     System.out.println("xVel: " + getXVelocity() + " yVel: " + getYVelocity());
+    System.out.println("xPos: " + getXPos() + " yPos: " + getYPos());
 
   }
 

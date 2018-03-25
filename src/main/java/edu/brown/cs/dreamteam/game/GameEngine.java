@@ -1,9 +1,7 @@
 package edu.brown.cs.dreamteam.game;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
-import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
@@ -12,31 +10,31 @@ import edu.brown.cs.dreamteam.main.Architect;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 30;
+  private static final int FPS = 1;
   private static final int PRINT_RATE = 30;
 
-  private static final int HEIGHT = 10;
-  private static final int WIDTH = 10;
-  private static final int CHUNK_SIZE = 100;
+  private static final int HEIGHT = 5;
+  private static final int WIDTH = 5;
+  private static final int CHUNK_SIZE = 3;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;
 
-  private Set<Entity> entities;
   private ChunkMap chunks;
 
   private boolean running = false;
   private int ticks = 0;
 
   public GameEngine(Architect architect) {
-    init();
     this.architect = architect;
+
+    init();
   }
 
   private void init() {
-    entities = new HashSet<Entity>();
     chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
     eventEmitter = new GameEventEmitter();
+    this.addGameEventListener(architect);
 
   }
 
@@ -69,17 +67,14 @@ public class GameEngine implements Runnable {
   }
 
   private void tick() {
-    Set<ClientState> updatedClientStates = architect.retrieveClientStates();
+    Map<String, ClientState> updatedClientStates = architect
+        .retrieveClientStates();
     chunks.updateClients(updatedClientStates);
     chunks.tick();
   }
 
-  private void addEntity(Entity e) {
-    entities.add(e);
-  }
-
   public void addPlayer(GamePlayer p) {
-    addEntity(p);
+    chunks.addPlayer(p);
   }
 
   private void log() {

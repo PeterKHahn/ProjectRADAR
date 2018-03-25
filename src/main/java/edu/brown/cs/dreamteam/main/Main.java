@@ -2,7 +2,7 @@ package edu.brown.cs.dreamteam.main;
 
 public class Main {
 
-  private Architect architect;
+  private DebugMode debugMode;
 
   private Main(String[] args) {
     init();
@@ -10,7 +10,7 @@ public class Main {
   }
 
   private void init() {
-    architect = new Architect();
+    debugMode = DebugMode.GAME_SYNC;
   }
 
   public static void main(String[] args) {
@@ -18,7 +18,7 @@ public class Main {
   }
 
   private void run() {
-    new Thread(architect).run();
+    new Thread(debugMode.architect()).run();
   }
 
 }

@@ -12,6 +12,28 @@ public final class Logger {
 
   }
 
+  private static boolean debug = false;
+
+  public static void debug(boolean setDebug) {
+    debug = setDebug;
+  }
+
+  public static void logDebug(String message) {
+    if (debug) {
+      System.out.println(message);
+
+    }
+  }
+
+  public static void logMessage(String message) {
+    System.out.println(message);
+
+  }
+
+  public static void logMessage(String message, Object... args) {
+    System.out.printf(message, args);
+  }
+
   /**
    * Prints to Console, errors of the form "ERROR: [message]".
    *

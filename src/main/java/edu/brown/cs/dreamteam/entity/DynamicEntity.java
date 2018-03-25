@@ -8,8 +8,8 @@ public abstract class DynamicEntity extends Entity implements Tickable {
   private double xVelocity;
   private double yVelocity;
 
-  private double movementSpeed;
-  private double strafeSpeed;
+  private double movementSpeed = 1;
+  private double strafeSpeed = 1;
 
   private int movementCoeff;
   private int strafeCoeff;

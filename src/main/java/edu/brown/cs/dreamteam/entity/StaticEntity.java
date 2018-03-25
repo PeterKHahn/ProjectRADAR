@@ -6,4 +6,10 @@ public class StaticEntity extends Entity {
     super(id, row, col);
   }
 
+  @Override
+  public void kill() {
+    // TODO fill, or perhaps put this in dynamic, idk
+
+  }
+
 }

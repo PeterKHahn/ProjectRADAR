@@ -3,11 +3,11 @@ package edu.brown.cs.dreamteam.game;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 
 public class Chunk implements Tickable {
 
-  private Set<Entity> entities;
+  private Set<DynamicEntity> dynamicEntities;
 
   private int row;
   private int col;
@@ -20,7 +20,7 @@ public class Chunk implements Tickable {
   }
 
   private void init() {
-    entities = new HashSet<Entity>();
+    dynamicEntities = new HashSet<DynamicEntity>();
   }
 
   public int getRow() {
@@ -31,21 +31,26 @@ public class Chunk implements Tickable {
     return col;
   }
 
-  public void addEntity(Entity e) {
-    entities.add(e);
-
+  public void addDynamic(DynamicEntity d) {
+    dynamicEntities.add(d);
   }
 
-  public void removeEntity(Entity e) {
-    entities.remove(e);
+  public void removeDynamic(DynamicEntity d) {
+    dynamicEntities.remove(d);
   }
 
   @Override
   public void tick() {
-    for (Entity e : entities) {
 
+  }
+
+  @Override
+  public String toString() {
+    if (dynamicEntities.isEmpty()) {
+      return "Empty Chunk";
+    } else {
+      return "Chunk";
     }
-
   }
 
 }
