@@ -10,8 +10,8 @@ import edu.brown.cs.dreamteam.main.Architect;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 1;
-  private static final int PRINT_RATE = 30;
+  private static final int FPS = 30;
+  private static final int PRINT_RATE = 3;
 
   private static final int HEIGHT = 5;
   private static final int WIDTH = 5;
@@ -25,6 +25,12 @@ public class GameEngine implements Runnable {
   private boolean running = false;
   private int ticks = 0;
 
+  /**
+   * Creates a GameEngine given an Architect
+   * 
+   * @param architect
+   *          The Architecture that the GameEngine is a part of
+   */
   public GameEngine(Architect architect) {
     this.architect = architect;
 
@@ -62,10 +68,18 @@ public class GameEngine implements Runnable {
     }
   }
 
+  /**
+   * Adds a listener to the game engine's GameEventEmitter
+   * 
+   * @param listener
+   */
   public void addGameEventListener(GameEventListener listener) {
     eventEmitter.addGameEventListener(listener);
   }
 
+  /**
+   * Represents a change in game event, by updating internal states
+   */
   private void tick() {
     Map<String, ClientState> updatedClientStates = architect
         .retrieveClientStates();
@@ -73,6 +87,12 @@ public class GameEngine implements Runnable {
     chunks.tick();
   }
 
+  /**
+   * Adds a player to the Game
+   * 
+   * @param p
+   *          the player to add
+   */
   public void addPlayer(GamePlayer p) {
     chunks.addPlayer(p);
   }

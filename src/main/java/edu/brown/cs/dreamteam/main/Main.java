@@ -1,5 +1,11 @@
 package edu.brown.cs.dreamteam.main;
 
+/**
+ * The main class that holds debug information and runs the game
+ * 
+ * @author peter
+ *
+ */
 public class Main {
 
   private DebugMode debugMode;

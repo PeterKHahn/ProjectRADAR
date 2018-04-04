@@ -1,17 +1,30 @@
 package edu.brown.cs.dreamteam.game;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
+import java.util.Set;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import edu.brown.cs.dreamteam.box.Boxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
-import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
-import edu.brown.cs.dreamteam.utility.Logger;
 
+/**
+ * Chunk Map is the primary location of our storage of entity information,
+ * including which areas they affect
+ * 
+ * @author peter
+ *
+ */
 public class ChunkMap implements Tickable {
 
   private final int height;
@@ -24,9 +37,20 @@ public class ChunkMap implements Tickable {
   private Chunk[][] chunks;
 
   private Map<String, GamePlayer> players;
-  private Map<String, Chunk> idsToChunks;
-  private Map<DynamicEntity, Chunk> dynamicToChunk;
+  private Multimap<GamePlayer, Chunk> playerToChunks;
+  private Map<String, Obstacle> obstacles;
+  private Multimap<Obstacle, Chunk> obstacleToChunks;
 
+  /**
+   * Constructor for ChunkMap
+   * 
+   * @param width
+   *          The number of chunks wide
+   * @param height
+   *          the number of chunks high
+   * @param chunkSize
+   *          the size of each chunk
+   */
   public ChunkMap(int width, int height, int chunkSize) {
     this.height = height;
     this.width = width;
@@ -39,12 +63,16 @@ public class ChunkMap implements Tickable {
   private void init() {
     chunks = new Chunk[height][width];
     players = new HashMap<String, GamePlayer>();
-    idsToChunks = new HashMap<String, Chunk>();
-    dynamicToChunk = new HashMap<DynamicEntity, Chunk>();
+    playerToChunks = HashMultimap.create();
+    obstacles = new HashMap<String, Obstacle>();
+    obstacleToChunks = HashMultimap.create();
     initChunks();
 
   }
 
+  /**
+   * Initializes each chunk
+   */
   private void initChunks() {
 
     for (int r = 0; r < height; r++) {
@@ -55,118 +83,171 @@ public class ChunkMap implements Tickable {
     }
   }
 
+  /**
+   * Given clientStates, updates each client to fit the client state
+   * 
+   * @param clientStates
+   *          A Map of ID to client state that holds information about the state
+   *          of all clients
+   */
   public void updateClients(Map<String, ClientState> clientStates) {
-
-    Queue<Chunk> updated = new LinkedList<Chunk>();
 
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
       String clientId = entry.getKey();
       GamePlayer player = players.get(clientId);
-      Chunk chunk = idsToChunks.get(clientId);
-      updated.add(chunk);
 
       player.update(entry.getValue());
 
     }
   }
 
-  private void transfer(DynamicEntity dynamic, Chunk from, Chunk to) {
-    from.removeDynamic(dynamic);
-    to.addDynamic(dynamic);
-    dynamicToChunk.put(dynamic, to);
-  }
-
   @Override
   public void tick() {
-    tickDynamic();
-    // updateAllChunks();
+    tickPlayer();
   }
 
-  private void tickDynamic() {
-    Queue<Chunk> updated = new LinkedList<Chunk>();
+  /**
+   * Ticks all dynamic entities in the game, by updating their position based on
+   * their velocity
+   */
+  private void tickPlayer() {
 
-    for (Entry<DynamicEntity, Chunk> entry : dynamicToChunk.entrySet()) {
-      DynamicEntity dynamic = entry.getKey();
-      Chunk chunk = entry.getValue();
-      dynamic.tick(); // moves the dynamic
+    for (GamePlayer player : playerToChunks.keySet()) {
 
-      try {
-        Chunk chunk2 = positionToChunk(dynamic);
-        if (chunk != chunk2) {
-          // The player moved to another chunk
-          Logger.logDebug("Player has been transfered");
-          transfer(dynamic, chunk, chunk2);
-          updated.add(chunk2);
-        }
-      } catch (IllegalChunkException e) {
-        // The player went out of bounds
-        Logger.logDebug("The player has gone out of bounds");
-        dynamic.kill();
+      moveDynamic(player);
 
-      }
+      Collection<Chunk> newChunks = chunksInRange(player);
+
+      playerToChunks.removeAll(player);
+      playerToChunks.putAll(player, newChunks);
+
     }
   }
 
   /**
-   * Given a position on the screen, will return the chunk that the given row
-   * and column can be found on.
+   * A way to move a given dynamic, handling collisions in linear time to the
+   * velocity of the dynamic. The dynamic entity must not be colliding any
+   * static Entity when first passed into this function, and it will not collide
+   * with any static entity upon exiting this function. This method does not
+   * function at high velocities. Corners can be cut, and thin objects can be
+   * passed through, if the velocity of a given dynamic entity is high enough.
+   * If this proves to be a problem, we will need to consider a new way of
+   * approaching this task.
    *
-   * @param rPos
-   *          The row position of the entity we are looking for. This must be a
-   *          valid location on the map.
-   * @param cPos
-   *          The column position of the entity we are looking for. This must be
-   *          a valid location on the map.
-   * @return The Chunk where the given row and column should be found
-   * @throws IllegalChunkException
-   *           If the given position is not valid
+   * @param dynamicE
    */
-  private Chunk positionToChunk(double xPos, double yPos)
-      throws IllegalChunkException {
+  private void moveDynamic(DynamicEntity dynamicE) {
 
-    if (!inBounds(xPos, yPos)) {
-      throw new IllegalChunkException(xPos, yPos);
+    Collection<Chunk> chunks = chunksInRange(dynamicE);
+    Set<StaticEntity> staticInRange = staticFromChunks(chunks);
+
+    dynamicE.updateX();
+
+    int velocityCoeff = dynamicE.getXVelocity() > 0 ? 1 : -1;
+
+    for (StaticEntity s : staticInRange) {
+      while (dynamicE.collidesWith(s)) {
+        dynamicE.setXPos((int) dynamicE.getXPos() - velocityCoeff);
+      }
     }
-    int rPos = totalHeight - (int) yPos - 1;
+
+    dynamicE.updateY();
+
+    for (StaticEntity s : staticInRange) {
+      while (dynamicE.collidesWith(s)) {
+        dynamicE.setYPos((int) dynamicE.getYPos() - velocityCoeff);
+      }
+    }
+
+  }
+
+  private int getChunkRow(double yPos) {
+    int rPos = (totalHeight - (int) yPos - 1);
+    return rPos / chunkSize;
+  }
+
+  private int getChunkCol(double xPos) {
     int cPos = (int) xPos;
-
-    int chunkRow = rPos / chunkSize;
-    int chunkCol = cPos / chunkSize;
-
-    try {
-      return chunks[chunkRow][chunkCol];
-
-    } catch (ArrayIndexOutOfBoundsException aioob) {
-      throw new IllegalChunkException(xPos, yPos);
-    }
-
+    return cPos / chunkSize;
   }
 
-  private boolean inBounds(double xPos, double yPos) {
-    return xPos >= 0 && yPos >= 0 && xPos < totalWidth && yPos < totalHeight;
-  }
-
-  private Chunk positionToChunk(Entity e) throws IllegalChunkException {
-
-    return positionToChunk(e.getXPos(), e.getYPos());
-  }
-
+  /**
+   * Adds a player to the game
+   * 
+   * @param e
+   *          the game player to be added
+   */
   public void addPlayer(GamePlayer e) {
-    // TODO abstract this out more.
-    Chunk c;
-    try {
-      Logger.logDebug("Game Player: " + e);
 
-      c = positionToChunk(e);
+    Collection<Chunk> chunks = chunksInRange(e);
+    for (Chunk c : chunks) {
       c.addDynamic(e);
-      dynamicToChunk.put(e, c);
-      players.put(e.getId(), e);
-    } catch (IllegalChunkException e1) {
-      // TODO log this, but nothing really needs to be done.
-      Logger.logDebug("Illegal position");
-
     }
 
+    playerToChunks.putAll(e, chunks);
+    players.put(e.getId(), e);
+
+  }
+
+  public void addObstacle(Obstacle e) {
+    Collection<Chunk> chunks = chunksInRange(e);
+    for (Chunk c : chunks) {
+      c.addStatic(e);
+    }
+    obstacleToChunks.putAll(e, chunks);
+    obstacles.put(e.getId(), e);
+
+  }
+
+  private Collection<Chunk> chunksInRange(Boxed e) {
+    int fromRow = getChunkRow(e.getUpper());
+    int toRow = getChunkRow(e.getLower());
+    int fromCol = getChunkCol(e.getLeft());
+    int toCol = getChunkCol(e.getRight());
+
+    return chunksInRange(fromRow, toRow, fromCol, toCol);
+
+  }
+
+  /**
+   * Returns the chunks in the range of the bounds
+   * 
+   * @param fromRow
+   *          the row to start
+   * @param toRow
+   *          the row to end
+   * @param fromCol
+   *          the col to start
+   * @param toCol
+   *          the col to end
+   * @return A collection of Chunks within the range of the bounds
+   */
+  private Collection<Chunk> chunksInRange(int fromRow, int toRow, int fromCol,
+      int toCol) {
+    Collection<Chunk> res = new LinkedList<Chunk>();
+    for (int r = Math.max(fromRow, 0); r <= toRow && r < height; r++) {
+      for (int c = Math.max(fromCol, 0); c <= toCol && c < width; c++) {
+        res.add(chunks[r][c]);
+      }
+    }
+
+    return res;
+
+  }
+
+  /**
+   * Returns the set of staticEntities within the chunks
+   * 
+   * @param chunks
+   *          the Collection of chunks to retrieve static entities from
+   * @return A Set of Static Entities contined in chunks
+   */
+  private Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
+    Set<StaticEntity> res = new HashSet<StaticEntity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getStaticEntities());
+    }
+    return res;
   }
 
   public Chunk[][] getChunkArray() {

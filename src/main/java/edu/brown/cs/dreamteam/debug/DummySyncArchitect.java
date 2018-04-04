@@ -13,6 +13,12 @@ import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.main.Architect;
 import edu.brown.cs.dreamteam.utility.Logger;
 
+/**
+ * A Dummy system architect that tests simple features concurrently.
+ * 
+ * @author peter
+ *
+ */
 public class DummySyncArchitect extends Architect {
 
   private Map<String, ClientState> clientStates;

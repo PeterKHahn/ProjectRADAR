@@ -2,37 +2,29 @@ package edu.brown.cs.dreamteam.entity;
 
 import java.util.Objects;
 
+/**
+ * The base class for many elements of our game
+ * 
+ * @author peter
+ *
+ */
 public abstract class Entity {
 
   private final String id;
 
-  private double x;
-  private double y;
-
-  public Entity(String id, double x, double y) {
+  /**
+   * Each entity must have a unique ID. If two entities are created with the
+   * same ID, they are considered the same entity
+   * 
+   * @param id
+   */
+  public Entity(String id) {
     this.id = id;
-    this.x = x;
-    this.y = y;
+
   }
 
   public String getId() {
     return id;
-  }
-
-  public double getXPos() {
-    return x;
-  }
-
-  public double getYPos() {
-    return y;
-  }
-
-  public void setXPos(double x) {
-    this.x = x;
-  }
-
-  public void setYPos(double y) {
-    this.y = y;
   }
 
   @Override
@@ -41,6 +33,9 @@ public abstract class Entity {
   }
 
   @Override
+  /**
+   * Equality and hashcode based on id
+   */
   public boolean equals(Object o) {
     if (o instanceof Entity) {
       Entity e = (Entity) o;
@@ -53,7 +48,5 @@ public abstract class Entity {
   public int hashCode() {
     return Objects.hash(id);
   }
-
-  public abstract void kill();
 
 }

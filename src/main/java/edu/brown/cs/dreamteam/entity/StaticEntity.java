@@ -1,15 +1,17 @@
 package edu.brown.cs.dreamteam.entity;
 
-public class StaticEntity extends Entity {
+import edu.brown.cs.dreamteam.box.StaticBoxed;
 
-  public StaticEntity(String id, int row, int col) {
-    super(id, row, col);
-  }
+/**
+ * A StaticEntity is a Rectangular entity that does not change position
+ * 
+ * @author peter
+ *
+ */
+public abstract class StaticEntity extends Entity implements StaticBoxed {
 
-  @Override
-  public void kill() {
-    // TODO fill, or perhaps put this in dynamic, idk
-
+  public StaticEntity(String id) {
+    super(id);
   }
 
 }

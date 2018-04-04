@@ -10,6 +10,13 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.utility.Logger;
 
+/**
+ * The Main Architect for the project, where all functionality integration the
+ * many components exist
+ * 
+ * @author peter
+ *
+ */
 public class SystemArchitect extends Architect {
 
   private GameEngine game;
