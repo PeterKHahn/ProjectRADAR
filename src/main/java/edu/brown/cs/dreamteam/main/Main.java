@@ -14,8 +14,10 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
+import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -55,11 +57,30 @@ public class Main {
     FreeMarkerEngine freeMarker = createEngine();
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
+    Spark.post("/", new NameHandler());
 
     Spark.exception(Exception.class, (e, r, er) -> {
       e.printStackTrace();
     });
 
+  }
+
+  /**
+   * the handler for on start of the homepage.
+   *
+   * @author anina
+   */
+  private class NameHandler implements Route {
+
+    @Override
+    public Object handle(Request arg0, Response arg1) throws Exception {
+      QueryParamsMap qm = arg0.queryMap();
+      String codename = qm.value("codename");
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("success", true).put("error", "").put("codename", codename)
+          .build();
+      return GSON.toJson(variables);
+    }
   }
 
   /**
