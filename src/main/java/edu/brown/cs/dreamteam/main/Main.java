@@ -78,11 +78,11 @@ public class Main {
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       QueryParamsMap qm = arg0.queryMap();
+      List<String> room = new ArrayList<>(rooms.getRoomIDs());
       String codename = qm.value("codename");
-      String newRoomID = rooms.generateNewRoom();
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "Join R.A.D.A.R.").put("codename", codename)
-          .put("newRoomID", newRoomID).build();
+          .put("roomIDs", room).build();
       return new ModelAndView(variables, "join.ftl");
     }
   }
@@ -96,12 +96,12 @@ public class Main {
 
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
+      String newRoomID = rooms.generateNewRoom();
       QueryParamsMap qm = arg0.queryMap();
       String codename = qm.value("codename");
-      List<String> room = new ArrayList<>(rooms.getRoomIDs());
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "Create R.A.D.A.R.").put("codename", codename)
-          .put("roomIDs", rooms).build();
+          .put("newRoomID", newRoomID).build();
       return new ModelAndView(variables, "create.ftl");
     }
   }
