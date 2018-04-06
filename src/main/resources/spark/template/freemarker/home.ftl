@@ -8,12 +8,12 @@
      <script src="js/jquery-3.1.1.js"></script>
      <script src="js/name.js"></script>
      
-     <form id="nameForm" action="#">
+     <form id="nameForm" method="GET">
   		<label for="codename"> enter your name.</label>
   		<input id="codename" name="codename" type="text"/>
 		 <br>
-		 <button type="button" onclick="localhost:4567/create" id="create" name="create" value="create">create</button>
-		 <button type="button" onclick="localhost:4567/join" id="join" name="join" value="join">join</button>		 
+		 <button type="submit" formaction="/create" id="create" name="create" value="create">create</button>
+		 <button type="submit" formaction="/join" id="join" name="join" value="join">join</button>		 
 	 </form>
 
      <p id="result"> 😉 </p>

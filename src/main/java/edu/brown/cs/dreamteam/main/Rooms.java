@@ -13,6 +13,10 @@ public class Rooms {
     roomIDs = new HashSet<>();
   }
 
+  public Set<String> getRoomIDs() {
+    return roomIDs;
+  }
+
   public String generateNewRoom() {
     String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     String result = "";

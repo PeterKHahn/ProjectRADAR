@@ -7,6 +7,7 @@
   <body>	
      <script src="js/jquery-3.1.1.js"></script>
      <h1> JOIN ME AND TOGETHER WE CAN RULE THE GALAXY</h1> 
+     
      ${codename}
 
      <p id="result"> 😉 </p>

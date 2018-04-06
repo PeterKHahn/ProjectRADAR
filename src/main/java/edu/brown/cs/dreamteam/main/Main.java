@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -17,7 +19,6 @@ import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -27,6 +28,7 @@ public class Main {
   private static final int DEFAULT_PORT = 4567;
   private String[] args;
   private static final Gson GSON = new Gson();
+  private Rooms rooms = new Rooms();
 
   public static void main(String[] args) {
     new Main(args).run();
@@ -57,8 +59,8 @@ public class Main {
     FreeMarkerEngine freeMarker = createEngine();
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
-    Spark.post("/create", new CreateHandler());
-    Spark.post("/join", new JoinHandler());
+    Spark.get("/create", new CreateHandler(), freeMarker);
+    Spark.get("/join", new JoinHandler(), freeMarker);
 
     Spark.exception(Exception.class, (e, r, er) -> {
       e.printStackTrace();
@@ -71,14 +73,16 @@ public class Main {
    *
    * @author anina
    */
-  private class JoinHandler implements Route {
+  private class JoinHandler implements TemplateViewRoute {
 
     @Override
-    public Object handle(Request arg0, Response arg1) throws Exception {
+    public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       QueryParamsMap qm = arg0.queryMap();
       String codename = qm.value("codename");
+      String newRoomID = rooms.generateNewRoom();
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "Join R.A.D.A.R.").put("codename", codename).build();
+          .put("title", "Join R.A.D.A.R.").put("codename", codename)
+          .put("newRoomID", newRoomID).build();
       return new ModelAndView(variables, "join.ftl");
     }
   }
@@ -88,15 +92,16 @@ public class Main {
    *
    * @author anina
    */
-  private class CreateHandler implements Route {
+  private class CreateHandler implements TemplateViewRoute {
 
     @Override
-    public Object handle(Request arg0, Response arg1) throws Exception {
+    public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       QueryParamsMap qm = arg0.queryMap();
       String codename = qm.value("codename");
-
+      List<String> room = new ArrayList<>(rooms.getRoomIDs());
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "Create R.A.D.A.R.").put("codename", codename).build();
+          .put("title", "Create R.A.D.A.R.").put("codename", codename)
+          .put("roomIDs", rooms).build();
       return new ModelAndView(variables, "create.ftl");
     }
   }
