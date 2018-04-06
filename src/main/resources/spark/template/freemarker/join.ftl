@@ -10,7 +10,7 @@
      
      ${codename}
 
-     <#list ${roomIDs} as ID>
+     <#list roomIDs as ID>
   		 ${ID?counter}: ${ID}
 	 </#list>
 
