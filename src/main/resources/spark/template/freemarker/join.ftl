@@ -10,6 +10,10 @@
      
      ${codename}
 
+     <#list ${roomIDs} as ID>
+  		 ${ID?counter}: ${ID}
+	 </#list>
+
      <p id="result"> 😉 </p>
   </body>
 </html>
