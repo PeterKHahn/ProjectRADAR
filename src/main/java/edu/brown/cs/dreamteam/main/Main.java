@@ -61,11 +61,30 @@ public class Main {
     Spark.get("/", new HomeHandler(), freeMarker);
     Spark.get("/create", new CreateHandler(), freeMarker);
     Spark.get("/join", new JoinHandler(), freeMarker);
+    Spark.get("/game/:roomID", new GameHandler());
 
     Spark.exception(Exception.class, (e, r, er) -> {
       e.printStackTrace();
     });
 
+  }
+
+  /**
+   * the handler for on start of the homepage.
+   *
+   * @author anina
+   */
+  private class JoinHandler implements TemplateViewRoute {
+
+    @Override
+    public ModelAndView handle(Request arg0, Response arg1) throws Exception {
+      QueryParamsMap qm = arg0.queryMap();
+      List<String> room = new ArrayList<>(rooms.getRoomIDs());
+      // String codename = qm.value("roomID");
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("title", "Game R.A.D.A.R.").put("roomIDs", room).build();
+      return new ModelAndView(variables, "join.ftl");
+    }
   }
 
   /**
