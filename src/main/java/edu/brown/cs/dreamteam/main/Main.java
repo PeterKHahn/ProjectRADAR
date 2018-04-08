@@ -7,6 +7,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.eclipse.jetty.websocket.api.Session;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -19,6 +22,7 @@ import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -29,6 +33,13 @@ public class Main {
   private String[] args;
   private static final Gson GSON = new Gson();
   private Rooms rooms = new Rooms();
+
+  Map<String, ClientState> clientStates();
+
+  // EXPERIMENTAL
+  static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
+  static int nextUserNumber = 1; // Used for creating the next username
+  // EXPERIMENTAL
 
   public static void main(String[] args) {
     new Main(args).run();
@@ -57,11 +68,14 @@ public class Main {
     Spark.exception(Exception.class, new ExceptionPrinter());
 
     FreeMarkerEngine freeMarker = createEngine();
+    // EXPERIMENTAL
+    // Spark.webSocket("/game/:roomID", GameWebSocketHandler.class);
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
     Spark.get("/create", new CreateHandler(), freeMarker);
     Spark.get("/join", new JoinHandler(), freeMarker);
-    Spark.get("/game/:roomID", new GameHandler());
+    Spark.get("/game/:roomID", new GameHandler(), freeMarker);
+    Spark.post("/giveStatus", new SendStatusHandler());
 
     Spark.exception(Exception.class, (e, r, er) -> {
       e.printStackTrace();
@@ -70,20 +84,38 @@ public class Main {
   }
 
   /**
-   * the handler for on start of the homepage.
+   * the handler for on start of the game page.
    *
    * @author anina
    */
-  private class JoinHandler implements TemplateViewRoute {
+  private class SendStatusHandler implements Route {
+
+    @Override
+    public Object handle(Request arg0, Response arg1) throws Exception {
+      String room = arg0.params(":roomID");
+      QueryParamsMap qm = arg0.queryMap();
+      String codename = qm.value("codename");
+      String status = qm.value("status");
+
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("title", "Game R.A.D.A.R.").put("roomID", room).build();
+      return GSON.toJson(variables);
+    }
+  }
+
+  /**
+   * the handler for on start of the game page.
+   *
+   * @author anina
+   */
+  private class GameHandler implements TemplateViewRoute {
 
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
-      QueryParamsMap qm = arg0.queryMap();
-      List<String> room = new ArrayList<>(rooms.getRoomIDs());
-      // String codename = qm.value("roomID");
+      String room = arg0.params(":roomID");
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "Game R.A.D.A.R.").put("roomIDs", room).build();
-      return new ModelAndView(variables, "join.ftl");
+          .put("title", "Game R.A.D.A.R.").put("roomID", room).build();
+      return new ModelAndView(variables, "game.ftl");
     }
   }
 
@@ -97,7 +129,7 @@ public class Main {
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       QueryParamsMap qm = arg0.queryMap();
-      List<String> room = new ArrayList<>(rooms.getRoomIDs());
+      List<String> room = new ArrayList<>(rooms.getNotPlayingYetRoomIDs());
       String codename = qm.value("codename");
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "Join R.A.D.A.R.").put("codename", codename)

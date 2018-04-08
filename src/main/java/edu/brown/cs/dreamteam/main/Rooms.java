@@ -6,15 +6,21 @@ import java.util.Set;
 
 public class Rooms {
 
-  private Set<String> roomIDs;
+  private Set<String> notPlayingYetRoomIDs;
   private Set<Socket> players;
+  private Set<String> playingRoomIDs;
 
   public Rooms() {
-    roomIDs = new HashSet<>();
+    notPlayingYetRoomIDs = new HashSet<>();
+    playingRoomIDs = new HashSet<>();
   }
 
-  public Set<String> getRoomIDs() {
-    return roomIDs;
+  public Set<String> getNotPlayingYetRoomIDs() {
+    return notPlayingYetRoomIDs;
+  }
+
+  public Set<String> getAllRoomIDs() {
+    return playingRoomIDs;
   }
 
   public String generateNewRoom() {
@@ -29,11 +35,20 @@ public class Rooms {
       }
 
     }
-    while (roomIDs.contains(result)) {
+    while (notPlayingYetRoomIDs.contains(result)) {
       result = generateNewRoom();
     }
-    roomIDs.add(result);
+    notPlayingYetRoomIDs.add(result);
     return result;
+  }
+
+  public void startRoom(String id) {
+    if (notPlayingYetRoomIDs.contains(id)) {
+      notPlayingYetRoomIDs.remove(id);
+      playingRoomIDs.add(id);
+    } else {
+      throw new IllegalArgumentException("This room was never initialized!");
+    }
   }
 
 }

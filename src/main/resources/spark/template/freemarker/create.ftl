@@ -7,7 +7,7 @@
   <body>	
      <script src="js/jquery-3.1.1.js"></script>
      <h1> CREAATED BISH </h1> 
-     ${newRoomID}
+     <a href="/game/${newRoomID}"> start </a> 
      ${codename}
 
      <p id="result"> 😉 </p>

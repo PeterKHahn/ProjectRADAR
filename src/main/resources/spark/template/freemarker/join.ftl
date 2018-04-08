@@ -11,7 +11,7 @@
      ${codename}
 
      <#list roomIDs as ID>
-  		 ${ID?counter}: ${ID}
+  		 ${ID?counter}: <a href="/game/${ID}"> ${ID} </a>
 	 </#list>
 
      <p id="result"> 😉 </p>
