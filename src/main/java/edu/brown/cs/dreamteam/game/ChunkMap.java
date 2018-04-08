@@ -41,6 +41,8 @@ public class ChunkMap implements Tickable {
   private Map<String, Obstacle> obstacles;
   private Multimap<Obstacle, Chunk> obstacleToChunks;
 
+  private int tickCount;
+
   /**
    * Constructor for ChunkMap
    * 
@@ -104,6 +106,7 @@ public class ChunkMap implements Tickable {
   @Override
   public void tick() {
     tickPlayer();
+    tickCount++;
   }
 
   /**
@@ -222,7 +225,7 @@ public class ChunkMap implements Tickable {
    *          the col to end
    * @return A collection of Chunks within the range of the bounds
    */
-  private Collection<Chunk> chunksInRange(int fromRow, int toRow, int fromCol,
+  public Collection<Chunk> chunksInRange(int fromRow, int toRow, int fromCol,
       int toCol) {
     Collection<Chunk> res = new LinkedList<Chunk>();
     for (int r = Math.max(fromRow, 0); r <= toRow && r < height; r++) {
@@ -242,7 +245,7 @@ public class ChunkMap implements Tickable {
    *          the Collection of chunks to retrieve static entities from
    * @return A Set of Static Entities contined in chunks
    */
-  private Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
+  public Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
     Set<StaticEntity> res = new HashSet<StaticEntity>();
     for (Chunk c : chunks) {
       res.addAll(c.getStaticEntities());
@@ -250,8 +253,27 @@ public class ChunkMap implements Tickable {
     return res;
   }
 
+  /**
+   * Returns the set of staticEntities within the chunks
+   * 
+   * @param chunks
+   *          the Collection of chunks to retrieve static entities from
+   * @return A Set of Static Entities contined in chunks
+   */
+  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+    Set<DynamicEntity> res = new HashSet<DynamicEntity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getDynamicEntities());
+    }
+    return res;
+  }
+
   public Chunk[][] getChunkArray() {
     return chunks;
+  }
+
+  public int tickCount() {
+    return tickCount;
   }
 
   class IllegalChunkException extends Exception {

@@ -84,6 +84,15 @@ public class Chunk implements Tickable {
     return staticEntities;
   }
 
+  /**
+   * Returns a Collection of all dynamic Entities in the Chunk
+   * 
+   * @return a collection of all dynamic entities in the Chunk
+   */
+  public Collection<DynamicEntity> getDynamicEntities() {
+    return dynamicEntities;
+  }
+
   @Override
   public void tick() {
 
