@@ -18,15 +18,17 @@
 		$(document).ready(function(){
 		
 		    //Establish the WebSocket connection and set up event handlers
-		    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/game/${roomID}");
+		    console.log("ws:" + location.hostname + ":" + location.port + "/game/websocket")
+		    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/xx/websocket");
 		    webSocket.onmessage = function (msg) { updateChat(msg); };
 		    webSocket.onclose = function () { alert("WebSocket connection closed") };
 		    // Show a connected message when the WebSocket is opened.
 			webSocket.onopen = function(event) {
-			  $("#socketStatus).innerHTML = 'Connected to: ' + event.currentTarget.url;
+			  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 			};
 			// Handle any errors that occur.
 			webSocket.onerror = function(error) {
+			  console.log(error);
 			  console.log('WebSocket Error: ' + error);
 			};
 		
@@ -51,10 +53,10 @@
 		    //Update the chat-panel, and the list of connected users
 		    function updateChat(msg) {
 		        var data = JSON.parse(msg.data);
-		        insert("chat", data.userMessage);
-		        id("userlist").innerHTML = "";
+		        $("<li/>").html(data.message).appendTo($("#chat"));
+		        $("userlist").innerHTML = "";
 		        data.userlist.forEach(function (user) {
-		            insert("userlist", "<li>" + user + "</li>");
+		            $("<li/>").html(user).appendTo($("#chat"));
 		        });
 		    }
 		});
