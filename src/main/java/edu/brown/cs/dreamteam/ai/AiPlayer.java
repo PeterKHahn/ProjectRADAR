@@ -44,13 +44,6 @@ public class AiPlayer {
   }
 
   /**
-   * Trains machine learning models if data files exist.
-   */
-  private void trainModels() {
-    // TODO
-  }
-
-  /**
    * Gets the next action updates of the AI player, including position changes,
    * game actions (key presses to use weapons/place radars), given the player's
    * current state.
@@ -63,7 +56,18 @@ public class AiPlayer {
     // TODO: return type (check with networking)
     // TODO: Check entities type from networking and change strategies
     // accordingly
+    updateStrategy(entities);
     strategies.get(strategy).getNextMove(entities);
+  }
+
+  /**
+   * Updates the strategy as necessary, according to the current entity info.
+   * 
+   * @param entities
+   *          Information about all entities.
+   */
+  private void updateStrategy(String entities) {
+    // TODO
   }
 
 }
