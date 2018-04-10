@@ -16,16 +16,31 @@ public class AiPlayer {
 
   private StrategyType strategy;
   private Map<StrategyType, Strategy> strategies;
+  private Position position;
 
   /**
-   * Initializes the AI player.
+   * Initializes the AI player. TODO: Check entities type from networking
    */
-  public AiPlayer() {
+  public AiPlayer(String entities) {
     strategy = StrategyType.GATHER;
     strategies = new HashMap<>();
     strategies.put(StrategyType.GATHER, new GatheringStrategy());
     strategies.put(StrategyType.OFFENSE, new OffensiveStrategy());
     strategies.put(StrategyType.DEFENSE, new DefensiveStrategy());
+
+    // TODO: Generate a graph using intraversable obstacles from the game map
+    generateGraph(entities);
+
+    // TODO: Initialize the coordinates
+    position = new Position(0, 0);
+
+  }
+
+  /**
+   * Generates a graph using the given entity information.
+   */
+  private void generateGraph(String entities) {
+
   }
 
   /**

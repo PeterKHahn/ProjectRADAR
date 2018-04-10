@@ -124,16 +124,9 @@ The AI player will simulate a human player in that it only has knowledge of item
 Uses backend's representations of item and player locations within the AI player's visible range. If a player is in the AI's visible range, the player's hit box (attack range) and hurt box (the range at which the player can be dealt damage to) are queried. The minimap updates are updated at every tick (whether goal position is revealed, items and players within the radar range).
 
 ### Main algorithms
-  - Predict encountered player's movements
-    - [Hidden Semi-Markov Models, Section IV.A](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf): discretize game map into a grid and treat each state as an opponent occupying a grid cell at time t.
-      - Used for entire map
-      - Code representtion: 2D array corresponding to each cell in the map  
-      - Prior: Probability of a player starting at a position.
-      - Transition and duration: built from game logs.
-    - [Particle Filters, Section IV.B](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf)
-    - [Baum-Welsch algorithm to adjust HSMM's transition matrix with each new game log, p6](https://arxiv.org/pdf/1802.03417.pdf)
-  - Avoid obstacles and calculate shortest distance route (either to items, or to/away from other players)
-    - A* search: convert grid into graph with nodes at every cell and edges between cells that can be traversed to from each other
+  - Predict encountered player's movements: use last tick's enemy player velocity to predict the enemy's position in the next tick
+  - Avoid obstacles and calculate shortest distance route (either to items, or to/away from other players): A* search by converting grid into graph with nodes at every cell and edges between cells that can be traversed to from each other
+    - Note: A* search code is adapted using efu2 and jyang80's Maps implementation of A* search.
 
 ### Behavior modes
 #### Defensive mode
