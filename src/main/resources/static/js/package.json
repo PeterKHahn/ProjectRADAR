@@ -1,0 +1,16 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "radar game",
+  "main": "jquery-2.1.1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ckim34",
+  "license": "ISC",
+  "dependencies": {
+    "consolidate": "^0.15.1",
+    "hogan": "^1.0.2",
+    "socket.io": "^2.1.0"
+  }
+}
