@@ -1,5 +1,6 @@
 package edu.brown.cs.dreamteam.ai;
 
+import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public class AiPlayer {
     GATHER, OFFENSE, DEFENSE
   }
 
+  private static final Gson GSON = new Gson();
   private StrategyType strategy;
   private Map<StrategyType, Strategy> strategies;
   private Position position;
@@ -52,12 +54,14 @@ public class AiPlayer {
    *          The collection of all static and dynamic entities and
    *          items/weapons at the current tick of the game.
    */
-  public void getUpdate(String entities) {
+  public String getUpdate(String entities) {
+    // System.out.println(GSON.fromJson(entities, ));
     // TODO: return type (check with networking)
     // TODO: Check entities type from networking and change strategies
     // accordingly
     updateStrategy(entities);
     strategies.get(strategy).getNextMove(entities);
+    return "AI got " + entities;
   }
 
   /**
@@ -66,8 +70,9 @@ public class AiPlayer {
    * @param entities
    *          Information about all entities.
    */
-  private void updateStrategy(String entities) {
+  private String updateStrategy(String entities) {
     // TODO
+    return null;
   }
 
 }
