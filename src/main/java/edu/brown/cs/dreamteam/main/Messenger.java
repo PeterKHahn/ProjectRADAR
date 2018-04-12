@@ -31,7 +31,6 @@ public class Messenger {
                     GSON.toJson(new ImmutableMap.Builder<String, Object>()
                         .put("user", sender).put("message", message)
                         .put("userlist", userUsernameMap.values()).build())));
-
           } catch (Exception e) {
             e.printStackTrace();
           }

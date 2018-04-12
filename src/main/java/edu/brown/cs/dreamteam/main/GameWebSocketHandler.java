@@ -6,9 +6,12 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
+import edu.brown.cs.dreamteam.ai.AiPlayer;
+
 @WebSocket
 public class GameWebSocketHandler {
   private String sender, msg;
+  private AiPlayer ai = new AiPlayer(null);
 
   @OnWebSocketConnect
   public void onConnect(Session user) throws Exception {
@@ -29,8 +32,11 @@ public class GameWebSocketHandler {
 
   @OnWebSocketMessage
   public void onMessage(Session user, String message) {
-    System.out.println("NOICE");
+    System.out.println(Messenger.userUsernameMap.get(user));
+    System.out.println("AI: " + ai.getUpdate(message));
+
     Messenger.broadcastMessage(sender = Messenger.userUsernameMap.get(user),
-        msg = message);
+        msg = ai.getUpdate(message));
   }
+
 }
