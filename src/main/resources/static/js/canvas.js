@@ -1,12 +1,15 @@
+
+/*** Eefine global variables ***/
+
 let c, ctx;
-// create mycanvas
+
 $(document).ready(() => {
 	init();
 	drawPlayer();
 
 
 		
-    // Establish the WebSocket connection and set up event handlers
+    /*** Establish the WebSocket connection and set up event handlers ***/
 
     console.log("ws:" + location.hostname + ":" + location.port + "/game/websocket")
     var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/xx/websocket");
@@ -53,7 +56,8 @@ $(document).ready(() => {
 
 
 
-	// will interpret keypress events
+	/*** Interpreting keypress events ***/
+
 	$(document).keypress(event => {
 		
 		code = event.keyCode;
