@@ -27,8 +27,6 @@ public class GatheringStrategy implements Strategy {
     // TODO
     if (canMakeRadar(entities)) {
       placeRadar(entities);
-    } else {
-
     }
   }
 
