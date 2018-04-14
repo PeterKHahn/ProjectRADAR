@@ -50,7 +50,8 @@ public class GameEngine implements Runnable {
     Map<String, ClientState> clientStates = architect.retrieveClientStates();
     int numAi = NUM_PLAYERS - clientStates.keySet().size();
     for (int i = 0; i < numAi; i++) {
-      architect.putClientState("AI" + Integer.toString(i), new ClientState());
+      String id = "AI" + Integer.toString(i);
+      architect.putClientState(id, new ClientState(id));
     }
   }
 

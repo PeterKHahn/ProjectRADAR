@@ -1,13 +1,7 @@
 package edu.brown.cs.dreamteam.ai;
 
-<<<<<<< Updated upstream
-||||||| merged common ancestors
-import com.google.gson.Gson;
-=======
-import com.google.gson.Gson;
 import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.event.ClientState;
->>>>>>> Stashed changes
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,15 +23,12 @@ public class AiPlayer {
   /**
    * Initializes the AI player. TODO: Check entities type from networking
    */
-  public AiPlayer(String entities, Map<String, ClientState> clientStates) {
+  public AiPlayer(String id, Map<String, ClientState> clientStates) {
     strategy = StrategyType.GATHER;
     strategies = new HashMap<>();
     strategies.put(StrategyType.GATHER, new GatheringStrategy());
     strategies.put(StrategyType.OFFENSE, new OffensiveStrategy());
     strategies.put(StrategyType.DEFENSE, new DefensiveStrategy());
-
-    // TODO: Generate a graph using intraversable obstacles from the game map
-    generateGraph(entities);
 
     // TODO: Initialize the coordinates
     position = new Position(0, 0);
@@ -45,9 +36,10 @@ public class AiPlayer {
   }
 
   /**
-   * Generates a graph using the given entity information.
+   * Generates a graph using the given entity information at the beginning of
+   * the game.
    */
-  private void generateGraph(String entities) {
+  public static void initGraph(String entities) {
 
   }
 
