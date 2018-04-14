@@ -1,4 +1,4 @@
-package edu.brown.cs.dreamteam.ai;
+package edu.brown.cs.dreamteam.board;
 
 import edu.brown.cs.dreamteam.graph.Edge;
 

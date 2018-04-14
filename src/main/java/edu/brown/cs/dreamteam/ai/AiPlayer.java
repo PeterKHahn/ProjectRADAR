@@ -1,5 +1,13 @@
 package edu.brown.cs.dreamteam.ai;
 
+<<<<<<< Updated upstream
+||||||| merged common ancestors
+import com.google.gson.Gson;
+=======
+import com.google.gson.Gson;
+import edu.brown.cs.dreamteam.board.Position;
+import edu.brown.cs.dreamteam.event.ClientState;
+>>>>>>> Stashed changes
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +29,7 @@ public class AiPlayer {
   /**
    * Initializes the AI player. TODO: Check entities type from networking
    */
-  public AiPlayer(String entities) {
+  public AiPlayer(String entities, Map<String, ClientState> clientStates) {
     strategy = StrategyType.GATHER;
     strategies = new HashMap<>();
     strategies.put(StrategyType.GATHER, new GatheringStrategy());
