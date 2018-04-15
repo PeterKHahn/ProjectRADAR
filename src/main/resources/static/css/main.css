@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Gugi');
 
 body {
-	background-color: black;
-	color: #1ec503;
+	background-color: #424874;
+	color: #b8dbd9;
 	font-family: "Gugi", "Courier New";
 	text-align: center;
 }
@@ -23,21 +23,21 @@ label:focus,
 {
     outline:0px !important;
     -webkit-appearance:none;
-    background-color: black;
-	color: #1ec503;
+    background-color: #424874;
+	color: #b8dbd9;
 	border-width: 1px;
 	padding: 0px;
 	margin: 0 auto;
 	font-family: 'Courier New';
 	font-weight: bold;
-	border-color: #1ec503;
+	border-color: #b8dbd9;
 	border-radius: 2px;
 	padding: 3px;
 }
 
 a {
 	text-decoration: none;
-	color: #1ec503;
+	color: #b8dbd9;
 }
 
 a:hover {

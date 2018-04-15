@@ -1,7 +1,7 @@
 
-/*** Eefine global variables ***/
+/*** Define global variables ***/
 
-let c, ctx;
+let c, ctx, offsetX, offsetY, mapHeight, staticEntities;
 // CHANGE THIS TO FALSE LATER.
 let gameStart = false;
 
@@ -30,19 +30,20 @@ $(document).ready(() => {
     });
 
     $("#start").click(event => {
-    	// let status = {status: "start"};
-    	// webSocket.send("hewwo");
-    	// webSocket.send(JSON.stringify(status));
+    	let status = {status: "start"};
+    	webSocket.send(JSON.stringify(status));
     	$("#waitingRoom").fadeOut();
     	$("#game").fadeIn();
     	gameStart = true;
+    	init();
     })
 
 
 	// init();
 	// drawPlayer();
 
-    webSocket.onmessage = function (msg) { 
+    webSocket.onmessage = function (msg) {
+    	console.log(msg); 
     	// console.log(JSON.parse(msg));
     	// let res = JSON.parse(msg);
     	// if (res.kind === "gamePost") {
@@ -95,13 +96,16 @@ $(document).ready(() => {
 
 	/*** Interpreting keypress events ***/
 
-	// $(document).keypress(event => {
-	// 	console.log(event.keyCode);
-	// 	if (gameStart) {
-	// 		keySend(event.keyCode, webSocket);
-	// 	}
-	// });
+	$(document).keypress(event => {
+		if (gameStart) {
+			keySend(event.keyCode, webSocket);
+		}
+	});
 });
+
+
+
+/*** CANVAS SPECIFIC FUNCTIONS ***/
 
 //initializes canvas with context
 function init() {
@@ -109,55 +113,108 @@ function init() {
 	ctx = c.getContext("2d");
 	c.width = 500;
 	c.height = 500;
-	//drawplayer
-	//add eventlisteners for motion and for picking up stuff
+	offsetX = 0;
+	offsetY = 0;
+	staticEntities = [
+		{x:20, y:60, type:"weapon"},
+		{x:420, y:390, type: "item"},
+		{x: 333, y:270, type:"deco"}
+	];
+	drawPlayer();
+	drawDummies();
+
 };
 
 function drawPlayer() {
 	ctx.beginPath();
-	ctx.strokeStyle = "black";
+	ctx.strokeStyle = "#b8dbd9";
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 25, 0, 2*Math.PI);
 	ctx.stroke();
 }
 
-//draw square
-  // - weapon
-  // - item
-  // - decorations
-function drawSquare(x, y) {
+function movePlayer(direction) {
+	switch(direction) {
+		case "left":
+			offsetX+=10; break;
+		case "right":
+			offsetX-=10; break;
+		case "up":
+			offsetY+=10; break;
+		case "down":
+			offsetY-=10; break;
+	}
+	clearCanvas();
+	drawDummies();
+	drawPlayer();
+}
+
+// clears canvas to redraw items.
+function clearCanvas() {
+	ctx.clearRect(0, 0, c.width, c.height);
+}
+
+
+// draws square. type = weapon, item, or decoration
+function drawSquare(x, y, type) {
 	ctx.beginPath();
-	ctx.strokeStyle = "black";
+	ctx.rect(x, y, 50, 50);
+	ctx.fillStyle = "white";
+	switch(type) {
+		case "weapon":
+			ctx.fillStyle = "red";
+			// maybe change color?? can pick up
+			break;
+		case "item":
+			ctx.fillStyle = "white";
+			// change color ??? can pick up
+			break;
+		case "deco":
+			ctx.fillStyle = "green";
+			// change color ??? can pick up
+			break;
+	}
+	ctx.fill();
 }
 
 function keySend(code, webSocket) {
 	switch (code) {
-		case 37: // left arrow
 		case 97: // a for wasd
-			webSocket.send("left");
-			console.log("left!"); break;
-		case 38: // up arrow
-		case 119: // w in wasd
-			webSocket.send("up");
-			console.log("up!"); break;
-		case 39: // right in wasd
+			webSocket.send("left"); movePlayer("left"); break;
 		case 100: // d in wasd
-			webSocket.send("right");
-			console.log("right!"); break;
-		case 40: // down arrow
+			webSocket.send("right"); movePlayer("right"); break;
+		case 119: // w in wasd
+			webSocket.send("up"); movePlayer("up"); break;
 		case 115: // s in wasd
-			webSocket.send("down");
-			console.log("down!"); break;
+			webSocket.send("down"); movePlayer("down"); break;
 		case 32: // space bar for attack
-			webSocket.send("space");
-			console.log("space bar: attack!"); break;
+			webSocket.send("space"); break;
 		case 102: // f for items
-			webSocket.send("f");
-			console.log("f: pick up items?"); break;
+			webSocket.send("f"); break;
 		case 114: // r for radar
-			webSocket.send("r");
-			console.log("r: radar?"); break;
+			webSocket.send("r"); break;
 	}
+}
+
+/*** MISCELLANEOUS FUNCTIONS ***/
+
+function determineOffset() {
+	// figure out upper right of shrunk map
+	// that is the offset, subtract from each number
+}
+
+function validMovement() {
+	// is the player movement going to go out of bounds?
+}
+
+function drawDummies() {
+	drawSquare(staticEntities[0].x+offsetX, staticEntities[0].y+offsetY, staticEntities[0].type);
+	drawSquare(staticEntities[1].x+offsetX, staticEntities[1].y+offsetY, staticEntities[1].type);
+	drawSquare(staticEntities[2].x+offsetX, staticEntities[2].y+offsetY, staticEntities[2].type);
+}
+
+function convertToCoord(y) {
+	y = mapHeight - y;
 }
 
 
