@@ -1,5 +1,8 @@
 package edu.brown.cs.dreamteam.box;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import edu.brown.cs.dreamteam.datastructures.TwoDVector;
 import edu.brown.cs.dreamteam.utility.Clamp;
 
@@ -109,7 +112,7 @@ public class RectangleBox extends Box {
    * @return whether the x value is within the two vertical bounds of the
    *         rectangle
    */
-  private boolean isWithinX(double x) {
+  public boolean isWithinX(double x) {
     return x <= rightBound && x >= leftBound;
   }
 
@@ -122,7 +125,7 @@ public class RectangleBox extends Box {
    * @return whether the y value is within the two vertical bounds of the
    *         rectangle
    */
-  private boolean isWithinY(double y) {
+  public boolean isWithinY(double y) {
     return y <= upperBound && y >= lowerBound;
   }
 
@@ -143,6 +146,36 @@ public class RectangleBox extends Box {
   @Override
   public double getUpper() {
     return upperBound;
+  }
+
+  public Edge getUpperEdge() {
+    return new Edge(new Point(leftBound, upperBound),
+        new Point(rightBound, upperBound));
+  }
+
+  public Edge getLowerEdge() {
+    return new Edge(new Point(leftBound, lowerBound),
+        new Point(rightBound, lowerBound));
+  }
+
+  public Edge getLeftEdge() {
+    return new Edge(new Point(leftBound, upperBound),
+        new Point(leftBound, lowerBound));
+  }
+
+  public Edge getRightEdge() {
+    return new Edge(new Point(rightBound, upperBound),
+        new Point(rightBound, lowerBound));
+
+  }
+
+  public Collection<Edge> getEdges() {
+    Collection<Edge> res = new LinkedList<Edge>();
+    res.add(getUpperEdge());
+    res.add(getLowerEdge());
+    res.add(getLeftEdge());
+    res.add(getRightEdge());
+    return res;
   }
 
   @Override

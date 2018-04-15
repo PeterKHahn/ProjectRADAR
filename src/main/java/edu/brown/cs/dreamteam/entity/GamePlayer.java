@@ -82,8 +82,12 @@ public class GamePlayer extends DynamicEntity {
    *          the ClientState to match
    */
   public void update(ClientState state) {
+    int horzCoeff = state.retrieveHorzMultiplier();
+    int vertCoeff = state.retrieveVertMultiplier();
+    double theta = state.retrieveTheta();
+
     updatePlayer(state);
-    updateDynamic(state);
+    updateDynamic(vertCoeff, horzCoeff, theta);
   }
 
   /**

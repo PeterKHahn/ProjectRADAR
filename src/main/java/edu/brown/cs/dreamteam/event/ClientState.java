@@ -152,7 +152,7 @@ public class ClientState {
    * @return -1 if only left is hold, 1 if only right is held, 0 if both or
    *         neither is held
    */
-  public synchronized int retrieveStrafeMultiplier() {
+  public synchronized int retrieveHorzMultiplier() {
     if (leftHeld == rightHeld) {
       return 0;
     } else {
@@ -166,7 +166,7 @@ public class ClientState {
    * @return -1 if only back is held, 1 if only forward is held, 0 if both or
    *         neither is held
    */
-  public synchronized int retrieveMovementMultiplier() {
+  public synchronized int retrieveVertMultiplier() {
     if (forwardHeld == backwardHeld) {
       return 0;
     } else {
