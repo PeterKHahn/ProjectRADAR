@@ -1,10 +1,9 @@
 package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.CircleBox;
+import edu.brown.cs.dreamteam.box.Edge;
+import edu.brown.cs.dreamteam.box.Point;
 import edu.brown.cs.dreamteam.box.RectangleBox;
-import edu.brown.cs.dreamteam.datastructures.Edge;
-import edu.brown.cs.dreamteam.datastructures.Point;
-import edu.brown.cs.dreamteam.utility.Geometry2D;
 
 public class Bullet {
 
@@ -46,9 +45,10 @@ public class Bullet {
 
     Point a = new Point(x, y);
     Point b = new Point(lastX, lastY);
+    Edge tmp = new Edge(a, b);
 
     for (Edge e : box.getEdges()) {
-      boolean res = collides(a, b, e);
+      boolean res = tmp.collides(e);
       if (res) {
         return true;
       }
@@ -56,13 +56,6 @@ public class Bullet {
 
     return false;
 
-  }
-
-  private boolean collides(Point a, Point b, Edge e) {
-    Point c = e.p1;
-    Point d = e.p2;
-    Geometry2D.counterClockWise(a, c, d);
-    return false;
   }
 
   public boolean collides(CircleBox box) {

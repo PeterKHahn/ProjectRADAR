@@ -1,4 +1,4 @@
-package edu.brown.cs.dreamteam.datastructures;
+package edu.brown.cs.dreamteam.box;
 
 public class Point {
 

@@ -3,8 +3,6 @@ package edu.brown.cs.dreamteam.box;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import edu.brown.cs.dreamteam.datastructures.Edge;
-import edu.brown.cs.dreamteam.datastructures.Point;
 import edu.brown.cs.dreamteam.datastructures.TwoDVector;
 import edu.brown.cs.dreamteam.utility.Clamp;
 

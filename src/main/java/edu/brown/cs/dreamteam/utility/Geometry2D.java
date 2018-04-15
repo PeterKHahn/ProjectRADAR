@@ -1,6 +1,6 @@
 package edu.brown.cs.dreamteam.utility;
 
-import edu.brown.cs.dreamteam.datastructures.Point;
+import edu.brown.cs.dreamteam.box.Point;
 
 public class Geometry2D {
 
