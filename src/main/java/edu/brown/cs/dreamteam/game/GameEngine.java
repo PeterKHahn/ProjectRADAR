@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.game;
 
 import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
@@ -112,6 +113,15 @@ public class GameEngine implements Runnable {
    */
   public void addPlayer(GamePlayer p) {
     chunks.addPlayer(p);
+
+  }
+
+  public void addObstacle(Obstacle ob) {
+    chunks.addObstacle(ob);
+  }
+
+  public void addAiPlayer() {
+
   }
 
   private void log() {

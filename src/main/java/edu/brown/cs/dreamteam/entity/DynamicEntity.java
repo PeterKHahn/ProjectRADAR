@@ -18,12 +18,11 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
   private double x;
   private double y;
 
-  private double movementSpeed = 1;
-  private double strafeSpeed = 1;
-  private double speedCap = movementSpeed + strafeSpeed;
+  private double speed = 1;
+  private double speedCap = speed * 2;
 
-  private int movementCoeff;
-  private int strafeCoeff;
+  private int vertCoeff;
+  private int horzCoeff;
 
   private double theta;
 
@@ -45,10 +44,8 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
    * @param size
    *          the radius of the entity
    */
-  public DynamicEntity(String id, String type, double x, double y,
-      double size) {
+  public DynamicEntity(String id, double x, double y, double size) {
     super(id);
-    this.type = type;
     this.size = size;
     this.x = x;
     this.y = y;
@@ -58,6 +55,10 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
   private void init() {
     box = new CircleBox(getXPos(), getYPos(), size);
 
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 
   public String getType() {
@@ -110,31 +111,17 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
   }
 
   /**
-   * Given the current velocity-related coefficients, updates the internal
-   * fields of the dynamic entity to match those specified
-   * 
-   * @param movementCoeff
-   * 
-   */
-  protected void updateDynamic(int movementCoeff, int strafeCoeff,
-      double theta) {
-    this.movementCoeff = movementCoeff;
-    this.strafeCoeff = strafeCoeff;
-    this.theta = theta;
-    updateVelocity();
-  }
-
-  /**
    * Sets the x and y velocity given the entity's speed and angle
+   * 
+   * @param vertCoeff
+   * @param horzCoeff
+   * @param theta
    */
-  private void updateVelocity() {
+  protected void updateDynamic(int vertCoeff, int horzCoeff, double theta) {
+    this.theta = theta;
 
-    double tempL = strafeCoeff * strafeSpeed;
-    double tempF = movementCoeff * movementSpeed;
-
-    xVelocity = tempL * Math.cos(theta);
-    yVelocity = tempF * Math.sin(theta);
-
+    this.xVelocity = horzCoeff * speed;
+    this.yVelocity = vertCoeff * speed;
   }
 
   /**

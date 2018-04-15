@@ -1,5 +1,7 @@
 package edu.brown.cs.dreamteam.utility;
 
+import edu.brown.cs.dreamteam.datastructures.Point;
+
 public class Geometry2D {
 
   private Geometry2D() {
@@ -26,6 +28,11 @@ public class Geometry2D {
 
     return Math.sqrt(dx * dx + dy * dy);
 
+  }
+
+  public static boolean counterClockWise(Point p1, Point p2, Point p3) {
+    double res = (p2.x - p1.x) * (p2.y + p1.y) + (p3.x - p2.x) * (p3.y + p2.y);
+    return res < 0;
   }
 
 }
