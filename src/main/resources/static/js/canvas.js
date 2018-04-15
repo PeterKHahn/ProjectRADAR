@@ -1,81 +1,25 @@
 
-/*** Eefine global variables ***/
+/*** Define global variables ***/
 
-let c, ctx;
+let c, ctx, offsetX, offsetY, mapHeight, staticEntities;
 
 $(document).ready(() => {
 	init();
-	drawPlayer();
-
-
-		
-    /*** Establish the WebSocket connection and set up event handlers ***/
-
-    console.log("ws:" + location.hostname + ":" + location.port + "/game/websocket")
-    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/xx/websocket");
-    webSocket.onmessage = function (msg) { updateChat(msg); };
-    webSocket.onclose = function () { alert("WebSocket connection closed") };
-    // Show a connected message when the WebSocket is opened.
-	webSocket.onopen = function(event) {
-	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
-	};
-	// Handle any errors that occur.
-	webSocket.onerror = function(error) {
-	  console.log(error);
-	  console.log('WebSocket Error: ' + error);
-	};
-
-    // Send message if "Send" is clicked
-    $("#send").click(function() {
-        sendMessage($("#message").val());
-    });
-
-    // Send message if enter is pressed in the input field
-    $("#message").keypress(event => function (e) {
-        if (e.keyCode === 13) { sendMessage(e.target.value); }
-    });
-
-    // Send a message if it's not empty, then clear the input field
-    function sendMessage(message) {
-        if (message !== "") {
-            webSocket.send(message);
-            $("#message").val("");
-        }
-    }
-
-    // Update the chat-panel, and the list of connected users
-    function updateChat(msg) {
-        var data = JSON.parse(msg.data);
-        $("<li/>").html(data.message).appendTo($("#chat"));
-        $("userlist").innerHTML = "";
-        data.userlist.forEach(function (user) {
-            $("<li/>").html(user).appendTo($("#chat"));
-        });
-    }
-
-
-
 
 	/*** Interpreting keypress events ***/
 
 	$(document).keypress(event => {
-		
 		code = event.keyCode;
-		console.log("called");
-		console.log("called thing is " + code);
+		console.log(code);
 		switch (code) {
-			case 37: // left arrow
 			case 97: // a for wasd
-				console.log("left!"); break;
-			case 38: // up arrow
-			case 119: // w in wasd
-				console.log("up!"); break;
-			case 39: // right in wasd
+				console.log("left!"); movePlayer("left"); break;
 			case 100: // d in wasd
-				console.log("right!"); break;
-			case 40: // down arrow
+				console.log("right!"); movePlayer("right"); break;
+			case 119: // w in wasd
+				console.log("up!"); movePlayer("up"); break;
 			case 115: // s in wasd
-				console.log("down!"); break;
+				console.log("down!"); movePlayer("down"); break;
 			case 32: // space bar for attack
 				console.log("space bar: attack!"); break;
 			case 102: // f for items
@@ -86,57 +30,95 @@ $(document).ready(() => {
 	});
 });
 
+/*** CANVAS SPECIFIC FUNCTIONS ***/
+
 //initializes canvas with context
 function init() {
 	c = document.getElementById("gameCanvas");
 	ctx = c.getContext("2d");
 	c.width = 500;
 	c.height = 500;
-	//drawplayer
-	//add eventlisteners for motion and for picking up stuff
+	offsetX = 0;
+	offsetY = 0;
+	staticEntities = [
+		{x:20, y:60, type:"weapon"},
+		{x:420, y:390, type: "item"},
+		{x: 333, y:270, type:"deco"}
+	];
+	drawPlayer();
+	drawDummies();
 };
 
 function drawPlayer() {
 	ctx.beginPath();
-	ctx.strokeStyle = "black";
+	ctx.strokeStyle = "#b8dbd9";
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 25, 0, 2*Math.PI);
 	ctx.stroke();
 }
 
-//draw square
-  // - weapon
-  // - item
-  // - decorations
-function drawSquare(x, y) {
-	ctx.beginPath();
-	ctx.strokeStyle = "black";
-
+function movePlayer(direction) {
+	switch(direction) {
+		case "left":
+			offsetX+=10; break;
+		case "right":
+			offsetX-=10; break;
+		case "up":
+			offsetY+=10; break;
+		case "down":
+			offsetY-=10; break;
+	}
+	clearCanvas();
+	drawDummies();
+	drawPlayer();
 }
-//draw circle
- // - player
 
-// upon keypress
+// clears canvas to redraw items.
+function clearCanvas() {
+	ctx.clearRect(0, 0, c.width, c.height);
+}
 
 
-// // move things with keyboard
-// function check(e) {
-// 	code = e.keyCode;
-// 	console.log("called");
-// 	switch (code) {
-// 		case 37: // left arrow
-// 		case 65: // a for wasd
-// 			console.log("left!"); break;
-// 		case 38: // up arrow
-// 		case 87: // w in wasd
-// 			console.log("up!"); break;
-// 		case 39: // right in wasd
-// 		case 68: // d in wasd
-// 			console.log("right!"); break;
-// 		case 40: // down arrow
-// 		case 83: // s in wasd
-// 			console.log("down!"); break;
-// 		// 
+// draws square. type = weapon, item, or decoration
+function drawSquare(x, y, type) {
+	ctx.beginPath();
+	ctx.rect(x, y, 50, 50);
+	ctx.fillStyle = "white";
+	switch(type) {
+		case "weapon":
+			ctx.fillStyle = "red";
+			// maybe change color?? can pick up
+			break;
+		case "item":
+			ctx.fillStyle = "white";
+			// change color ??? can pick up
+			break;
+		case "deco":
+			ctx.fillStyle = "green";
+			// change color ??? can pick up
+			break;
+	}
+	ctx.fill();
+}
 
-// 	}
-// }
+
+/*** MISCELLANEOUS FUNCTIONS ***/
+
+function determineOffset() {
+	// figure out upper right of shrunk map
+	// that is the offset, subtract from each number
+}
+
+function validMovement() {
+	// is the player movement going to go out of bounds?
+}
+
+function drawDummies() {
+	drawSquare(staticEntities[0].x+offsetX, staticEntities[0].y+offsetY, staticEntities[0].type);
+	drawSquare(staticEntities[1].x+offsetX, staticEntities[1].y+offsetY, staticEntities[1].type);
+	drawSquare(staticEntities[2].x+offsetX, staticEntities[2].y+offsetY, staticEntities[2].type);
+}
+
+function convertToCoord(y) {
+	y = mapHeight - y;
+}
