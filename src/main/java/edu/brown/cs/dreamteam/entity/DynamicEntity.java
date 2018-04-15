@@ -2,7 +2,6 @@ package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.Boxed;
 import edu.brown.cs.dreamteam.box.CircleBox;
-import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Tickable;
 
 /**
@@ -19,12 +18,11 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
   private double x;
   private double y;
 
-  private double movementSpeed = 1;
-  private double strafeSpeed = 1;
-  private double speedCap = movementSpeed + strafeSpeed;
+  private double speed = 1;
+  private double speedCap = speed * 2;
 
-  private int movementCoeff;
-  private int strafeCoeff;
+  private int vertCoeff;
+  private int horzCoeff;
 
   private double theta;
 
@@ -106,26 +104,13 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
    * Given a clientstate, updates the internal fields of the dynamic entity to
    * match those specified in the ClientState
    * 
-   * @param state
+   * 
    */
-  protected void updateDynamic(ClientState state) {
-    movementCoeff = state.retrieveMovementMultiplier();
-    strafeCoeff = state.retrieveStrafeMultiplier();
-    theta = state.retrieveTheta();
-    updateVelocity();
-  }
+  protected void updateDynamic(int vertCoeff, int horzCoeff, double theta) {
+    this.theta = theta;
 
-  /**
-   * Sets the x and y velocity given the entity's speed and angle
-   */
-  private void updateVelocity() {
-
-    double tempL = strafeCoeff * strafeSpeed;
-    double tempF = movementCoeff * movementSpeed;
-
-    xVelocity = tempL * Math.cos(theta);
-    yVelocity = tempF * Math.sin(theta);
-
+    this.xVelocity = horzCoeff * speed;
+    this.yVelocity = horzCoeff * speed;
   }
 
   /**
