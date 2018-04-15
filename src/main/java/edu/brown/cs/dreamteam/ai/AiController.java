@@ -1,7 +1,10 @@
 package edu.brown.cs.dreamteam.ai;
 
 import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +15,7 @@ import java.util.Map;
  */
 public class AiController {
   private static final int AI_SIZE = 5;
+  private static final int VISIBLE_RANGE = AI_SIZE * 5;
 
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE
@@ -62,9 +66,9 @@ public class AiController {
   private void updateStrategy(ChunkMap chunks) {
     // Checks if there is an enemy in the visible range
     if (seeEnemy(chunks)) {
-
-      // No enemy in visible range
+      // TODO check player health
     } else {
+      // No enemy in visible range
 
     }
   }
@@ -78,7 +82,30 @@ public class AiController {
    *         in the visible range, false otherwise.
    */
   private boolean seeEnemy(ChunkMap chunks) {
+    // Get chunks in the visible range
+    int currRow = chunks.getChunkRow(player.getYPos());
+    int currCol = chunks.getChunkCol(player.getXPos());
+    int fromRow = currRow - VISIBLE_RANGE;
+    int toRow = currRow + VISIBLE_RANGE;
+    int fromCol = currCol - VISIBLE_RANGE;
+    int toCol = currCol + VISIBLE_RANGE;
+    Collection<Chunk> visibleChunks = chunks.chunksInRange(fromRow, toRow,
+        fromCol, toCol);
 
+    // Iterate through all chunks to check if another player is within the
+    // chunks in visible range
+    for (Chunk chunk : visibleChunks) {
+      Collection<DynamicEntity> players = chunk.getDynamicEntities();
+      if (players.size() > 0) {
+        if (players.contains(player) && players.size() > 1) {
+          return true;
+        } else if (!players.contains(player)) {
+          return true;
+        }
+      }
+    }
+
+    // All chunks have been iterated through
     return false;
   }
 

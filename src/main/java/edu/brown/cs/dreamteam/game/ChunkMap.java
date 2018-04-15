@@ -85,6 +85,10 @@ public class ChunkMap implements Tickable {
     }
   }
 
+  public int getChunkSize() {
+    return chunkSize;
+  }
+
   /**
    * Given clientStates, updates each client to fit the client state
    * 
