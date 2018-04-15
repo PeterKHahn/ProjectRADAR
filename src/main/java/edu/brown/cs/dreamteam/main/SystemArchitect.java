@@ -62,7 +62,7 @@ public class SystemArchitect extends Architect {
     Spark.get("/", new HomeHandler(), freeMarker);
     Spark.get("/create", new CreateHandler(), freeMarker);
     Spark.get("/join", new JoinHandler(), freeMarker);
-    Spark.get("/game/:roomID", new GameHandler(), freeMarker);
+    Spark.get("/game/:roomID/:codename", new GameHandler(), freeMarker);
     Spark.post("/giveStatus", new SendStatusHandler(this));
     // EXPERIMENTAL
 
@@ -125,8 +125,10 @@ public class SystemArchitect extends Architect {
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       String room = arg0.params(":roomID");
+      String codename = arg0.params(":codename");
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "Game R.A.D.A.R.").put("roomID", room).build();
+          .put("title", "Game R.A.D.A.R.").put("roomID", room)
+          .put("codename", codename).build();
       return new ModelAndView(variables, "game.ftl");
     }
   }
@@ -143,6 +145,9 @@ public class SystemArchitect extends Architect {
       QueryParamsMap qm = arg0.queryMap();
       List<String> room = new ArrayList<>(rooms.getNotPlayingYetRoomIDs());
       String codename = qm.value("codename");
+      if (codename == null || codename.equals("")) {
+        codename = "Guest";
+      }
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "Join R.A.D.A.R.").put("codename", codename)
           .put("roomIDs", room).build();
@@ -162,6 +167,9 @@ public class SystemArchitect extends Architect {
       String newRoomID = rooms.generateNewRoom();
       QueryParamsMap qm = arg0.queryMap();
       String codename = qm.value("codename");
+      if (codename == null || codename.equals("")) {
+        codename = "Guest";
+      }
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "Create R.A.D.A.R.").put("codename", codename)
           .put("newRoomID", newRoomID).build();
