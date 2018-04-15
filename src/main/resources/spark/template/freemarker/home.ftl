@@ -12,14 +12,7 @@
      
      <h1> &lt;PROJECT R.A.D.A.R&gt; </h1>
      
-     <form id="nameForm" method="GET">
-  		<label for="codename"> enter your name.</label>
-  		<input id="codename" name="codename" type="text"/>
-		 <br>
-		 <button type="submit" formaction="/create" id="create" name="create" value="create">create</button>
-		 <button type="submit" formaction="/join" id="join" name="join" value="join">join</button>		 
-	 </form>
+	 <a href="/game/${roomID}"> play! </a>
 
-     <p id="result">  </p>
   </body>
 </html>
