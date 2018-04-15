@@ -60,7 +60,26 @@ public class AiController {
    *          Information about all entities.
    */
   private void updateStrategy(ChunkMap chunks) {
-    // TODO
+    // Checks if there is an enemy in the visible range
+    if (seeEnemy(chunks)) {
+
+      // No enemy in visible range
+    } else {
+
+    }
+  }
+
+  /**
+   * Checks if there is an enemy in the current visible range.
+   * 
+   * @param chunks
+   *          A ChunkMap with information of all entities in the game.
+   * @return True if at least one enemy player (including other AI players) are
+   *         in the visible range, false otherwise.
+   */
+  private boolean seeEnemy(ChunkMap chunks) {
+
+    return false;
   }
 
 }

@@ -21,4 +21,21 @@ public class Board {
     // TODO Auto-generated constructor stub
   }
 
+  /**
+   * Does A* Search between the given start and end position and gives the next
+   * position that the player should go to to reach the end in the shortest
+   * path.
+   *
+   * @param start
+   *          The starting position.
+   * @param end
+   *          The destination position.
+   * @return A position adjacent to the starting position that starts the
+   *         shortest path to the destination.
+   */
+  public Position getMoveTo(Position start, Position end) {
+    // TODO
+    return null;
+  }
+
 }
