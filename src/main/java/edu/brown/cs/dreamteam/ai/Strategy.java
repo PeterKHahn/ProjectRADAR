@@ -1,12 +1,19 @@
 package edu.brown.cs.dreamteam.ai;
 
+import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
 /**
  * An interface defining a game mode's strategy to control the AI player.
  *
  * @author efu2
  */
 public interface Strategy {
-  // TODO: check return type (should be able to give next "key presses" for
-  // moving and interacting with items) AND parameter type for player state
-  void getNextMove(String entities);
+  /**
+   * Makes the next move based on the specific strategy's goals.
+   *
+   * @param chunks
+   *          Information about all entities on the map.
+   */
+  ClientState makeNextMove(ChunkMap chunks, ClientState currState);
 }

@@ -2,7 +2,6 @@ package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.Boxed;
 import edu.brown.cs.dreamteam.box.CircleBox;
-import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Tickable;
 
 /**
@@ -32,8 +31,10 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
 
   private CircleBox box;
 
+  private String type;
+
   /**
-   * Standard constructor for dynamicentity, initializing their fields
+   * Standard constructor for dynamic entity, initializing their fields
    * 
    * @param id
    *          id of the dynamicEntity
@@ -44,8 +45,10 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
    * @param size
    *          the radius of the entity
    */
-  public DynamicEntity(String id, double x, double y, double size) {
+  public DynamicEntity(String id, String type, double x, double y,
+      double size) {
     super(id);
+    this.type = type;
     this.size = size;
     this.x = x;
     this.y = y;
@@ -55,6 +58,10 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
   private void init() {
     box = new CircleBox(getXPos(), getYPos(), size);
 
+  }
+
+  public String getType() {
+    return type;
   }
 
   public double getXPos() {
@@ -103,15 +110,17 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
   }
 
   /**
-   * Given a clientstate, updates the internal fields of the dynamic entity to
-   * match those specified in the ClientState
+   * Given the current velocity-related coefficients, updates the internal
+   * fields of the dynamic entity to match those specified
    * 
-   * @param state
+   * @param movementCoeff
+   * 
    */
-  protected void updateDynamic(ClientState state) {
-    movementCoeff = state.retrieveMovementMultiplier();
-    strafeCoeff = state.retrieveStrafeMultiplier();
-    theta = state.retrieveTheta();
+  protected void updateDynamic(int movementCoeff, int strafeCoeff,
+      double theta) {
+    this.movementCoeff = movementCoeff;
+    this.strafeCoeff = strafeCoeff;
+    this.theta = theta;
     updateVelocity();
   }
 

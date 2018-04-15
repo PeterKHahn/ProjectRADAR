@@ -1,5 +1,8 @@
 package edu.brown.cs.dreamteam.ai;
 
+import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
 /**
  * Strategy to gather as many items as possible. No other players are in the
  * visible range. Cases: - AI currently has insufficient materials to make a
@@ -22,16 +25,6 @@ public class GatheringStrategy implements Strategy {
     // TODO Auto-generated constructor stub
   }
 
-  @Override
-  public void getNextMove(String entities) {
-    // TODO
-    if (canMakeRadar(entities)) {
-      placeRadar(entities);
-    } else {
-
-    }
-  }
-
   private void placeRadar(String entities) {
     // TODO: calculate the position to place the radar at.
   }
@@ -46,6 +39,17 @@ public class GatheringStrategy implements Strategy {
   private boolean canMakeRadar(String entities) {
     // TODO
     return false;
+  }
+
+  @Override
+  public ClientState makeNextMove(ChunkMap chunks, ClientState currState) {
+    // TODO Check what class contains info about players' held items
+    // if (canMakeRadar(chunks)) {
+    // placeRadar(chunks);
+    // } else {
+    //
+    // }
+    return null;
   }
 
 }

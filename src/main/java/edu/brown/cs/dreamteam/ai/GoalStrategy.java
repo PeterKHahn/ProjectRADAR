@@ -1,5 +1,8 @@
 package edu.brown.cs.dreamteam.ai;
 
+import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
 /**
  * Strategy to reach the revealed goal. Goal has been revealed! Go straight
  * towards the goal in modified defensive mode: Instead of fleeing the opposite
@@ -15,9 +18,9 @@ public class GoalStrategy implements Strategy {
   }
 
   @Override
-  public void getNextMove(String entities) {
+  public ClientState makeNextMove(ChunkMap chunks, ClientState currState) {
     // TODO Auto-generated method stub
-
+    return null;
   }
 
 }

@@ -2,16 +2,17 @@ package edu.brown.cs.dreamteam.ai;
 
 import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.main.Architect;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A class that receives the AI player's client status updates from networking
- * and sends networking the position updates.
+ * A class that controls 1 AI player in the game managed by the given architect.
  *
  * @author efu2
  */
-public class AiPlayer {
+public class AiController {
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE
   }
@@ -19,11 +20,15 @@ public class AiPlayer {
   private StrategyType strategy;
   private Map<StrategyType, Strategy> strategies;
   private Position position;
+  private Architect architect;
+  private String id;
 
   /**
    * Initializes the AI player. TODO: Check entities type from networking
    */
-  public AiPlayer(String id, Map<String, ClientState> clientStates) {
+  public AiController(String id, Architect architect) {
+    this.id = id;
+    this.architect = architect;
     strategy = StrategyType.GATHER;
     strategies = new HashMap<>();
     strategies.put(StrategyType.GATHER, new GatheringStrategy());
@@ -36,37 +41,31 @@ public class AiPlayer {
   }
 
   /**
-   * Generates a graph using the given entity information at the beginning of
-   * the game.
-   */
-  public static void initGraph(String entities) {
-
-  }
-
-  /**
    * Gets the next action updates of the AI player, including position changes,
    * game actions (key presses to use weapons/place radars), given the player's
    * current state.
    *
-   * @param entities
+   * @param chunks
    *          The collection of all static and dynamic entities and
    *          items/weapons at the current tick of the game.
    */
-  public void getUpdate(String entities) {
+  public void makeNextMove(ChunkMap chunks) {
     // TODO: return type (check with networking)
     // TODO: Check entities type from networking and change strategies
     // accordingly
-    updateStrategy(entities);
-    strategies.get(strategy).getNextMove(entities);
+    updateStrategy(chunks);
+    ClientState nextState = strategies.get(strategy).makeNextMove(chunks,
+        architect.retrieveClientStates().get(id));
+    architect.putClientState(id, nextState);
   }
 
   /**
    * Updates the strategy as necessary, according to the current entity info.
    * 
-   * @param entities
+   * @param chunks
    *          Information about all entities.
    */
-  private void updateStrategy(String entities) {
+  private void updateStrategy(ChunkMap chunks) {
     // TODO
   }
 

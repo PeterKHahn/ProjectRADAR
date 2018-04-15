@@ -1,6 +1,6 @@
 package edu.brown.cs.dreamteam.game;
 
-import edu.brown.cs.dreamteam.ai.AiPlayer;
+import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
@@ -27,7 +27,7 @@ public class GameEngine implements Runnable {
   private boolean running = false;
   private int ticks = 0;
 
-  private List<AiPlayer> aiPlayers;
+  private List<AiController> aiControllers;
 
   /**
    * Creates a GameEngine given an Architect
@@ -45,13 +45,19 @@ public class GameEngine implements Runnable {
     chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
     eventEmitter = new GameEventEmitter();
     this.addGameEventListener(architect);
+    initAi();
+  }
 
+  private void initAi() {
     // Initialize AI players as necessary
     Map<String, ClientState> clientStates = architect.retrieveClientStates();
     int numAi = NUM_PLAYERS - clientStates.keySet().size();
     for (int i = 0; i < numAi; i++) {
       String id = "AI" + Integer.toString(i);
       architect.putClientState(id, new ClientState(id));
+      aiControllers.add(new AiController(id, architect));
+      // TODO
+      chunks.addPlayer(new GamePlayer(id, 0, 0));
     }
   }
 

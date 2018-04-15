@@ -1,5 +1,13 @@
 package edu.brown.cs.dreamteam.game;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import edu.brown.cs.dreamteam.box.Boxed;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
+import edu.brown.cs.dreamteam.event.ClientState;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,16 +15,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
-import edu.brown.cs.dreamteam.box.Boxed;
-import edu.brown.cs.dreamteam.entity.DynamicEntity;
-import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Obstacle;
-import edu.brown.cs.dreamteam.entity.StaticEntity;
-import edu.brown.cs.dreamteam.event.ClientState;
 
 /**
  * Chunk Map is the primary location of our storage of entity information,
@@ -37,7 +35,8 @@ public class ChunkMap implements Tickable {
   private Chunk[][] chunks;
 
   private Map<String, GamePlayer> players;
-  private Multimap<GamePlayer, Chunk> playerToChunks;
+  private Map<String, DynamicEntity> nonHumanPlayers;
+  private Multimap<DynamicEntity, Chunk> playerToChunks;
   private Map<String, Obstacle> obstacles;
   private Multimap<Obstacle, Chunk> obstacleToChunks;
 
@@ -65,6 +64,7 @@ public class ChunkMap implements Tickable {
   private void init() {
     chunks = new Chunk[height][width];
     players = new HashMap<String, GamePlayer>();
+    nonHumanPlayers = new HashMap<String, DynamicEntity>();
     playerToChunks = HashMultimap.create();
     obstacles = new HashMap<String, Obstacle>();
     obstacleToChunks = HashMultimap.create();
@@ -115,7 +115,7 @@ public class ChunkMap implements Tickable {
    */
   private void tickPlayer() {
 
-    for (GamePlayer player : playerToChunks.keySet()) {
+    for (DynamicEntity player : playerToChunks.keySet()) {
 
       moveDynamic(player);
 
@@ -180,7 +180,7 @@ public class ChunkMap implements Tickable {
    * @param e
    *          the game player to be added
    */
-  public void addPlayer(GamePlayer e) {
+  public void addPlayer(DynamicEntity e) {
 
     Collection<Chunk> chunks = chunksInRange(e);
     for (Chunk c : chunks) {
@@ -188,7 +188,20 @@ public class ChunkMap implements Tickable {
     }
 
     playerToChunks.putAll(e, chunks);
-    players.put(e.getId(), e);
+    String playerType = e.getType();
+    switch (playerType) {
+      case "HUMAN":
+        players.put(e.getId(), (GamePlayer) e);
+        break;
+
+      case "AI":
+        nonHumanPlayers.put(e.getId(), e);
+        break;
+
+      default:
+        System.out.println("ERROR: Invalid DynamicEntity type " + playerType);
+        break;
+    }
 
   }
 
