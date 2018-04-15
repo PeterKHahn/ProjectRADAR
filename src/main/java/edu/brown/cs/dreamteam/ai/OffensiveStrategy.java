@@ -1,6 +1,8 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.game.Chunk;
+import java.util.Collection;
 
 /**
  * Strategy to attack other players to get their items. Activated when: AI
@@ -17,16 +19,16 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * 
  * @author efu2
  */
-public class OffensiveStrategy implements Strategy {
-  private PositionPredictor pp;
+public class OffensiveStrategy extends Strategy {
 
-  public OffensiveStrategy() {
-    pp = new PositionPredictor();
+  public OffensiveStrategy(Board board, AiPlayer player) {
+    super(board, player);
+    // TODO Auto-generated constructor stub
   }
 
   @Override
-  public void makeNextMove(ChunkMap chunks, AiPlayer player) {
+  void makeNextMove(Collection<Chunk> chunks) {
     // TODO Auto-generated method stub
-  }
 
+  }
 }

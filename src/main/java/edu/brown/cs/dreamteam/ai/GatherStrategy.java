@@ -1,6 +1,8 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.game.Chunk;
+import java.util.Collection;
 
 /**
  * Strategy to gather as many items as possible. No other players are in the
@@ -18,9 +20,10 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * 
  * @author efu2
  */
-public class GatheringStrategy implements Strategy {
+public class GatherStrategy extends Strategy {
 
-  public GatheringStrategy() {
+  public GatherStrategy(Board board, AiPlayer player) {
+    super(board, player);
     // TODO Auto-generated constructor stub
   }
 
@@ -41,13 +44,8 @@ public class GatheringStrategy implements Strategy {
   }
 
   @Override
-  public void makeNextMove(ChunkMap chunks, AiPlayer player) {
-    // TODO Check what class contains info about players' held items
-    // if (canMakeRadar(chunks)) {
-    // placeRadar(chunks);
-    // } else {
-    //
-    // }
-  }
+  void makeNextMove(Collection<Chunk> chunks) {
+    // TODO Auto-generated method stub
 
+  }
 }

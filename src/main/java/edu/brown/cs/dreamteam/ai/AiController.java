@@ -18,7 +18,7 @@ public class AiController {
   private static final int VISIBLE_RANGE = AI_SIZE * 5;
 
   private enum StrategyType {
-    GATHER, OFFENSE, DEFENSE
+    GATHER, OFFENSE, DEFENSE, GOAL
   }
 
   private StrategyType strategy;
@@ -27,15 +27,25 @@ public class AiController {
   private Board board;
 
   /**
-   * Initializes the AI player. TODO: Check entities type from networking
+   * Initializes the AiController that makes decisions about the AiPlayer's next
+   * move.
+   * 
+   * @param id
+   *          This AI player's ID.
+   * @param board
+   *          The graph representation of this game.
    */
   public AiController(String id, Board board) {
+    // TODO update starting position
     player = new AiPlayer(id, 0, 0, AI_SIZE);
+
+    // Initialize strategies
     strategy = StrategyType.GATHER;
     strategies = new HashMap<>();
-    strategies.put(StrategyType.GATHER, new GatheringStrategy());
-    strategies.put(StrategyType.OFFENSE, new OffensiveStrategy());
-    strategies.put(StrategyType.DEFENSE, new DefensiveStrategy());
+    strategies.put(StrategyType.GATHER, new GatherStrategy(board, player));
+    strategies.put(StrategyType.OFFENSE, new OffensiveStrategy(board, player));
+    strategies.put(StrategyType.DEFENSE, new DefensiveStrategy(board, player));
+    strategies.put(StrategyType.GOAL, new GoalStrategy(board, player));
 
   }
 
@@ -53,35 +63,12 @@ public class AiController {
    *          items/weapons at the current tick of the game.
    */
   public void makeNextMove(ChunkMap chunks) {
-    updateStrategy(chunks);
-    strategies.get(strategy).makeNextMove(chunks, player);
+    Collection<Chunk> visibleChunks = getVisibleChunks(chunks);
+    updateStrategy(visibleChunks);
+    strategies.get(strategy).makeNextMove(visibleChunks);
   }
 
-  /**
-   * Updates the strategy as necessary, according to the current entity info.
-   * 
-   * @param chunks
-   *          Information about all entities.
-   */
-  private void updateStrategy(ChunkMap chunks) {
-    // Checks if there is an enemy in the visible range
-    if (seeEnemy(chunks)) {
-      // TODO check player health
-    } else {
-      // No enemy in visible range
-
-    }
-  }
-
-  /**
-   * Checks if there is an enemy in the current visible range.
-   * 
-   * @param chunks
-   *          A ChunkMap with information of all entities in the game.
-   * @return True if at least one enemy player (including other AI players) are
-   *         in the visible range, false otherwise.
-   */
-  private boolean seeEnemy(ChunkMap chunks) {
+  private Collection<Chunk> getVisibleChunks(ChunkMap chunks) {
     // Get chunks in the visible range
     int currRow = chunks.getChunkRow(player.getYPos());
     int currCol = chunks.getChunkCol(player.getXPos());
@@ -89,24 +76,27 @@ public class AiController {
     int toRow = currRow + VISIBLE_RANGE;
     int fromCol = currCol - VISIBLE_RANGE;
     int toCol = currCol + VISIBLE_RANGE;
-    Collection<Chunk> visibleChunks = chunks.chunksInRange(fromRow, toRow,
-        fromCol, toCol);
+    return chunks.chunksInRange(fromRow, toRow, fromCol, toCol);
+  }
 
-    // Iterate through all chunks to check if another player is within the
-    // chunks in visible range
-    for (Chunk chunk : visibleChunks) {
-      Collection<DynamicEntity> players = chunk.getDynamicEntities();
-      if (players.size() > 0) {
-        if (players.contains(player) && players.size() > 1) {
-          return true;
-        } else if (!players.contains(player)) {
-          return true;
-        }
-      }
+  /**
+   * Updates the strategy as necessary, according to the current entity info.
+   * 
+   * @param chunks
+   *          A Collection of all visible chunks to the player right now.
+   */
+  private void updateStrategy(Collection<Chunk> chunks) {
+    // Get visible enemies using one of the Strategy instances
+    Collection<DynamicEntity> enemies = strategies.get(StrategyType.OFFENSE)
+        .getVisibleEnemies(chunks);
+    if (enemies.size() > 0) {
+      // There is an enemy in the visible range
+      // TODO check player health
+
+    } else {
+      // No enemy in visible range
+      // TODO Check if the goal is revealed
     }
-
-    // All chunks have been iterated through
-    return false;
   }
 
 }

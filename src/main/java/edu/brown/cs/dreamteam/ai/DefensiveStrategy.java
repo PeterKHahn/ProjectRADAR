@@ -1,6 +1,8 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.game.Chunk;
+import java.util.Collection;
 
 /**
  * Strategy to avoid all enemy players to save health. If AI's health is below 2
@@ -18,15 +20,17 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * 
  * @author efu2
  */
-public class DefensiveStrategy implements Strategy {
+public class DefensiveStrategy extends Strategy {
 
-  public DefensiveStrategy() {
+  public DefensiveStrategy(Board board, AiPlayer player) {
+    super(board, player);
     // TODO Auto-generated constructor stub
   }
 
   @Override
-  public void makeNextMove(ChunkMap chunks, AiPlayer player) {
+  void makeNextMove(Collection<Chunk> chunks) {
     // TODO Auto-generated method stub
+
   }
 
 }

@@ -1,6 +1,8 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.game.Chunk;
+import java.util.Collection;
 
 /**
  * Strategy to reach the revealed goal. Goal has been revealed! Go straight
@@ -10,15 +12,17 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  *
  * @author efu2
  */
-public class GoalStrategy implements Strategy {
+public class GoalStrategy extends Strategy {
 
-  public GoalStrategy() {
+  public GoalStrategy(Board board, AiPlayer player) {
+    super(board, player);
     // TODO Auto-generated constructor stub
   }
 
   @Override
-  public void makeNextMove(ChunkMap chunks, AiPlayer player) {
+  void makeNextMove(Collection<Chunk> chunks) {
     // TODO Auto-generated method stub
+
   }
 
 }

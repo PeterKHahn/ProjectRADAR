@@ -7,7 +7,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OffensiveStrategyTest {
+public class GatherStrategyTest {
   private static Board emptyBoard;
   private static AiPlayer player;
 
@@ -19,7 +19,7 @@ public class OffensiveStrategyTest {
 
   @Test
   public void testConstruction() {
-    OffensiveStrategy s = new OffensiveStrategy(emptyBoard, player);
+    GatherStrategy s = new GatherStrategy(emptyBoard, player);
     assertNotNull(s);
   }
 
