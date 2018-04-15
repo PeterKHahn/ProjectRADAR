@@ -1,6 +1,7 @@
 package edu.brown.cs.dreamteam.game;
 
 import edu.brown.cs.dreamteam.ai.AiController;
+import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.event.ClientState;
@@ -24,6 +25,7 @@ public class GameEngine implements Runnable {
   private Architect architect;
 
   private ChunkMap chunks;
+  private Board board; // Graph representation of the completed ChunkMap
 
   private boolean running = false;
   private int ticks = 0;
@@ -46,20 +48,6 @@ public class GameEngine implements Runnable {
     chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
     eventEmitter = new GameEventEmitter();
     this.addGameEventListener(architect);
-    initAi();
-  }
-
-  private void initAi() {
-    // Initialize AI players as necessary
-    Map<String, ClientState> clientStates = architect.retrieveClientStates();
-    int numAi = NUM_PLAYERS - clientStates.keySet().size();
-    for (int i = 0; i < numAi; i++) {
-      String id = "AI" + Integer.toString(i);
-      architect.putClientState(id, new ClientState(id));
-      aiControllers.add(new AiController(id, architect));
-      // TODO
-      chunks.addPlayer(new GamePlayer(id, 0, 0));
-    }
   }
 
   @Override
@@ -102,7 +90,15 @@ public class GameEngine implements Runnable {
     Map<String, ClientState> updatedClientStates = architect
         .retrieveClientStates();
     chunks.updateClients(updatedClientStates);
+    tickAi();
     chunks.tick();
+  }
+
+  private void tickAi() {
+    int numAi = aiControllers.size();
+    for (int i = 0; i < numAi; i++) {
+      aiControllers.get(i).makeNextMove(chunks);
+    }
   }
 
   /**
@@ -120,8 +116,13 @@ public class GameEngine implements Runnable {
     chunks.addObstacle(ob);
   }
 
-  public void addAiPlayer() {
+  public void addAiPlayer(int id) {
+    aiControllers.add(new AiController(Integer.toString(id), board));
+    chunks.addPlayer(aiControllers.get(aiControllers.size() - 1).getPlayer());
+  }
 
+  public void makeBoard() {
+    board = new Board(chunks);
   }
 
   private void log() {

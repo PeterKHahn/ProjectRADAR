@@ -1,9 +1,8 @@
 package edu.brown.cs.dreamteam.entity;
 
+import edu.brown.cs.dreamteam.event.ClientState;
 import java.util.HashSet;
 import java.util.Set;
-
-import edu.brown.cs.dreamteam.event.ClientState;
 
 /**
  * The internal representation of a player in the Game
@@ -34,6 +33,7 @@ public class GamePlayer extends DynamicEntity {
    */
   public GamePlayer(String id, double xPos, double yPos) {
     super(id, xPos, yPos, size);
+    this.setType("HUMAN");
     init();
 
   }

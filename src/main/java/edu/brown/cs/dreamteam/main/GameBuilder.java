@@ -1,12 +1,11 @@
 package edu.brown.cs.dreamteam.main;
 
-import java.util.Collection;
-
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.utility.Logger;
+import java.util.Collection;
 
 public class GameBuilder {
 
@@ -51,8 +50,9 @@ public class GameBuilder {
   }
 
   public GameEngine complete() {
+    engine.makeBoard();
     while (numHumanPlayers < 4) {
-      engine.addAiPlayer();
+      engine.addAiPlayer(numHumanPlayers);
       numHumanPlayers++;
     }
     return engine;

@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -15,5 +14,5 @@ public interface Strategy {
    * @param chunks
    *          Information about all entities on the map.
    */
-  ClientState makeNextMove(ChunkMap chunks, ClientState currState);
+  void makeNextMove(ChunkMap chunks, AiPlayer player);
 }

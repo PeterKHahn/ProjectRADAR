@@ -1,5 +1,7 @@
 package edu.brown.cs.dreamteam.board;
 
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
 /**
  * Represents the game board as a graph with Positions as vertices and Moves as
  * edges.
@@ -15,7 +17,7 @@ public class Board {
    * @param entities
    *          All entities' positions on the game board.
    */
-  public Board(String entities) {
+  public Board(ChunkMap chunks) {
     // TODO Auto-generated constructor stub
   }
 

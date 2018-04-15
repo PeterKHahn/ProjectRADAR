@@ -1,9 +1,7 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.board.Position;
-import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.game.ChunkMap;
-import edu.brown.cs.dreamteam.main.Architect;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,31 +11,32 @@ import java.util.Map;
  * @author efu2
  */
 public class AiController {
+  private static final int AI_SIZE = 5;
+
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE
   }
 
   private StrategyType strategy;
   private Map<StrategyType, Strategy> strategies;
-  private Position position;
-  private Architect architect;
-  private String id;
+  private AiPlayer player;
+  private Board board;
 
   /**
    * Initializes the AI player. TODO: Check entities type from networking
    */
-  public AiController(String id, Architect architect) {
-    this.id = id;
-    this.architect = architect;
+  public AiController(String id, Board board) {
+    player = new AiPlayer(id, 0, 0, AI_SIZE);
     strategy = StrategyType.GATHER;
     strategies = new HashMap<>();
     strategies.put(StrategyType.GATHER, new GatheringStrategy());
     strategies.put(StrategyType.OFFENSE, new OffensiveStrategy());
     strategies.put(StrategyType.DEFENSE, new DefensiveStrategy());
 
-    // TODO: Initialize the coordinates
-    position = new Position(0, 0);
+  }
 
+  public AiPlayer getPlayer() {
+    return player;
   }
 
   /**
@@ -50,13 +49,8 @@ public class AiController {
    *          items/weapons at the current tick of the game.
    */
   public void makeNextMove(ChunkMap chunks) {
-    // TODO: return type (check with networking)
-    // TODO: Check entities type from networking and change strategies
-    // accordingly
     updateStrategy(chunks);
-    ClientState nextState = strategies.get(strategy).makeNextMove(chunks,
-        architect.retrieveClientStates().get(id));
-    architect.putClientState(id, nextState);
+    strategies.get(strategy).makeNextMove(chunks, player);
   }
 
   /**

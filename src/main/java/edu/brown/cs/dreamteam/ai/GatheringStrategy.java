@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -42,14 +41,13 @@ public class GatheringStrategy implements Strategy {
   }
 
   @Override
-  public ClientState makeNextMove(ChunkMap chunks, ClientState currState) {
+  public void makeNextMove(ChunkMap chunks, AiPlayer player) {
     // TODO Check what class contains info about players' held items
     // if (canMakeRadar(chunks)) {
     // placeRadar(chunks);
     // } else {
     //
     // }
-    return null;
   }
 
 }

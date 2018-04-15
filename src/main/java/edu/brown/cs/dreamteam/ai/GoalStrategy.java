@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -18,9 +17,8 @@ public class GoalStrategy implements Strategy {
   }
 
   @Override
-  public ClientState makeNextMove(ChunkMap chunks, ClientState currState) {
+  public void makeNextMove(ChunkMap chunks, AiPlayer player) {
     // TODO Auto-generated method stub
-    return null;
   }
 
 }
