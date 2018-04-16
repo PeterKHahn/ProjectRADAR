@@ -55,6 +55,7 @@ public class GameBuilder {
       engine.addAiPlayer();
       numHumanPlayers++;
     }
+
     return engine;
   }
 

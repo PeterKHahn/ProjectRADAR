@@ -35,7 +35,7 @@ public final class Logger {
    */
   public static void logDebug(String message) {
     if (debug) {
-      System.out.println(message);
+      // System.out.println(message);
 
     }
   }
@@ -47,7 +47,7 @@ public final class Logger {
    *          THe message to print
    */
   public static void logMessage(String message) {
-    System.out.println(message);
+    // System.out.println(message);
 
   }
 
@@ -60,7 +60,7 @@ public final class Logger {
    *          The objects that fit the formatted string.
    */
   public static void logMessage(String message, Object... args) {
-    System.out.printf(message, args);
+    // System.out.printf(message, args);
   }
 
   /**
@@ -70,7 +70,7 @@ public final class Logger {
    *          the message associated with the error
    */
   public static void logError(String message) {
-    System.out.println("ERROR: " + message);
+    // System.out.println("ERROR: " + message);
   }
 
   /**
@@ -80,7 +80,7 @@ public final class Logger {
    *          the message associated with the error
    */
   public static void logWarning(String message) {
-    System.out.println("WARNING: " + message);
+    // System.out.println("WARNING: " + message);
   }
 
   /**
@@ -90,7 +90,7 @@ public final class Logger {
    *          the message associated with the error
    */
   public static void logTestFail(String message) {
-    System.out.println("TEST FAIL: " + message);
+    // System.out.println("TEST FAIL: " + message);
   }
 
 }

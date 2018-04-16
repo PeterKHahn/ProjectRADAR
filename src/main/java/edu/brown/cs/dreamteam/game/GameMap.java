@@ -4,10 +4,8 @@ import java.util.Collection;
 
 import edu.brown.cs.dreamteam.entity.Obstacle;
 
-public class GameMap {
+public interface GameMap {
 
-  public Collection<Obstacle> getObstacles() {
-    return null;
-  }
+  public Collection<Obstacle> getObstacles();
 
 }

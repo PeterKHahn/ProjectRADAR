@@ -23,4 +23,8 @@ public abstract class Architect implements Runnable, GameEventListener {
    */
   public abstract Map<String, ClientState> retrieveClientStates();
 
+  // TODO: pray that put replaces, not adds another if there is a repeat.
+  public abstract void putClientState(String name, ClientState state);
+
+  public abstract void initSpark();
 }

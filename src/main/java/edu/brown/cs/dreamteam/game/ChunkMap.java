@@ -41,6 +41,8 @@ public class ChunkMap {
   private Map<String, Obstacle> obstacles;
   private Multimap<Obstacle, Chunk> obstacleToChunks;
 
+  private int tickCount;
+
   /**
    * Constructor for ChunkMap
    * 
@@ -103,6 +105,7 @@ public class ChunkMap {
 
   public void tick() {
     tickPlayer();
+    tickCount++;
   }
 
   /**
@@ -160,12 +163,12 @@ public class ChunkMap {
 
   }
 
-  private int getChunkRow(double yPos) {
+  public int getChunkRow(double yPos) {
     int rPos = (totalHeight - (int) yPos - 1);
     return rPos / chunkSize;
   }
 
-  private int getChunkCol(double xPos) {
+  public int getChunkCol(double xPos) {
     int cPos = (int) xPos;
     return cPos / chunkSize;
   }
@@ -221,7 +224,7 @@ public class ChunkMap {
    *          the col to end
    * @return A collection of Chunks within the range of the bounds
    */
-  private Collection<Chunk> chunksInRange(int fromRow, int toRow, int fromCol,
+  public Collection<Chunk> chunksInRange(int fromRow, int toRow, int fromCol,
       int toCol) {
     Collection<Chunk> res = new LinkedList<Chunk>();
     for (int r = Math.max(fromRow, 0); r <= toRow && r < height; r++) {
@@ -241,7 +244,7 @@ public class ChunkMap {
    *          the Collection of chunks to retrieve static entities from
    * @return A Set of Static Entities contined in chunks
    */
-  private Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
+  public Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
     Set<StaticEntity> res = new HashSet<StaticEntity>();
     for (Chunk c : chunks) {
       res.addAll(c.getStaticEntities());
@@ -249,8 +252,59 @@ public class ChunkMap {
     return res;
   }
 
+  /**
+   * Gets all Chunks in a square box that are near a player, with a distance
+   * metric specified by radius
+   * 
+   * @param player
+   *          The player to look around
+   * @param radius
+   *          the distance we are looking horizontally and vertically for chunks
+   * @return
+   */
+  public Collection<Chunk> getChunksNearPlayer(DynamicEntity player,
+      double radius) {
+    double xPos = player.getXPos();
+    double yPos = player.getYPos();
+    double leftBound = xPos - radius;
+    double rightBound = xPos + radius;
+    double upperBound = yPos + radius;
+    double lowerBound = yPos - radius;
+
+    int fromRow = getChunkRow(upperBound);
+    int toRow = getChunkRow(lowerBound);
+    int fromCol = getChunkCol(leftBound);
+    int toCol = getChunkCol(rightBound);
+
+    return chunksInRange(fromRow, toRow, fromCol, toCol);
+
+  }
+
+  /**
+   * Returns the set of dynamicEntities within the chunks
+   * 
+   * @param chunks
+   *          the Collection of chunks to retrieve static entities from
+   * @return A Set of Static Entities contined in chunks
+   */
+  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+    Set<DynamicEntity> res = new HashSet<DynamicEntity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getDynamicEntities());
+    }
+    return res;
+  }
+
   public Chunk[][] getChunkArray() {
     return chunks;
+  }
+
+  public Collection<GamePlayer> getPlayers() {
+    return players.values();
+  }
+
+  public int tickCount() {
+    return tickCount;
   }
 
   class IllegalChunkException extends Exception {

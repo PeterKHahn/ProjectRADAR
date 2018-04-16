@@ -8,7 +8,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 /**
  * GameEventEmitter will emit at the End of every tick, information about the
  * game state, using the observer pattern
- * 
+ *
  * @author peter
  *
  */
@@ -27,7 +27,7 @@ public class GameEventEmitter {
   /**
    * Adds a GameEventListener to the collection of listeners who will listen for
    * this signal
-   * 
+   *
    * @param listener
    */
   public void addGameEventListener(GameEventListener listener) {
@@ -37,12 +37,14 @@ public class GameEventEmitter {
   /**
    * Emits information about a ChunkMap to all GameEventListeners in the thread.
    * It does this asynchronously
-   * 
+   *
    * @param chunks
    *          the ChunkMap to emit
    */
   public void emit(ChunkMap chunks) {
+    System.out.println("emmitting...");
     for (GameEventListenerThread listener : listeners) {
+      System.out.println("listener hit");
       listener.setChunk(chunks);
       new Thread(listener).start();
 
@@ -51,7 +53,7 @@ public class GameEventEmitter {
 
   /**
    * A wrapper class to support multithreading for each of the listeners
-   * 
+   *
    * @author peter
    *
    */

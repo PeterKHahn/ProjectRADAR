@@ -48,7 +48,7 @@ public class DummySyncArchitect extends Architect {
 
   @Override
   public void onGameChange(ChunkMap chunks) {
-    System.out.println("Chunks: " + chunks);
+    // System.out.println("Chunks: " + chunks);
     Chunk[][] array = chunks.getChunkArray();
     for (int r = 0; r < array.length; r++) {
       for (int c = 0; c < array[0].length; c++) {
@@ -75,6 +75,18 @@ public class DummySyncArchitect extends Architect {
     }
 
     return res;
+  }
+
+  @Override
+  public void putClientState(String name, ClientState state) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void initSpark() {
+    // TODO Auto-generated method stub
+
   }
 
 }

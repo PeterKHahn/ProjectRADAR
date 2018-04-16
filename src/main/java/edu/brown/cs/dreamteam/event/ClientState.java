@@ -113,15 +113,15 @@ public class ClientState {
   /**
    * updates if the player should pick up an item
    */
-  public synchronized void itemPicked() {
-    itemPicked = true;
+  public synchronized void itemPicked(Boolean item) {
+    itemPicked = item;
   }
 
   /**
    * Updates if the player should perform its primary action
    */
-  public synchronized void primaryAction() {
-    primaryAction = true;
+  public synchronized void primaryAction(Boolean action) {
+    primaryAction = action;
   }
 
   /**

@@ -28,12 +28,13 @@ public class GameEngine implements Runnable {
 
   /**
    * Creates a GameEngine given an Architect
-   * 
+   *
    * @param architect
    *          The Architecture that the GameEngine is a part of
    */
   public GameEngine(Architect architect) {
     this.architect = architect;
+    addGameEventListener(architect);
 
     init();
   }
@@ -47,6 +48,7 @@ public class GameEngine implements Runnable {
 
   @Override
   public void run() {
+    System.out.println("Running Game...");
     running = true;
     long lastTime = System.nanoTime();
     double nsPerTick = 1000000000.0 / FPS;
@@ -71,7 +73,7 @@ public class GameEngine implements Runnable {
 
   /**
    * Adds a listener to the game engine's GameEventEmitter
-   * 
+   *
    * @param listener
    */
   public void addGameEventListener(GameEventListener listener) {
@@ -90,7 +92,7 @@ public class GameEngine implements Runnable {
 
   /**
    * Adds a player to the Game
-   * 
+   *
    * @param p
    *          the player to add
    */
@@ -108,6 +110,6 @@ public class GameEngine implements Runnable {
   }
 
   private void log() {
-    System.out.println("Ticks: " + ticks);
+    // System.out.println("Ticks: " + ticks);
   }
 }

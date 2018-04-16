@@ -9,7 +9,7 @@ import edu.brown.cs.dreamteam.entity.StaticEntity;
 
 /**
  * Chunked pieces of a Map for Efficiency purposes
- * 
+ *
  * @author peter
  *
  */
@@ -23,7 +23,7 @@ public class Chunk {
 
   /**
    * A Constructor for Chunk initializing its row and column in the Chunk Grid
-   * 
+   *
    * @param row
    * @param col
    */
@@ -50,7 +50,7 @@ public class Chunk {
 
   /**
    * Adds a DynamicEntity to the Chunk
-   * 
+   *
    * @param d
    */
   public void addDynamic(DynamicEntity d) {
@@ -59,7 +59,7 @@ public class Chunk {
 
   /**
    * Removes a DynamicEntity from the Chunk
-   * 
+   *
    * @param d
    */
   public void removeDynamic(DynamicEntity d) {
@@ -68,7 +68,7 @@ public class Chunk {
 
   /**
    * Adds a Static Entity to the Chunk
-   * 
+   *
    * @param s
    */
   public void addStatic(StaticEntity s) {
@@ -77,11 +77,20 @@ public class Chunk {
 
   /**
    * Returns a Collection of all static Entities in the Chunk
-   * 
+   *
    * @return a collection of all static entities in the Chunk
    */
   public Collection<StaticEntity> getStaticEntities() {
     return staticEntities;
+  }
+
+  /**
+   * Returns a Collection of all dynamic Entities in the Chunk
+   *
+   * @return a collection of all dynamic entities in the Chunk
+   */
+  public Collection<DynamicEntity> getDynamicEntities() {
+    return dynamicEntities;
   }
 
   public void tick() {

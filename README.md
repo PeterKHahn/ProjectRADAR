@@ -19,8 +19,8 @@ Group Members:
 ## Timeline
 | Date                  | Integrations                      |
 |-------------------    |---------------------------------  |
-| April 7               | <ul><li>Game logic:<ul><li>can send networking player status updates</li><li>can send AI player all players' statuses (position, health, items, hitbox/hurtbox)</li><li>can produce game logs (player statuses at every frame or second, or whatever is feasible)</li></ul></li><li>Frontend:<ul><li>all pages' can be rendered</li><li>can render players on screen according to client statuses from networking</li></ul></li><li>Networking:<ul><li>can receive client statuses from game logic and AI</li><li>can pass on client statuses to frontend</li><li>can generate game room URLs</li><li>has all game pages' URLs' post/get Spark requests set up</li></ul></li><li>AI:<ul><li>position prediction and shortest distance walking models are completed, if not trained</li><li>can send client status updates to networking</li><li>can parse game logs from game logic</li></ul></li></ul> |
-| April 15              | <ul><li>Game logic:<ul><li>all rules implemented</li><li>can play a round of the game on dummy frontend</li></ul></li><li>Frontend:<ul><li>graphics ready, each page is rendered with graphics</li><li>game screen can update according to networking updates</li><li>game screen can predict player's next position to mitigate lag</li></ul></li><li>Networking:<ul><li>done</li></ul></li><li>AI:<ul><li>models completed and trained</li><li>can use game engine to visually see AI responses to encountered items and players</li><li>can calculate optimal radar position</li></ul></li></ul> |
+| April 7               | <ul><li>Game logic:<ul><li><s>can send networking player status updates</s></li><li><s>can send AI player all players' statuses (position, health, items, hitbox/hurtbox)</s></li><li>low priority: can produce game logs (player statuses at every frame or second, or whatever is feasible)</li></ul></li><li>Frontend:<ul><li><s>all pages' can be rendered</s></li><li>can render players on screen according to client statuses from networking</li></ul></li><li>Networking:<ul><li>can receive client statuses from game logic and AI</li><li>can pass on client statuses to frontend</li><li><s>can generate game room URLs</s></li><li><s>has all game pages' URLs' post/get Spark requests set up</s></li></ul></li><li>AI:<ul><li>position prediction and shortest distance walking models are completed, if not trained</li><li>can send client status updates to networking</li><li>updated and don't need anymore: can parse game logs from game logic</li></ul></li></ul> |
+| April 15              | <ul><li>Game logic:<ul><li>all rules implemented</li><li>can play a round of the game on dummy frontend</li></ul></li><li>Frontend:<ul><li>graphics ready, each page is rendered with graphics</li><li>game screen can update according to networking updates</li><li>game screen can predict player's next position to mitigate lag</li></ul></li><li>Networking:<ul><li>done</li></ul></li><li>AI:<ul><li>can use game engine to visually see AI responses to encountered items and players</li><li>can calculate optimal radar position</li></ul></li></ul> |
 | April 23 (4-way)      | Everyone done with individual parts and tests. |
 | May 2 (Adversary)     | Code all merged and bugs fixed.   |
 | May 7 (Pre-Demo)      | Last-minute bugs fixed!!!!        |
@@ -124,16 +124,9 @@ The AI player will simulate a human player in that it only has knowledge of item
 Uses backend's representations of item and player locations within the AI player's visible range. If a player is in the AI's visible range, the player's hit box (attack range) and hurt box (the range at which the player can be dealt damage to) are queried. The minimap updates are updated at every tick (whether goal position is revealed, items and players within the radar range).
 
 ### Main algorithms
-  - Predict encountered player's movements
-    - [Hidden Semi-Markov Models, Section IV.A](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf): discretize game map into a grid and treat each state as an opponent occupying a grid cell at time t.
-      - Used for entire map
-      - Code representtion: 2D array corresponding to each cell in the map  
-      - Prior: Probability of a player starting at a position.
-      - Transition and duration: built from game logs.
-    - [Particle Filters, Section IV.B](http://www.csse.uwa.edu.au/cig08/Proceedings/papers/8071.pdf)
-    - [Baum-Welsch algorithm to adjust HSMM's transition matrix with each new game log, p6](https://arxiv.org/pdf/1802.03417.pdf)
-  - Avoid obstacles and calculate shortest distance route (either to items, or to/away from other players)
-    - A* search: convert grid into graph with nodes at every cell and edges between cells that can be traversed to from each other
+  - Predict encountered player's movements: use last tick's enemy player velocity to predict the enemy's position in the next tick
+  - Avoid obstacles and calculate shortest distance route (either to items, or to/away from other players): A* search by converting grid into graph with nodes at every cell and edges between cells that can be traversed to from each other
+    - Note: A* search code is adapted using efu2 and jyang80's Maps implementation of A* search.
 
 ### Behavior modes
 #### Defensive mode
