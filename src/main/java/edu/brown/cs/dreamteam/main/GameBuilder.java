@@ -28,11 +28,13 @@ public class GameBuilder {
 
   public GameBuilder addHumanPlayer(PlayerSession playerSession) {
     GamePlayer player = new GamePlayer(playerSession.getId(), 0, 0);
+
     if (players.size() > 3) {
       Logger.logError("Only 4 players can be in a game. Not all players added");
       return this;
     }
     engine.addPlayer(player);
+
     numHumanPlayers++;
     return this;
 
