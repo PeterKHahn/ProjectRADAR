@@ -8,9 +8,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 
+import edu.brown.cs.dreamteam.debug.DummyGameMap;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Chunk;
@@ -34,6 +42,7 @@ import spark.template.freemarker.FreeMarkerEngine;
  *
  */
 public class SystemArchitect extends Architect {
+  private static final Gson GSON = new Gson();
 
   private GameEngine game;
   private Rooms rooms = new Rooms();
@@ -54,13 +63,11 @@ public class SystemArchitect extends Architect {
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
-    Spark.webSocket("/xx/websocket", GameWebSocketHandler.class);
+    Spark.webSocket("/xx/websocket", new GameWebSocketHandler(this));
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
     Spark.get("/game/:roomID", new GameHandler(), freeMarker);
     Spark.post("/giveStatus", new SendStatusHandler(this));
-    // EXPERIMENTAL
-
     Spark.exception(Exception.class, (e, r, er) -> {
       e.printStackTrace();
     });
@@ -99,15 +106,94 @@ public class SystemArchitect extends Architect {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
     for (GamePlayer p : movingThings) {
+      System.out.println("PLAYERRRR");
       Collection<Chunk> chunksNeeded = chunks.getChunksNearPlayer(p, radius);
-      chunks.dynamicFromChunks(chunksNeeded);
-      chunks.staticFromChunks(chunksNeeded);
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("player", p)
+          .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
+          .put("statics", chunks.staticFromChunks(chunksNeeded)).build();
+      Messenger.broadcastIndividualMessage(p.getId(),
+          "INDIVIDUAL MESSAGE: " + GSON.toJson(variables));
     }
   }
 
   @Override
   public void putClientState(String name, ClientState state) {
     clientStates.put(name, state);
+  }
+
+  @WebSocket
+  public class GameWebSocketHandler {
+    private String sender, msg;
+    private Architect a;
+
+    public GameWebSocketHandler(Architect a) {
+      this.a = a;
+    }
+
+    @OnWebSocketConnect
+    public void onConnect(Session user) throws Exception {
+      Messenger.addUserUserID(user);
+      Messenger.broadcastMessage(sender = "Server",
+          msg = ("Someone joined the chat!"));
+
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session user, int statusCode, String reason) {
+      String username = Messenger.sessionUserMap.get(user);
+      Messenger.sessionUserMap.remove(user);
+      Messenger.userSessionMap.remove(username);
+      Messenger.broadcastMessage(sender = "Server",
+          msg = (username + " left the chat"));
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session user, String message) {
+      System.out.println(Messenger.sessionUserMap.get(user));
+      System.out.println(message);
+      if (message.equals("start")) {
+        putClientState(Messenger.sessionUserMap.get(user),
+            new ClientState(Messenger.sessionUserMap.get(user)));
+        GameBuilder.create(a)
+            .addHumanPlayer(
+                new PlayerSession(Messenger.sessionUserMap.get(user), user))
+            .generateMap(new DummyGameMap()).complete();
+      } else if (message.equals("left")) {
+        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
+        if (c != null) {
+          c.leftHeld(true);
+        }
+      } else if (message.equals("right")) {
+        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
+        if (c != null) {
+          c.rightHeld(true);
+        }
+      } else if (message.equals("up")) {
+        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
+        if (c != null) {
+          c.forwardHeld(true);
+        }
+      } else if (message.equals("right")) {
+        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
+        if (c != null) {
+          c.backwardHeld(true);
+        }
+      } else if (message.equals("space")) {
+        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
+        if (c != null) {
+          c.primaryAction(true);
+        }
+      } else if (message.equals("f")) {
+        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
+        if (c != null) {
+          c.itemPicked(true);
+        }
+      }
+
+      Messenger.broadcastMessage(sender = Messenger.sessionUserMap.get(user),
+          msg = message);
+    }
   }
 
   /**

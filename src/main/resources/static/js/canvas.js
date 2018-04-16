@@ -43,7 +43,8 @@ $(document).ready(() => {
 	// drawPlayer();
 
     webSocket.onmessage = function (msg) {
-    	console.log(msg); 
+    	console.log(msg);
+    	console.log(msg.data) 
     	// console.log(JSON.parse(msg));
     	// let res = JSON.parse(msg);
     	// if (res.kind === "gamePost") {
