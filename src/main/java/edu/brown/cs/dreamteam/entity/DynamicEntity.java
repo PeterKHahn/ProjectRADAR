@@ -2,7 +2,6 @@ package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.Boxed;
 import edu.brown.cs.dreamteam.box.CircleBox;
-import edu.brown.cs.dreamteam.game.Tickable;
 
 /**
  * A dynamic entity is an entity that has a dynamic position and angle.
@@ -10,7 +9,7 @@ import edu.brown.cs.dreamteam.game.Tickable;
  * @author peter
  *
  */
-public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
+public abstract class DynamicEntity extends Entity implements Boxed {
 
   private double xVelocity;
   private double yVelocity;

@@ -13,7 +13,7 @@ import edu.brown.cs.dreamteam.entity.StaticEntity;
  * @author peter
  *
  */
-public class Chunk implements Tickable {
+public class Chunk {
 
   private Set<DynamicEntity> dynamicEntities;
   private Set<StaticEntity> staticEntities;
@@ -84,7 +84,6 @@ public class Chunk implements Tickable {
     return staticEntities;
   }
 
-  @Override
   public void tick() {
 
   }

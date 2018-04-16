@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
  * The internal representation of a player in the Game
@@ -117,7 +118,7 @@ public class GamePlayer extends DynamicEntity {
   }
 
   @Override
-  public void tick() {
+  public void tick(ChunkMap chunkMap) {
 
   }
 

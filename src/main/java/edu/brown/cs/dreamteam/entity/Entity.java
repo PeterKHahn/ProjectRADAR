@@ -2,6 +2,8 @@ package edu.brown.cs.dreamteam.entity;
 
 import java.util.Objects;
 
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
 /**
  * The base class for many elements of our game
  * 
@@ -43,6 +45,8 @@ public abstract class Entity {
     }
     return false;
   }
+
+  public abstract void tick(ChunkMap chunkMap);
 
   @Override
   public int hashCode() {

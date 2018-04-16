@@ -25,7 +25,7 @@ import edu.brown.cs.dreamteam.event.ClientState;
  * @author peter
  *
  */
-public class ChunkMap implements Tickable {
+public class ChunkMap {
 
   private final int height;
   private final int width;
@@ -101,7 +101,6 @@ public class ChunkMap implements Tickable {
     }
   }
 
-  @Override
   public void tick() {
     tickPlayer();
   }

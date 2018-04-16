@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.RectangleBox;
 import edu.brown.cs.dreamteam.datastructures.TwoDVector;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
  * A StaticEntity that represents Solid, Rectangular Obstacles in the field
@@ -61,6 +62,12 @@ public class Obstacle extends StaticEntity {
   @Override
   public double getRight() {
     return box.getRight();
+  }
+
+  @Override
+  public void tick(ChunkMap chunkMap) {
+    // TODO Auto-generated method stub
+
   }
 
 }

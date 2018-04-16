@@ -4,8 +4,9 @@ import edu.brown.cs.dreamteam.box.CircleBox;
 import edu.brown.cs.dreamteam.box.Edge;
 import edu.brown.cs.dreamteam.box.Point;
 import edu.brown.cs.dreamteam.box.RectangleBox;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 
-public class Bullet {
+public class Bullet extends Entity {
 
   private double xVelocity;
   private double yVelocity;
@@ -18,7 +19,16 @@ public class Bullet {
 
   private final double speed = 50;
 
-  public Bullet(double x, double y, double theta) {
+  private static int count = 0;
+
+  public static Bullet bullet(double x, double y, double theta) {
+    String id = "BULLET:" + count;
+    count++;
+    return new Bullet(id, x, y, theta);
+  }
+
+  private Bullet(String id, double x, double y, double theta) {
+    super(id);
     this.x = x;
     this.y = y;
 
@@ -60,6 +70,12 @@ public class Bullet {
 
   public boolean collides(CircleBox box) {
     return false;
+  }
+
+  @Override
+  public void tick(ChunkMap chunkMap) {
+    // TODO Auto-generated method stub
+
   }
 
 }
