@@ -150,7 +150,7 @@ public class SystemArchitect extends Architect {
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
       System.out.println(Messenger.sessionUserMap.get(user));
-      System.out.println(message);
+
       if (message.equals("start")) {
         putClientState(Messenger.sessionUserMap.get(user),
             new ClientState(Messenger.sessionUserMap.get(user)));

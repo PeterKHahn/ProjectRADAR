@@ -31,7 +31,7 @@ $(document).ready(() => {
 
     $("#start").click(event => {
     	let status = {status: "start"};
-    	webSocket.send(JSON.stringify(status));
+    	webSocket.send("start");
     	$("#waitingRoom").fadeOut();
     	$("#game").fadeIn();
     	gameStart = true;
