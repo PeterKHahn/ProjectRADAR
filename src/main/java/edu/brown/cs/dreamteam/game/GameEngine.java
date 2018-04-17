@@ -34,9 +34,10 @@ public class GameEngine implements Runnable {
    */
   public GameEngine(Architect architect) {
     this.architect = architect;
+    init();
+
     addGameEventListener(architect);
 
-    init();
   }
 
   private void init() {
