@@ -14,10 +14,10 @@ public class Messenger {
   static Map<Session, String> sessionUserMap = new ConcurrentHashMap<>();
   static int nextUserNumber = 1;
 
-  public static void addUserUserID(Session user) {
-    String userID = "User" + Messenger.nextUserNumber++;
-    userSessionMap.put(userID, user);
-    sessionUserMap.put(user, userID);
+  public static void addUserUserId(Session user) {
+    String userId = "User" + Messenger.nextUserNumber++;
+    userSessionMap.put(userId, user);
+    sessionUserMap.put(user, userId);
     nextUserNumber++;
   }
 

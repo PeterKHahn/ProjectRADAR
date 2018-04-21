@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.brown.cs.dreamteam.box.CollisionBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 
 /**
- * Chunked pieces of a Map for Efficiency purposes
+ * Chunked pieces of a Map for Efficiency purposes.
  *
  * @author peter
  *
@@ -18,14 +19,18 @@ public class Chunk {
   private Set<DynamicEntity> dynamicEntities;
   private Set<StaticEntity> staticEntities;
 
+  private Set<CollisionBoxed> collisionBoxedEntities;
+
   private int row;
   private int col;
 
   /**
-   * A Constructor for Chunk initializing its row and column in the Chunk Grid
+   * A Constructor for Chunk initializing its row and column in the Chunk Grid.
    *
    * @param row
+   *          the row that the chunk belongs to
    * @param col
+   *          the column that the chunk belongs to
    */
   public Chunk(int row, int col) {
     this.row = row;
@@ -37,6 +42,7 @@ public class Chunk {
   private void init() {
     dynamicEntities = new HashSet<DynamicEntity>();
     staticEntities = new HashSet<StaticEntity>();
+    collisionBoxedEntities = new HashSet<>();
 
   }
 
@@ -49,39 +55,48 @@ public class Chunk {
   }
 
   /**
-   * Adds a DynamicEntity to the Chunk
+   * Adds a DynamicEntity to the Chunk.
    *
    * @param d
+   *          The dynamic entity we are adding
    */
-  public void addDynamic(DynamicEntity d) {
-    dynamicEntities.add(d);
+  public void addDynamic(DynamicEntity dynamic) {
+    dynamicEntities.add(dynamic);
+    collisionBoxedEntities.add(dynamic);
   }
 
   /**
-   * Removes a DynamicEntity from the Chunk
+   * Removes a Player from the Chunk.
    *
-   * @param d
+   * @param player
+   *          the player we are removing
    */
-  public void removeDynamic(DynamicEntity d) {
-    dynamicEntities.remove(d);
+  public void removeDynamic(DynamicEntity dynamic) {
+    dynamicEntities.remove(dynamic);
+    collisionBoxedEntities.remove(dynamic);
   }
 
   /**
-   * Adds a Static Entity to the Chunk
+   * Adds a Obstacle to the chunk
    *
-   * @param s
+   * @param o
+   *          the obstacle
    */
-  public void addStatic(StaticEntity s) {
-    staticEntities.add(s);
+  public void addStatic(StaticEntity staticEntity) {
+    staticEntities.add(staticEntity);
   }
 
   /**
-   * Returns a Collection of all static Entities in the Chunk
+   * Returns a Collection of all static Entities in the Chunk.
    *
    * @return a collection of all static entities in the Chunk
    */
   public Collection<StaticEntity> getStaticEntities() {
     return staticEntities;
+  }
+
+  public Collection<CollisionBoxed> getCollisionBoxedEntities() {
+    return collisionBoxedEntities;
   }
 
   /**

@@ -1,63 +1,51 @@
 package edu.brown.cs.dreamteam.box;
 
-/**
- * An abstraction of a box, which can be used for bounding boxes, hitboxes, etc.
- * Its primary purpose is to determine whether or not it collides with another
- * box.
- *
- * @author peter
- *
- */
-public abstract class Box {
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.utility.Geometry2D;
+
+public class Box implements Reach {
+
+  private Point center;
+  private double radius;
 
   /**
-   * A method to determine if a given box collides with a Rectangle box.
-   * Collision is defined by the existence of a point that falls within the
-   * bounds of both boxes.
-   *
-   * @param box
-   *          The RectangleBox we are determining collision with
-   * @return true if this and box collide, false otherwise
+   * Constructor for a box that takes a point and a radius.
+   * 
+   * @param center
+   *          the point that is the center of the Circle
+   * @param radius
+   *          the radius of the circle
    */
-  public abstract boolean collides(RectangleBox box);
+  public Box(Point center, double radius) {
+    this.center = center;
+    this.radius = radius;
+  }
 
-  /**
-   * A method to determine if a given box colliders with a CircleBox. Collision
-   * is defined by the existence of a point that falls within the bounds of both
-   * boxes.
-   *
-   * @param box
-   *          The CircleBox we are determining collision with
-   * @return true if this and box collide, false otherwise
-   */
-  public abstract boolean collides(CircleBox box);
+  public Box(double x, double y, double radius) {
+    this.center = new Point(x, y);
+    this.radius = radius;
+  }
 
-  /**
-   * Returns the uppermost value that the box contains.
-   *
-   * @return the uppermost value that the box contains
-   */
-  public abstract double getUpper();
+  public Point center() {
+    return center;
+  }
 
-  /**
-   * Returns the lowermost value that the box contains.
-   *
-   * @return The lowermost value that the box contains
-   */
-  public abstract double getLower();
+  public double radius() {
+    return radius;
+  }
 
-  /**
-   * Returns the leftmost value that the box contains.
-   *
-   * @return the lowermost value that the box contains
-   */
-  public abstract double getLeft();
+  public boolean collides(Box box) {
+    return Geometry2D.distance(this.center(), box.center()) <= this.radius
+        + box.radius;
+  }
 
-  /**
-   * Returns the rightmost value that the box contains.
-   *
-   * @return the rightmost value that the box contains.
-   */
-  public abstract double getRight();
+  @Override
+  public double reach() {
+    return radius;
+  }
+
+  public void move(Vector v) {
+    center = center.move(v);
+  }
 
 }

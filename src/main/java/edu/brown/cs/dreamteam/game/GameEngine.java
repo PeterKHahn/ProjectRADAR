@@ -27,7 +27,7 @@ public class GameEngine implements Runnable {
   private int ticks = 0;
 
   /**
-   * Creates a GameEngine given an Architect
+   * Creates a GameEngine given an Architect.
    *
    * @param architect
    *          The Architecture that the GameEngine is a part of
@@ -73,16 +73,17 @@ public class GameEngine implements Runnable {
   }
 
   /**
-   * Adds a listener to the game engine's GameEventEmitter
+   * Adds a listener to the game engine's GameEventEmitter.
    *
    * @param listener
+   *          the listener to add
    */
   public void addGameEventListener(GameEventListener listener) {
     eventEmitter.addGameEventListener(listener);
   }
 
   /**
-   * Represents a change in game event, by updating internal states
+   * Represents a change in game event, by updating internal states.
    */
   private void tick() {
     Map<String, ClientState> updatedClientStates = architect
@@ -92,7 +93,7 @@ public class GameEngine implements Runnable {
   }
 
   /**
-   * Adds a player to the Game
+   * Adds a player to the Game.
    *
    * @param p
    *          the player to add
@@ -103,7 +104,7 @@ public class GameEngine implements Runnable {
   }
 
   public void addObstacle(Obstacle ob) {
-    chunks.addObstacle(ob);
+    chunks.addStatic(ob);
   }
 
   public void addAiPlayer() {

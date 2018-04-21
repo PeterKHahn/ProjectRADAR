@@ -28,7 +28,6 @@ public class SendStatusHandler implements Route {
     ClientState cPlayer = a.retrieveClientStates().get(id);
 
     String codename = qm.value("codename");
-    Double angle = Double.valueOf(qm.value("angle"));
     Boolean left = Boolean.getBoolean(qm.value("left"));
     Boolean right = Boolean.getBoolean(qm.value("right"));
     Boolean up = Boolean.getBoolean(qm.value("up"));
@@ -36,7 +35,6 @@ public class SendStatusHandler implements Route {
     Boolean itemPicked = Boolean.getBoolean(qm.value("itemPick"));
     Integer dropped = Integer.valueOf(qm.value("droppedItem"));
     Boolean primaryAction = Boolean.getBoolean(qm.value("action"));
-    cPlayer.angleSet(angle);
     cPlayer.leftHeld(left);
     cPlayer.rightHeld(right);
     cPlayer.backwardHeld(down);

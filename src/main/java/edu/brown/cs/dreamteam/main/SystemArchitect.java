@@ -103,10 +103,8 @@ public class SystemArchitect extends Architect {
   public void onGameChange(ChunkMap chunks) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
-    System.out.println("here");
     for (GamePlayer p : movingThings) {
-      System.out.println("PLAYERRRR");
-      Collection<Chunk> chunksNeeded = chunks.getChunksNearPlayer(p, radius);
+      Collection<Chunk> chunksNeeded = chunks.getChunksNearDynamic(p, radius);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
           .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
@@ -123,7 +121,8 @@ public class SystemArchitect extends Architect {
 
   @WebSocket
   public class GameWebSocketHandler {
-    private String sender, msg;
+    private String sender;
+    private String msg;
     private Architect a;
 
     public GameWebSocketHandler(Architect a) {
@@ -132,7 +131,7 @@ public class SystemArchitect extends Architect {
 
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
-      Messenger.addUserUserID(user);
+      Messenger.addUserUserId(user);
       Messenger.broadcastMessage(sender = "Server",
           msg = ("Someone joined the chat!"));
 
@@ -266,9 +265,9 @@ public class SystemArchitect extends Architect {
 
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
-      String newRoomID = rooms.generateNewRoom();
+      String newRoomId = rooms.generateNewRoom();
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "R.A.D.A.R.").put("roomID", newRoomID).build();
+          .put("title", "R.A.D.A.R.").put("roomID", newRoomId).build();
       return new ModelAndView(variables, "home.ftl");
     }
 

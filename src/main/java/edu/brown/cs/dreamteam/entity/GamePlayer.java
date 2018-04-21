@@ -7,7 +7,7 @@ import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
- * The internal representation of a player in the Game
+ * The internal representation of a player in the Game.
  * 
  * @author peter
  *
@@ -22,9 +22,13 @@ public class GamePlayer extends DynamicEntity {
 
   private boolean isAlive;
 
+  public static GamePlayer player(String sessionId, double xpos, double ypos) {
+    return new GamePlayer("PLAYER:" + sessionId, xpos, ypos);
+  }
+
   /**
    * Constructor for GamePlayer that initializes its origin position as well as
-   * its id
+   * its id.
    * 
    * @param id
    *          the unique ID of the player
@@ -33,8 +37,8 @@ public class GamePlayer extends DynamicEntity {
    * @param yPos
    *          the y position to start
    */
-  public GamePlayer(String id, double xPos, double yPos) {
-    super(id, xPos, yPos, size);
+  private GamePlayer(String id, double xpos, double ypos) {
+    super(id, xpos, ypos, size);
     init();
 
   }
@@ -47,7 +51,7 @@ public class GamePlayer extends DynamicEntity {
   }
 
   /**
-   * Returns during a given tick if the player should pick up an item
+   * Returns during a given tick if the player should pick up an item.
    * 
    * @return true if the player should pick up items, false otherwise
    */
@@ -56,7 +60,8 @@ public class GamePlayer extends DynamicEntity {
   }
 
   /**
-   * Returns during a given tick if the player should perform its primary action
+   * Returns during a given tick if the player should perform its primary
+   * action.
    * 
    * @return True if the player should perform their primary action, false
    *         otherwise
@@ -67,7 +72,7 @@ public class GamePlayer extends DynamicEntity {
   }
 
   /**
-   * Returns during a given tick the set of items the player should drop
+   * Returns during a given tick the set of items the player should drop.
    * 
    * @return The set of items the player should drop
    */
@@ -77,7 +82,7 @@ public class GamePlayer extends DynamicEntity {
 
   /**
    * Given a ClientState, updates the internal representations of the GamePlayer
-   * to match the state
+   * to match the state.
    * 
    * @param state
    *          the ClientState to match
@@ -85,14 +90,13 @@ public class GamePlayer extends DynamicEntity {
   public void update(ClientState state) {
     int horzCoeff = state.retrieveHorzMultiplier();
     int vertCoeff = state.retrieveVertMultiplier();
-    double theta = state.retrieveTheta();
 
     updatePlayer(state);
-    updateDynamic(vertCoeff, horzCoeff, theta);
+    updateDynamic(vertCoeff, horzCoeff);
   }
 
   /**
-   * Initializes the player flags given the ClientState
+   * Initializes the player flags given the ClientState.
    * 
    * @param state
    *          The ClientState to match
@@ -104,7 +108,7 @@ public class GamePlayer extends DynamicEntity {
   }
 
   /**
-   * Returns if the player is alive at any given point
+   * Returns if the player is alive at any given point.
    * 
    * @return true if the player is alive, false otherwise
    */

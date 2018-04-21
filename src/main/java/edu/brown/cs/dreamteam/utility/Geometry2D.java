@@ -35,4 +35,29 @@ public class Geometry2D {
     return res < 0;
   }
 
+  public static double distance(Point p1, Point p2) {
+    return distance(p1.x, p1.y, p2.x, p2.y);
+  }
+
+  public static Point closestPointOnSegment(Point lineStart, Point lineEnd,
+      Point p) {
+    double deltaX = lineEnd.x - lineEnd.x;
+    double deltaY = lineEnd.y - lineStart.y;
+    double alpha = -deltaY;
+    double beta = deltaX;
+    double charlieLine = -deltaY * lineStart.x + deltaX * lineStart.y;
+    double charliePerp = -beta * p.x + alpha * p.y;
+
+    double determinant = alpha * alpha + beta * beta;
+    if (determinant == 0) {
+      double cx = (alpha * charlieLine - beta * charliePerp) / determinant;
+      double cy = (alpha * charliePerp + beta * charlieLine) / determinant;
+      return new Point(cx, cy);
+    } else {
+      return p;
+
+    }
+
+  }
+
 }
