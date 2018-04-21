@@ -48,7 +48,6 @@ public class DummySyncArchitect extends Architect {
 
   @Override
   public void onGameChange(ChunkMap chunks) {
-    // System.out.println("Chunks: " + chunks);
     Chunk[][] array = chunks.getChunkArray();
     for (int r = 0; r < array.length; r++) {
       for (int c = 0; c < array[0].length; c++) {

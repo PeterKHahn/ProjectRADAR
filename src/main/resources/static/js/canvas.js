@@ -43,9 +43,9 @@ $(document).ready(() => {
 	// drawPlayer();
 
     webSocket.onmessage = function (msg) {
-    	console.log(msg);
-    	console.log(msg.data) 
-    	// console.log(JSON.parse(msg));
+    	// console.log(msg);
+    	// console.log(msg.data) 
+    	console.log(JSON.parse(msg.data));
     	// let res = JSON.parse(msg);
     	// if (res.kind === "gamePost") {
     	// 	console.log("whomst")
@@ -62,8 +62,6 @@ $(document).ready(() => {
     	console.log("websocket connection closed.")
     	// alert("WebSocket connection closed") 
     };
-
-
     // Show a connected message when the WebSocket is opened.
 	
 	// Handle any errors that occur.
@@ -71,29 +69,6 @@ $(document).ready(() => {
 	  console.log(error);
 	  console.log('WebSocket Error: ' + error);
 	};
-
-    
-
-    // // Send a message if it's not empty, then clear the input field
-    // function sendMessage(message) {
-    //     if (message !== "") {
-    //         webSocket.send(message);
-    //         $("#message").val("");
-    //     }
-    // }
-
-    // // Update the chat-panel, and the list of connected users
-    // function updateChat(msg) {
-    //     var data = JSON.parse(msg.data);
-    //     $("<li/>").html(data.message).appendTo($("#chat"));
-    //     $("userlist").innerHTML = "";
-    //     data.userlist.forEach(function (user) {
-    //         $("<li/>").html(user).appendTo($("#chat"));
-    //     });
-    // }
-
-
-
 
 	/*** Interpreting keypress events ***/
 

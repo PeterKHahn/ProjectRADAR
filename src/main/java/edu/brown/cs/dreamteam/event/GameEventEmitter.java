@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.event;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
@@ -13,7 +14,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  *
  */
 public class GameEventEmitter {
-
+  private static AtomicInteger num = new AtomicInteger();
   private Collection<GameEventListenerThread> listeners;
 
   public GameEventEmitter() {
@@ -42,9 +43,7 @@ public class GameEventEmitter {
    *          the ChunkMap to emit
    */
   public void emit(ChunkMap chunks) {
-    System.out.println("emmitting...");
     for (GameEventListenerThread listener : listeners) {
-      System.out.println("listener hit");
       listener.setChunk(chunks);
       new Thread(listener).start();
 
@@ -61,9 +60,11 @@ public class GameEventEmitter {
 
     private GameEventListener listener;
     private ChunkMap chunks;
+    public int id;
 
     private GameEventListenerThread(GameEventListener listener) {
       this.listener = listener;
+      this.id = num.incrementAndGet();
 
     }
 
@@ -73,6 +74,7 @@ public class GameEventEmitter {
 
     @Override
     public void run() {
+      // System.out.println("run by: " + this.id);
       listener.onGameChange(chunks);
 
     }

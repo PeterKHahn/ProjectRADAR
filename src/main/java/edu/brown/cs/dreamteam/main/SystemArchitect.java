@@ -57,7 +57,6 @@ public class SystemArchitect extends Architect {
   }
 
   public void initSpark() {
-    System.out.println("a");
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
@@ -103,16 +102,15 @@ public class SystemArchitect extends Architect {
   public void onGameChange(ChunkMap chunks) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
-    System.out.println("here");
+    int once = 0;
     for (GamePlayer p : movingThings) {
-      System.out.println("PLAYERRRR");
+      once++;
       Collection<Chunk> chunksNeeded = chunks.getChunksNearPlayer(p, radius);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
           .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
           .put("statics", chunks.staticFromChunks(chunksNeeded)).build();
-      Messenger.broadcastIndividualMessage(p.getId(),
-          "INDIVIDUAL MESSAGE: " + GSON.toJson(variables));
+      Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
   }
 
@@ -158,7 +156,6 @@ public class SystemArchitect extends Architect {
             .addHumanPlayer(
                 new PlayerSession(Messenger.sessionUserMap.get(user), user))
             .generateMap(new DummyGameMap()).complete();
-        System.out.println("Ready to start...");
         new Thread(engine).start();
       } else if (message.equals("left")) {
         ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
