@@ -36,7 +36,7 @@ public class GameEngine implements Runnable {
     this.architect = architect;
     init();
 
-    addGameEventListener(architect);
+    // addGameEventListener(architect);
 
   }
 
@@ -49,7 +49,6 @@ public class GameEngine implements Runnable {
 
   @Override
   public void run() {
-    System.out.println("Running Game...");
     running = true;
     long lastTime = System.nanoTime();
     double nsPerTick = 1000000000.0 / FPS;
