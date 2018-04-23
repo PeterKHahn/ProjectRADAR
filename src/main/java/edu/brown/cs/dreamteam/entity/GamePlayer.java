@@ -101,7 +101,6 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   public void update(ClientState state) {
     int horzCoeff = state.retrieveHorzMultiplier();
     int vertCoeff = state.retrieveVertMultiplier();
-
     updatePlayer(state);
     updateDynamic(vertCoeff, horzCoeff);
   }

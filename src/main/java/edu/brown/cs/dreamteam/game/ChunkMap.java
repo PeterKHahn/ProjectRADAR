@@ -88,6 +88,7 @@ public class ChunkMap {
   public void updateClients(Map<String, ClientState> clientStates) {
 
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
+      System.out.println("made it to updateclients");
       String clientId = entry.getKey();
       GamePlayer player = players.get(clientId);
       player.update(entry.getValue());
