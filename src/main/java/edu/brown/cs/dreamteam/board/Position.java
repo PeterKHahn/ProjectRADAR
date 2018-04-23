@@ -2,7 +2,9 @@ package edu.brown.cs.dreamteam.board;
 
 import edu.brown.cs.dreamteam.graph.Vertex;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a position on the game map and as a vertex in the graph
@@ -47,6 +49,10 @@ public class Position implements Vertex<Position, Move> {
     return y;
   }
 
+  public void addEdge(Position other) {
+    edges.add(new Move(this, other));
+  }
+
   @Override
   public List<Move> getEdges() {
     return edges;
@@ -57,4 +63,27 @@ public class Position implements Vertex<Position, Move> {
     return Math.pow(other.getX() - x, 2) + Math.pow(other.getY() - y, 2);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof Position)) {
+      return false;
+    }
+
+    Position other = (Position) o;
+    if (new HashSet<>(other.getEdges()).equals(new HashSet<>(edges))
+        && other.getX() == x && other.getY() == y) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y, edges);
+  }
 }

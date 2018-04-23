@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class AiController {
   private static final int AI_SIZE = 5;
-  private static final int VISIBLE_RANGE = AI_SIZE * 5;
+  public static final int VISIBLE_RANGE = AI_SIZE * 5;
 
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE, GOAL

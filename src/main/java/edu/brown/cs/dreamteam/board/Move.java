@@ -3,27 +3,45 @@ package edu.brown.cs.dreamteam.board;
 import edu.brown.cs.dreamteam.graph.Edge;
 
 public class Move implements Edge<Position, Move> {
+  private final Position src;
+  private final Position dest;
 
-  public Move() {
-    // TODO Auto-generated constructor stub
+  public Move(Position src, Position dest) {
+    this.src = src;
+    this.dest = dest;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof Move)) {
+      return false;
+    }
+
+    Move other = (Move) o;
+    if (other.getSrc().equals(src) && other.getDest().equals(dest)) {
+      return true;
+    }
+
+    return false;
   }
 
   @Override
   public Position getSrc() {
-    // TODO Auto-generated method stub
-    return null;
+    return src;
   }
 
   @Override
   public Position getDest() {
-    // TODO Auto-generated method stub
-    return null;
+    return dest;
   }
 
   @Override
   public double getWeight() {
-    // TODO Auto-generated method stub
-    return 0;
+    return 1;
   }
 
 }

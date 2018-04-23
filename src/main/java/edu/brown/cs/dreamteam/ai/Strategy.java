@@ -13,8 +13,8 @@ import java.util.List;
  * @author efu2
  */
 public abstract class Strategy {
-  private Board board;
-  private AiPlayer player;
+  protected Board board;
+  protected AiPlayer player;
 
   /**
    * Constructs the strategy class.

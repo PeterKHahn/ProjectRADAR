@@ -61,6 +61,14 @@ public class ChunkMap implements Tickable {
     init();
   }
 
+  public int getTotalWidth() {
+    return totalWidth;
+  }
+
+  public int getTotalHeight() {
+    return totalHeight;
+  }
+
   private void init() {
     chunks = new Chunk[height][width];
     players = new HashMap<String, GamePlayer>();
@@ -217,6 +225,10 @@ public class ChunkMap implements Tickable {
     obstacleToChunks.putAll(e, chunks);
     obstacles.put(e.getId(), e);
 
+  }
+
+  public Map<String, Obstacle> getObstacles() {
+    return obstacles;
   }
 
   private Collection<Chunk> chunksInRange(Boxed e) {
