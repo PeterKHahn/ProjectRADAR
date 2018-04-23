@@ -140,11 +140,16 @@ public class ClientState {
    *         neither is held
    */
   public synchronized int retrieveHorzMultiplier() {
+    int res;
     if (leftHeld == rightHeld) {
-      return 0;
+      res = 0;
     } else {
-      return leftHeld ? -1 : 1;
+      res = leftHeld ? -1 : 1;
     }
+    leftHeld = false;
+    rightHeld = false;
+
+    return res;
   }
 
   /**
@@ -154,11 +159,15 @@ public class ClientState {
    *         neither is held
    */
   public synchronized int retrieveVertMultiplier() {
+    int res;
     if (forwardHeld == backwardHeld) {
-      return 0;
+      res = 0;
     } else {
-      return backwardHeld ? -1 : 1;
+      res = backwardHeld ? -1 : 1;
     }
+    forwardHeld = false;
+    backwardHeld = false;
+    return res;
   }
 
   /**

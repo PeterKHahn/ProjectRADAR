@@ -57,4 +57,9 @@ public class Vector {
     return v.scalarMultiply(factor);
   }
 
+  @Override
+  public String toString() {
+    return "<" + x + ", " + y + ">";
+  }
+
 }

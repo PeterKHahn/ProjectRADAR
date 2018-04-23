@@ -45,7 +45,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   public DynamicEntity(String id, double x, double y, double radius) {
     super(id);
     this.radius = radius;
-    this.velocityVector = new Vector(x, y);
+    this.velocityVector = new Vector(0, 0);
     this.center = new Vector(x, y);
     this.collisionBox = new BoxSet(new Box(radius));
     init();
@@ -63,6 +63,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * Updates the position given the dynamic entity's velocity.
    */
   public void updatePosition(ChunkMap chunks) {
+    System.out.println(velocityVector);
     Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
 
     for (Chunk chunk : chunksNear) {
