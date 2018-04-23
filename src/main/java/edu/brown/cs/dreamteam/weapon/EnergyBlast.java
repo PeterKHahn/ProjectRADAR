@@ -1,10 +1,12 @@
 package edu.brown.cs.dreamteam.weapon;
 
+import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 
 public class EnergyBlast extends Weapon {
 
-  private double radius;
+  private double radius = 5;
   private BoxSet hitBox;
 
   private int duration = 10;
@@ -15,6 +17,18 @@ public class EnergyBlast extends Weapon {
 
   private boolean active;
 
+  private Vector hitBoxOffset;
+
+  public EnergyBlast() {
+    init();
+  }
+
+  private void init() {
+    hitBoxOffset = new Vector(0, 0);
+    hitBox = new BoxSet(new Box(radius));
+  }
+
+  @Override
   public void tick() {
     nextFire = Math.max(0, nextFire--);
     if (active) {
@@ -49,6 +63,11 @@ public class EnergyBlast extends Weapon {
   @Override
   public BoxSet hitBox() {
     return hitBox;
+  }
+
+  @Override
+  public Vector hitBoxOffset() {
+    return hitBoxOffset;
   }
 
 }

@@ -201,12 +201,6 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   }
 
   @Override
-  public double reach() {
-    double tmp = DreamMath.max(this.collisionBox().reach());
-    return tmp + radius + speedCap();
-  }
-
-  @Override
   public Vector center() {
     return center;
   }

@@ -1,8 +1,8 @@
 package edu.brown.cs.dreamteam.weapon;
 
-import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.HitBoxed;
 
-public abstract class Weapon {
+public abstract class Weapon implements HitBoxed {
 
   public Weapon() {
 
@@ -12,8 +12,6 @@ public abstract class Weapon {
 
   public abstract boolean canFire();
 
-  public abstract boolean isActive();
-
-  public abstract BoxSet hitBox();
+  public abstract void tick();
 
 }

@@ -9,6 +9,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
+import edu.brown.cs.dreamteam.utility.DreamMath;
 
 /**
  * The internal representation of a player in the Game.
@@ -27,6 +28,8 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   private boolean isAlive;
 
   private Inventory inventory;
+
+  private Vector collisionBoxOffset;
 
   public static GamePlayer player(String sessionId, double xpos, double ypos) {
     return new GamePlayer(sessionId, xpos, ypos);
@@ -55,6 +58,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
     primaryActionFlag = false;
     isAlive = true;
     inventory = new Inventory();
+    collisionBoxOffset = new Vector(0, 0);
   }
 
   /**
@@ -131,6 +135,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   @Override
   public void tick(ChunkMap chunkMap) {
     updatePosition(chunkMap); // Calls movement in dynamic entity
+    inventory.tick();
   }
 
   @Override
@@ -146,14 +151,20 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
 
   @Override
   public Vector collisionBoxOffset() {
-    // TODO Auto-generated method stub
-    return null;
+    return collisionBoxOffset;
   }
 
   @Override
   public Vector hitBoxOffset() {
-    // TODO Auto-generated method stub
-    return null;
+    return inventory.getActiveWeapon().hitBoxOffset();
+  }
+
+  @Override
+  public double reach() {
+    double tmp = DreamMath.max(
+        this.collisionBox().reach() + collisionBoxOffset().magnitude(),
+        this.hitBox().reach() + hitBoxOffset().magnitude(), size);
+    return tmp + speedCap();
   }
 
 }
