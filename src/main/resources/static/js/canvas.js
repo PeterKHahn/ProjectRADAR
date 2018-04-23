@@ -73,6 +73,7 @@ $(document).ready(() => {
 	/*** Interpreting keypress events ***/
 
 	$(document).keypress(event => {
+        console.log(event.keyCode)
 		if (gameStart) {
 			keySend(event.keyCode, webSocket);
 		}

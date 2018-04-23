@@ -91,6 +91,12 @@ public class ChunkMap {
       String clientId = entry.getKey();
       GamePlayer player = players.get(clientId);
 
+      if (player == null || entry == null) {
+
+        System.out.println("Player: " + player);
+        System.out.println("Entry: " + entry);
+      }
+
       player.update(entry.getValue());
 
     }

@@ -6,8 +6,4 @@ public interface CollisionBoxed {
 
   public BoxSet collisionBox();
 
-  public default Point getCenter() {
-    return collisionBox().getCenter();
-  }
-
 }

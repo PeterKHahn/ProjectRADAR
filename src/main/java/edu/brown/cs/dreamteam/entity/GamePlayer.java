@@ -3,8 +3,12 @@ package edu.brown.cs.dreamteam.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.brown.cs.dreamteam.box.Box;
+import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.game.Inventory;
 
 /**
  * The internal representation of a player in the Game.
@@ -12,7 +16,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * @author peter
  *
  */
-public class GamePlayer extends DynamicEntity {
+public class GamePlayer extends DynamicEntity implements HitBoxed {
 
   private static final int size = 5;
 
@@ -22,8 +26,12 @@ public class GamePlayer extends DynamicEntity {
 
   private boolean isAlive;
 
+  private BoxSet defaultHitBox;
+
+  private Inventory inventory;
+
   public static GamePlayer player(String sessionId, double xpos, double ypos) {
-    return new GamePlayer("PLAYER:" + sessionId, xpos, ypos);
+    return new GamePlayer(sessionId, xpos, ypos);
   }
 
   /**
@@ -48,6 +56,8 @@ public class GamePlayer extends DynamicEntity {
     itemsDropped = new HashSet<Integer>();
     primaryActionFlag = false;
     isAlive = true;
+    defaultHitBox = new BoxSet(new Box(center(), size));
+    inventory = new Inventory();
   }
 
   /**
@@ -124,6 +134,20 @@ public class GamePlayer extends DynamicEntity {
   @Override
   public void tick(ChunkMap chunkMap) {
 
+  }
+
+  @Override
+  public boolean isActive() {
+    return false;
+  }
+
+  @Override
+  public BoxSet hitBox() {
+    if (inventory.hasActiveWeapon()) {
+      return inventory.getActiveWeapon().hitBox();
+    } else {
+      return defaultHitBox;
+    }
   }
 
 }
