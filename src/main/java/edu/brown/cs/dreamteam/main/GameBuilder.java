@@ -25,16 +25,14 @@ public class GameBuilder {
     players = new LinkedList<GamePlayer>();
   }
 
-  public GameBuilder addHumanPlayers(Collection<PlayerSession> playerSessions) {
-    for (PlayerSession ps : playerSessions) {
+  public GameBuilder addHumanPlayers(Collection<GamePlayer> playersCollection) {
+    for (GamePlayer ps : playersCollection) {
       addHumanPlayer(ps);
     }
     return this;
   }
 
-  public GameBuilder addHumanPlayer(PlayerSession playerSession) {
-
-    GamePlayer player = GamePlayer.player(playerSession.getId(), 0, 0);
+  public GameBuilder addHumanPlayer(GamePlayer player) {
 
     if (players.size() > 3) {
       Logger.logError("Only 4 players can be in a game. Not all players added");

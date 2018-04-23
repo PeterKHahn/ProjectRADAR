@@ -90,7 +90,6 @@ public class ChunkMap {
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
       String clientId = entry.getKey();
       GamePlayer player = players.get(clientId);
-
       player.update(entry.getValue());
 
     }

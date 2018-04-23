@@ -23,7 +23,7 @@ public class GamePlayer extends DynamicEntity {
   private boolean isAlive;
 
   public static GamePlayer player(String sessionId, double xpos, double ypos) {
-    return new GamePlayer("PLAYER:" + sessionId, xpos, ypos);
+    return new GamePlayer(sessionId, xpos, ypos);
   }
 
   /**

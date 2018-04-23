@@ -150,48 +150,64 @@ public class SystemArchitect extends Architect {
     public void onMessage(Session user, String message) {
       System.out.println(Messenger.sessionUserMap.get(user));
 
-      if (message.equals("start")) {
-        putClientState(Messenger.sessionUserMap.get(user),
-            new ClientState(Messenger.sessionUserMap.get(user)));
-        GameEngine engine = GameBuilder.create(a)
-            .addHumanPlayer(
-                new PlayerSession(Messenger.sessionUserMap.get(user), user))
-            .generateMap(new DummyGameMap()).complete();
-        new Thread(engine).start();
-      } else if (message.equals("left")) {
-        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
-        if (c != null) {
-          c.leftHeld(true);
-        }
-      } else if (message.equals("right")) {
-        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
-        if (c != null) {
-          c.rightHeld(true);
-        }
-      } else if (message.equals("up")) {
-        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
-        if (c != null) {
-          c.forwardHeld(true);
-        }
-      } else if (message.equals("right")) {
-        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
-        if (c != null) {
-          c.backwardHeld(true);
-        }
-      } else if (message.equals("space")) {
-        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
-        if (c != null) {
-          c.primaryAction(true);
-        }
-      } else if (message.equals("f")) {
-        ClientState c = clientStates.get(Messenger.sessionUserMap.get(user));
-        if (c != null) {
-          c.itemPicked(true);
-        }
+      ClientState c = null;
+      switch (message) {
+        case "start":
+          GameEngine engine = GameBuilder.create(a)
+              .addHumanPlayer(GamePlayer
+                  .player(Messenger.sessionUserMap.get(user), 0.0, 0.0))
+              .generateMap(new DummyGameMap()).complete();
+          new Thread(engine).start();
+          if (Messenger.sessionUserMap.get(user) == null) {
+            System.out.println("get fuckt");
+          }
+          putClientState(Messenger.sessionUserMap.get(user),
+              new ClientState(Messenger.sessionUserMap.get(user)));
+
+          break;
+        case "left":
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            c.leftHeld(true);
+          }
+          break;
+        case "right":
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            c.rightHeld(true);
+          }
+          break;
+        case "up":
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            c.forwardHeld(true);
+          }
+          break;
+        case "down":
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            c.backwardHeld(true);
+          }
+        case "space":
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            c.primaryAction(true);
+          }
+          break;
+        case "f":
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            c.itemPicked(true);
+          }
+          break;
       }
 
-      Messenger.broadcastMessage(sender = Messenger.sessionUserMap.get(user),
-          msg = message);
+      if (c != null) {
+        clientStates.put(Messenger.sessionUserMap.get(user), c);
+      }
+
+      // Messenger.broadcastMessage(sender = Messenger.sessionUserMap.get(user),
+      // msg = message);
     }
   }
 
