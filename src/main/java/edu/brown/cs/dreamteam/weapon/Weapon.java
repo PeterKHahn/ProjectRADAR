@@ -1,17 +1,19 @@
 package edu.brown.cs.dreamteam.weapon;
 
-import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.box.BoxSet;
 
-public abstract class Weapon extends Entity implements HitBoxed {
+public abstract class Weapon {
 
-  public Weapon(String id) {
-    super(id);
+  public Weapon() {
 
   }
 
   public abstract void fire();
 
   public abstract boolean canFire();
+
+  public abstract boolean isActive();
+
+  public abstract BoxSet hitBox();
 
 }

@@ -1,8 +1,6 @@
 package edu.brown.cs.dreamteam.weapon;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
-import edu.brown.cs.dreamteam.box.Point;
-import edu.brown.cs.dreamteam.game.ChunkMap;
 
 public class EnergyBlast extends Weapon {
 
@@ -17,32 +15,7 @@ public class EnergyBlast extends Weapon {
 
   private boolean active;
 
-  public EnergyBlast(String id) {
-    super(id);
-  }
-
-  @Override
-  public boolean isActive() {
-    return true;
-  }
-
-  @Override
-  public BoxSet hitBox() {
-    return hitBox;
-  }
-
-  @Override
-  public double reach() {
-    return radius;
-  }
-
-  @Override
-  public Point center() {
-    return hitBox.center();
-  }
-
-  @Override
-  public void tick(ChunkMap chunkMap) {
+  public void tick() {
     nextFire = Math.max(0, nextFire--);
     if (active) {
       timeActive++;
@@ -66,6 +39,16 @@ public class EnergyBlast extends Weapon {
   @Override
   public boolean canFire() {
     return nextFire == 0;
+  }
+
+  @Override
+  public boolean isActive() {
+    return active;
+  }
+
+  @Override
+  public BoxSet hitBox() {
+    return hitBox;
   }
 
 }

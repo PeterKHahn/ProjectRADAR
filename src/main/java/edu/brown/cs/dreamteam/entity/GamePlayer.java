@@ -3,9 +3,9 @@ package edu.brown.cs.dreamteam.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
@@ -25,8 +25,6 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   private boolean primaryActionFlag;
 
   private boolean isAlive;
-
-  private BoxSet defaultHitBox;
 
   private Inventory inventory;
 
@@ -56,7 +54,6 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
     itemsDropped = new HashSet<Integer>();
     primaryActionFlag = false;
     isAlive = true;
-    defaultHitBox = new BoxSet(new Box(center(), size));
     inventory = new Inventory();
   }
 
@@ -133,21 +130,30 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
 
   @Override
   public void tick(ChunkMap chunkMap) {
-
+    updatePosition(chunkMap); // Calls movement in dynamic entity
   }
 
   @Override
   public boolean isActive() {
-    return false;
+    return inventory.getActiveWeapon().isActive();
   }
 
   @Override
   public BoxSet hitBox() {
-    if (inventory.hasActiveWeapon()) {
-      return inventory.getActiveWeapon().hitBox();
-    } else {
-      return defaultHitBox;
-    }
+    return inventory.getActiveWeapon().hitBox();
+
+  }
+
+  @Override
+  public Vector collisionBoxOffset() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Vector hitBoxOffset() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

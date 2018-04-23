@@ -1,5 +1,6 @@
 package edu.brown.cs.dreamteam.game;
 
+import edu.brown.cs.dreamteam.weapon.DefaultWeapon;
 import edu.brown.cs.dreamteam.weapon.Weapon;
 
 public class Inventory {
@@ -11,14 +12,15 @@ public class Inventory {
   }
 
   private void init() {
+    weapon = new DefaultWeapon();
   }
 
   public Weapon getActiveWeapon() {
     return weapon;
   }
 
-  public boolean hasActiveWeapon() {
-    return weapon != null;
+  public void tick() {
+
   }
 
 }

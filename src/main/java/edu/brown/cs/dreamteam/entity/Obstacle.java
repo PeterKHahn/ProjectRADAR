@@ -2,7 +2,7 @@ package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
-import edu.brown.cs.dreamteam.box.Point;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -14,6 +14,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 public class Obstacle extends StaticEntity {
 
   private BoxSet box;
+  private Vector offset;
 
   /**
    * Creates an Obstacle.
@@ -25,10 +26,15 @@ public class Obstacle extends StaticEntity {
    * @param radius
    *          the radius of the obstacle
    */
-  public Obstacle(String id, Point center, double radius) {
+  public Obstacle(String id, Vector center, double radius) {
     super(id, center, radius);
-    box = new BoxSet(new Box(center, radius));
+    box = new BoxSet(new Box(radius));
+    init();
 
+  }
+
+  private void init() {
+    offset = new Vector(0, 0);
   }
 
   @Override
@@ -50,6 +56,11 @@ public class Obstacle extends StaticEntity {
   @Override
   public double reach() {
     return box.reach();
+  }
+
+  @Override
+  public Vector collisionBoxOffset() {
+    return offset;
   }
 
 }
