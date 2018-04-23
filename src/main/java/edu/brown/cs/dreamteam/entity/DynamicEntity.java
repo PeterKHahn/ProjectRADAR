@@ -20,9 +20,6 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
  */
 public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
-  private double xVelocity;
-  private double yVelocity;
-
   private Vector velocityVector;
 
   private double speed = 1;
@@ -152,9 +149,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * 
    */
   protected void updateDynamic(int vertCoeff, int horzCoeff) {
+    velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
 
-    this.xVelocity = horzCoeff * speed;
-    this.yVelocity = horzCoeff * speed;
   }
 
   /**
@@ -163,7 +159,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @return the x velocity of the entity
    */
   public double getXVelocity() {
-    return xVelocity;
+    return velocityVector.x;
   }
 
   /**
@@ -172,7 +168,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @return the y velocity of the entity
    */
   public double getYVelocity() {
-    return yVelocity;
+    return velocityVector.y;
   }
 
   /**

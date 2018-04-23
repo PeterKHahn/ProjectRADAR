@@ -62,36 +62,6 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   }
 
   /**
-   * Returns during a given tick if the player should pick up an item.
-   * 
-   * @return true if the player should pick up items, false otherwise
-   */
-  public boolean itemPickedFlag() {
-    return itemPickedFlag;
-  }
-
-  /**
-   * Returns during a given tick if the player should perform its primary
-   * action.
-   * 
-   * @return True if the player should perform their primary action, false
-   *         otherwise
-   */
-  public boolean primaryActionFlag() {
-    return primaryActionFlag;
-
-  }
-
-  /**
-   * Returns during a given tick the set of items the player should drop.
-   * 
-   * @return The set of items the player should drop
-   */
-  public Set<Integer> itemsDroppedFlag() {
-    return itemsDropped;
-  }
-
-  /**
    * Given a ClientState, updates the internal representations of the GamePlayer
    * to match the state.
    * 
@@ -136,11 +106,16 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   public void tick(ChunkMap chunkMap) {
     updatePosition(chunkMap); // Calls movement in dynamic entity
     inventory.tick();
+
+    // check collision here
+    if (isHitboxActive()) {
+      // onlny iterate if it is active
+    }
   }
 
   @Override
-  public boolean isActive() {
-    return inventory.getActiveWeapon().isActive();
+  public boolean isHitboxActive() {
+    return inventory.getActiveWeapon().isHitboxActive();
   }
 
   @Override

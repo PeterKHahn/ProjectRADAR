@@ -56,7 +56,7 @@ public class EnergyBlast extends Weapon {
   }
 
   @Override
-  public boolean isActive() {
+  public boolean isHitboxActive() {
     return active;
   }
 
