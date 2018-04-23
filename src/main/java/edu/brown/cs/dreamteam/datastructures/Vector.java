@@ -44,6 +44,10 @@ public class Vector {
     return this.innerProduct(this);
   }
 
+  public double magnitude() {
+    return Math.sqrt(magnitudeSquared());
+  }
+
   public double projectOntoMagnitude(Vector v) {
     return v.innerProduct(this) / v.magnitudeSquared();
   }

@@ -3,8 +3,13 @@ package edu.brown.cs.dreamteam.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.game.Inventory;
+import edu.brown.cs.dreamteam.utility.DreamMath;
 
 /**
  * The internal representation of a player in the Game.
@@ -12,7 +17,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * @author peter
  *
  */
-public class GamePlayer extends DynamicEntity {
+public class GamePlayer extends DynamicEntity implements HitBoxed {
 
   private static final int size = 5;
 
@@ -21,6 +26,10 @@ public class GamePlayer extends DynamicEntity {
   private boolean primaryActionFlag;
 
   private boolean isAlive;
+
+  private Inventory inventory;
+
+  private Vector collisionBoxOffset;
 
   public static GamePlayer player(String sessionId, double xpos, double ypos) {
     return new GamePlayer(sessionId, xpos, ypos);
@@ -48,6 +57,8 @@ public class GamePlayer extends DynamicEntity {
     itemsDropped = new HashSet<Integer>();
     primaryActionFlag = false;
     isAlive = true;
+    inventory = new Inventory();
+    collisionBoxOffset = new Vector(0, 0);
   }
 
   /**
@@ -123,7 +134,37 @@ public class GamePlayer extends DynamicEntity {
 
   @Override
   public void tick(ChunkMap chunkMap) {
+    updatePosition(chunkMap); // Calls movement in dynamic entity
+    inventory.tick();
+  }
 
+  @Override
+  public boolean isActive() {
+    return inventory.getActiveWeapon().isActive();
+  }
+
+  @Override
+  public BoxSet hitBox() {
+    return inventory.getActiveWeapon().hitBox();
+
+  }
+
+  @Override
+  public Vector collisionBoxOffset() {
+    return collisionBoxOffset;
+  }
+
+  @Override
+  public Vector hitBoxOffset() {
+    return inventory.getActiveWeapon().hitBoxOffset();
+  }
+
+  @Override
+  public double reach() {
+    double tmp = DreamMath.max(
+        this.collisionBox().reach() + collisionBoxOffset().magnitude(),
+        this.hitBox().reach() + hitBoxOffset().magnitude(), size);
+    return tmp + speedCap();
   }
 
 }

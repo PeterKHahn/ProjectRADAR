@@ -3,6 +3,7 @@ package edu.brown.cs.dreamteam.entity;
 import java.util.Objects;
 
 import edu.brown.cs.dreamteam.box.Reach;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -54,5 +55,7 @@ public abstract class Entity implements Reach {
   public int hashCode() {
     return Objects.hash(id);
   }
+
+  public abstract Vector center();
 
 }

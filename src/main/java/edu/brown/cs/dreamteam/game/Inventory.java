@@ -1,25 +1,26 @@
 package edu.brown.cs.dreamteam.game;
 
+import edu.brown.cs.dreamteam.weapon.DefaultWeapon;
+import edu.brown.cs.dreamteam.weapon.Weapon;
+
 public class Inventory {
-  private static final int MAX_GUNS = 3;
-  private static final int MAX_BULLETS = 50;
 
-  private int numBullets = 0;
-
-  private int weaponIndex = 0;
-
-  int numWeapons = 0;
+  private Weapon weapon;
 
   public Inventory() {
     init();
   }
 
   private void init() {
+    weapon = new DefaultWeapon();
   }
 
-  public boolean pickup(Item item) {
+  public Weapon getActiveWeapon() {
+    return weapon;
+  }
 
-    return false;
+  public void tick() {
+    weapon.tick();
   }
 
 }

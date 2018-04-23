@@ -1,17 +1,16 @@
 package edu.brown.cs.dreamteam.box;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import edu.brown.cs.dreamteam.datastructures.Vector;
-import edu.brown.cs.dreamteam.utility.Geometry2D;
 
 public class BoxSet implements Reach {
 
-  private Collection<Box> boxes;
+  private Map<Box, Vector> boxes;
 
   private double reach;
-  private Point center;
 
   /**
    * The BoxSet constructor that is just a box.
@@ -21,33 +20,31 @@ public class BoxSet implements Reach {
    */
   public BoxSet(Box box) {
     init();
-    boxes.add(box);
+    boxes = new HashMap<Box, Vector>();
+    boxes.put(box, new Vector(0, 0));
+
     reach = box.radius();
-    this.center = box.center();
   }
 
   /**
    * Box Set constructor, initializing with a collection of boxes.
    * 
-   * @param center
-   *          the center of the BoxSet
    * @param boxes
    *          the boxes that make up the box Set
    */
-  public BoxSet(Point center, Collection<Box> boxes) {
+  public BoxSet(Map<Box, Vector> boxes) {
     this.boxes = boxes;
-    this.center = center;
-    for (Box box : boxes) {
-      double tmp = Geometry2D.distance(center, box.center()) + box.radius();
+    for (Entry<Box, Vector> box : boxes.entrySet()) {
+      double tmp = box.getValue().magnitude() + box.getKey().radius();
       reach = Math.max(reach, tmp);
     }
   }
 
   private void init() {
-    boxes = new LinkedList<Box>();
+
   }
 
-  public Collection<Box> boxes() {
+  public Map<Box, Vector> boxes() {
     return boxes;
   }
 
@@ -58,42 +55,24 @@ public class BoxSet implements Reach {
    *          The BoxSet we are colliding against
    * @return whether the boxes collide
    */
-  public boolean collides(BoxSet boxSet) {
-    for (Box box : boxes()) {
-      for (Box box2 : boxSet.boxes()) {
-        if (box.collides(box2)) {
+  public boolean collides(Vector center1, Vector center2, BoxSet boxSet) {
+
+    for (Entry<Box, Vector> boxEntry : boxes.entrySet()) {
+      for (Entry<Box, Vector> boxEntry2 : boxSet.boxes().entrySet()) {
+        Vector p1 = center1.add(boxEntry.getValue());
+        Vector p2 = center2.add(boxEntry2.getValue());
+        if (boxEntry.getKey().collides(p1, p2, boxEntry2.getKey())) {
           return true;
         }
       }
     }
-    return false;
-  }
 
-  public Point getCenter() {
-    return center;
+    return false;
   }
 
   @Override
   public double reach() {
     return reach;
-  }
-
-  /**
-   * Moves the Box Set in the direction and magnitude of Vector v.
-   * 
-   * @param v
-   *          the vector that dictates the movement of the BoxSet
-   */
-  public void move(Vector v) {
-    center = center.move(v);
-    for (Box b : boxes) {
-      b.move(v);
-    }
-  }
-
-  @Override
-  public Point center() {
-    return center;
   }
 
 }
