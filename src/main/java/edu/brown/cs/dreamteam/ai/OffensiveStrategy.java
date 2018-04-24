@@ -1,10 +1,12 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.board.Board;
-import edu.brown.cs.dreamteam.game.Chunk;
 import java.util.Collection;
 
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.game.Chunk;
+
 /**
+ * <p>
  * Strategy to attack other players to get their items. Activated when: AI
  * encounters another player and health is > 2 times any encountered players'
  * attack damage, and AI's hit range is larger than target player's hit range.
@@ -16,6 +18,7 @@ import java.util.Collection;
  * the optimal direction to hit the player 4. If successfully killed the target,
  * collect all target's better-quality items 5. Choose another target if the
  * mode hasn't changed yet
+ * </p>
  * 
  * @author efu2
  */

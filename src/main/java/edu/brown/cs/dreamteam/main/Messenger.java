@@ -10,12 +10,14 @@ import com.google.gson.Gson;
 
 public class Messenger {
   private static final Gson GSON = new Gson();
-  static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
+  static Map<String, Session> userSessionMap = new ConcurrentHashMap<>();
+  static Map<Session, String> sessionUserMap = new ConcurrentHashMap<>();
   static int nextUserNumber = 1;
 
-  public static void addUserUserID(Session user) {
-    String userID = "User" + Messenger.nextUserNumber++;
-    userUsernameMap.put(user, userID);
+  public static void addUserUserId(Session user) {
+    String userId = "User" + Messenger.nextUserNumber++;
+    userSessionMap.put(userId, user);
+    sessionUserMap.put(user, userId);
     nextUserNumber++;
   }
 
@@ -23,19 +25,30 @@ public class Messenger {
   // usernames
   public static void broadcastMessage(String sender, String message) {
     Map<String, Object> variables;
-    userUsernameMap.keySet().stream().filter(Session::isOpen)
+    sessionUserMap.keySet().stream().filter(Session::isOpen)
         .forEach(session -> {
           try {
             session.getRemote()
                 .sendString(String.valueOf(
                     GSON.toJson(new ImmutableMap.Builder<String, Object>()
                         .put("user", sender).put("message", message)
-                        .put("userlist", userUsernameMap.values()).build())));
-
+                        .put("userlist", sessionUserMap.values()).build())));
           } catch (Exception e) {
             e.printStackTrace();
           }
         });
 
   }
+
+  public static void broadcastIndividualMessage(String sender, String message) {
+    Session relevant = userSessionMap.get(sender);
+    if (relevant != null) {
+      try {
+        relevant.getRemote().sendString(message);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
 }

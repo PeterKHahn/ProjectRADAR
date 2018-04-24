@@ -1,8 +1,9 @@
 package edu.brown.cs.dreamteam.ai;
 
+import java.util.Collection;
+
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.game.Chunk;
-import java.util.Collection;
 
 /**
  * Strategy to gather as many items as possible. No other players are in the
@@ -27,7 +28,7 @@ public class GatherStrategy extends Strategy {
     // TODO Auto-generated constructor stub
   }
 
-  private void placeRadar(String entities) {
+  private void placeRadar(Collection<Chunk> chunks) {
     // TODO: calculate the position to place the radar at.
   }
 
@@ -38,14 +39,18 @@ public class GatherStrategy extends Strategy {
    *          The entity information given by networking.
    * @return True if there are sufficient materials, false otherwise.
    */
-  private boolean canMakeRadar(String entities) {
+  private boolean canMakeRadar(Collection<Chunk> chunks) {
     // TODO
     return false;
   }
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
-    // TODO Auto-generated method stub
+    // TODO
+    if (canMakeRadar(chunks)) {
+      placeRadar(chunks);
+    } else {
 
+    }
   }
 }

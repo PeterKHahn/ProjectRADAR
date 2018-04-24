@@ -1,16 +1,23 @@
 package edu.brown.cs.dreamteam.entity;
 
-import edu.brown.cs.dreamteam.event.ClientState;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.game.Inventory;
+import edu.brown.cs.dreamteam.utility.DreamMath;
+
 /**
- * The internal representation of a player in the Game
+ * The internal representation of a player in the Game.
  * 
  * @author peter
  *
  */
-public class GamePlayer extends DynamicEntity {
+public class GamePlayer extends DynamicEntity implements HitBoxed {
 
   private static final int size = 5;
 
@@ -20,9 +27,17 @@ public class GamePlayer extends DynamicEntity {
 
   private boolean isAlive;
 
+  private Inventory inventory;
+
+  private Vector collisionBoxOffset;
+
+  public static GamePlayer player(String sessionId, double xpos, double ypos) {
+    return new GamePlayer(sessionId, xpos, ypos);
+  }
+
   /**
    * Constructor for GamePlayer that initializes its origin position as well as
-   * its id
+   * its id.
    * 
    * @param id
    *          the unique ID of the player
@@ -34,8 +49,8 @@ public class GamePlayer extends DynamicEntity {
   public GamePlayer(String id, double xPos, double yPos) {
     super(id, xPos, yPos, size);
     this.setType("HUMAN");
-    init();
 
+    init();
   }
 
   private void init() {
@@ -43,40 +58,13 @@ public class GamePlayer extends DynamicEntity {
     itemsDropped = new HashSet<Integer>();
     primaryActionFlag = false;
     isAlive = true;
-  }
-
-  /**
-   * Returns during a given tick if the player should pick up an item
-   * 
-   * @return true if the player should pick up items, false otherwise
-   */
-  public boolean itemPickedFlag() {
-    return itemPickedFlag;
-  }
-
-  /**
-   * Returns during a given tick if the player should perform its primary action
-   * 
-   * @return True if the player should perform their primary action, false
-   *         otherwise
-   */
-  public boolean primaryActionFlag() {
-    return primaryActionFlag;
-
-  }
-
-  /**
-   * Returns during a given tick the set of items the player should drop
-   * 
-   * @return The set of items the player should drop
-   */
-  public Set<Integer> itemsDroppedFlag() {
-    return itemsDropped;
+    inventory = new Inventory();
+    collisionBoxOffset = new Vector(0, 0);
   }
 
   /**
    * Given a ClientState, updates the internal representations of the GamePlayer
-   * to match the state
+   * to match the state.
    * 
    * @param state
    *          the ClientState to match
@@ -84,14 +72,14 @@ public class GamePlayer extends DynamicEntity {
   public void update(ClientState state) {
     int horzCoeff = state.retrieveHorzMultiplier();
     int vertCoeff = state.retrieveVertMultiplier();
-    double theta = state.retrieveTheta();
+    System.out.println(new Vector(horzCoeff, vertCoeff));
 
     updatePlayer(state);
-    updateDynamic(vertCoeff, horzCoeff, theta);
+    updateDynamic(vertCoeff, horzCoeff);
   }
 
   /**
-   * Initializes the player flags given the ClientState
+   * Initializes the player flags given the ClientState.
    * 
    * @param state
    *          The ClientState to match
@@ -103,7 +91,7 @@ public class GamePlayer extends DynamicEntity {
   }
 
   /**
-   * Returns if the player is alive at any given point
+   * Returns if the player is alive at any given point.
    * 
    * @return true if the player is alive, false otherwise
    */
@@ -117,8 +105,43 @@ public class GamePlayer extends DynamicEntity {
   }
 
   @Override
-  public void tick() {
+  public void tick(ChunkMap chunkMap) {
+    updatePosition(chunkMap); // Calls movement in dynamic entity
+    inventory.tick();
 
+    // check collision here
+    if (isHitboxActive()) {
+      // onlny iterate if it is active
+    }
+  }
+
+  @Override
+  public boolean isHitboxActive() {
+    return inventory.getActiveWeapon().isHitboxActive();
+  }
+
+  @Override
+  public BoxSet hitBox() {
+    return inventory.getActiveWeapon().hitBox();
+
+  }
+
+  @Override
+  public Vector collisionBoxOffset() {
+    return collisionBoxOffset;
+  }
+
+  @Override
+  public Vector hitBoxOffset() {
+    return inventory.getActiveWeapon().hitBoxOffset();
+  }
+
+  @Override
+  public double reach() {
+    double tmp = DreamMath.max(
+        this.collisionBox().reach() + collisionBoxOffset().magnitude(),
+        this.hitBox().reach() + hitBoxOffset().magnitude(), size);
+    return tmp + speedCap();
   }
 
 }

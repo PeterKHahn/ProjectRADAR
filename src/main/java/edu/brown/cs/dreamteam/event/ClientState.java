@@ -21,14 +21,13 @@ public class ClientState {
   private boolean itemPicked;
   private boolean primaryAction;
 
-  private double theta;
   private Set<Integer> dropped;
 
   private String id;
 
   /**
    * A ClientState constructor that matches its id with that of the player it is
-   * interacting with
+   * interacting with.
    * 
    * @param id
    *          The ID of the ClientState, and that of the player which it
@@ -45,12 +44,11 @@ public class ClientState {
     backwardHeld = false;
     itemPicked = false;
     primaryAction = false;
-    theta = Math.PI / 2;
     dropped = new HashSet<Integer>();
   }
 
   /**
-   * Updates the list of dropped items to include the item at index index
+   * Updates the list of dropped items to include the item at index index.
    * 
    * @param index
    *          The index of the newly dropped item
@@ -60,7 +58,7 @@ public class ClientState {
   }
 
   /**
-   * Updates whether the player is holding forward
+   * Updates whether the player is holding forward.
    * 
    * @param held
    *          whether the player is holding forward
@@ -70,7 +68,7 @@ public class ClientState {
   }
 
   /**
-   * Updates whether the player is holding backward
+   * Updates whether the player is holding backward.
    * 
    * @param held
    *          whether the player is holding backward
@@ -80,7 +78,7 @@ public class ClientState {
   }
 
   /**
-   * Updates whether the player is holding left
+   * Updates whether the player is holding left.
    * 
    * @param held
    *          whether the player is holding left
@@ -90,7 +88,7 @@ public class ClientState {
   }
 
   /**
-   * Updates whether the player is holding right
+   * Updates whether the player is holding right.
    * 
    * @param held
    *          whether the player is holding right
@@ -100,32 +98,21 @@ public class ClientState {
   }
 
   /**
-   * Sets the angle the player should be facing. Theta should be relative to the
-   * positive x axis.
-   *
-   * @param angle
-   *          The angle the player should be facing
-   */
-  public synchronized void angleSet(double angle) {
-    theta = angle;
-  }
-
-  /**
-   * updates if the player should pick up an item
+   * updates if the player should pick up an item.
    */
   public synchronized void itemPicked(Boolean item) {
     itemPicked = item;
   }
 
   /**
-   * Updates if the player should perform its primary action
+   * Updates if the player should perform its primary action.
    */
   public synchronized void primaryAction(Boolean action) {
     primaryAction = action;
   }
 
   /**
-   * Returns whether the player should perform its primary action
+   * Returns whether the player should perform its primary action.
    * 
    * @return whether the player should perform its primary action
    */
@@ -136,7 +123,7 @@ public class ClientState {
   }
 
   /**
-   * Returns whether the player should pick up items
+   * Returns whether the player should pick up items.
    * 
    * @return whether the player should pick up items
    */
@@ -147,44 +134,44 @@ public class ClientState {
   }
 
   /**
-   * Returns the strafe direction of the player
+   * Returns the strafe direction of the player.
    * 
    * @return -1 if only left is hold, 1 if only right is held, 0 if both or
    *         neither is held
    */
   public synchronized int retrieveHorzMultiplier() {
+    int res;
     if (leftHeld == rightHeld) {
-      return 0;
+      res = 0;
     } else {
-      return leftHeld ? -1 : 1;
+      res = leftHeld ? -1 : 1;
     }
+    leftHeld = false;
+    rightHeld = false;
+
+    return res;
   }
 
   /**
-   * Returns the Movement direction of the player
+   * Returns the Movement direction of the player.
    * 
    * @return -1 if only back is held, 1 if only forward is held, 0 if both or
    *         neither is held
    */
   public synchronized int retrieveVertMultiplier() {
+    int res;
     if (forwardHeld == backwardHeld) {
-      return 0;
+      res = 0;
     } else {
-      return backwardHeld ? -1 : 1;
+      res = backwardHeld ? -1 : 1;
     }
+    forwardHeld = false;
+    backwardHeld = false;
+    return res;
   }
 
   /**
-   * Retrieves the angle releative to the x axis in radians of the player
-   * 
-   * @return
-   */
-  public synchronized double retrieveTheta() {
-    return theta;
-  }
-
-  /**
-   * Returns the set of indexes of items dropped
+   * Returns the set of indexes of items dropped.
    * 
    * @return the set of indexes of items dropped
    */
@@ -196,7 +183,7 @@ public class ClientState {
   }
 
   /**
-   * Returns the client id
+   * Returns the client id.
    * 
    * @return
    */

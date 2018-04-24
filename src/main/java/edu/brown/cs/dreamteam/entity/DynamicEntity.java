@@ -1,8 +1,16 @@
 package edu.brown.cs.dreamteam.entity;
 
-import edu.brown.cs.dreamteam.box.Boxed;
-import edu.brown.cs.dreamteam.box.CircleBox;
-import edu.brown.cs.dreamteam.game.Tickable;
+import java.util.Collection;
+import java.util.Map.Entry;
+
+import edu.brown.cs.dreamteam.box.Box;
+import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.CollisionBoxed;
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.game.Chunk;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.utility.Clamp;
+import edu.brown.cs.dreamteam.utility.DreamMath;
 
 /**
  * A dynamic entity is an entity that has a dynamic position and angle.
@@ -10,30 +18,22 @@ import edu.brown.cs.dreamteam.game.Tickable;
  * @author peter
  *
  */
-public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
+public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
-  private double xVelocity;
-  private double yVelocity;
-
-  private double x;
-  private double y;
+  private Vector velocityVector;
 
   private double speed = 1;
-  private double speedCap = speed * 2;
+  private double radius;
+  private Vector center;
 
-  private int vertCoeff;
-  private int horzCoeff;
+  private BoxSet collisionBox;
 
-  private double theta;
-
-  private double size;
-
-  private CircleBox box;
+  private Clamp timeClamp;
 
   private String type;
 
   /**
-   * Standard constructor for dynamic entity, initializing their fields
+   * Standard constructor for dynamic entity, initializing their fields.
    * 
    * @param id
    *          id of the dynamicEntity
@@ -41,20 +41,20 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
    *          the initial x value of the entity
    * @param y
    *          the initial y value of the entity
-   * @param size
+   * @param radius
    *          the radius of the entity
    */
-  public DynamicEntity(String id, double x, double y, double size) {
+  public DynamicEntity(String id, double x, double y, double radius) {
     super(id);
-    this.size = size;
-    this.x = x;
-    this.y = y;
+    this.radius = radius;
+    this.velocityVector = new Vector(0, 0);
+    this.center = new Vector(x, y);
+    this.collisionBox = new BoxSet(new Box(radius));
     init();
   }
 
   private void init() {
-    box = new CircleBox(getXPos(), getYPos(), size);
-
+    timeClamp = new Clamp(0, 1);
   }
 
   public void setType(String type) {
@@ -65,130 +65,151 @@ public abstract class DynamicEntity extends Entity implements Tickable, Boxed {
     return type;
   }
 
-  public double getXPos() {
-    return x;
-  }
-
-  public double getYPos() {
-    return y;
-  }
-
-  public void setXPos(double x) {
-    this.x = x;
-    this.box.updateX(x);
-
-  }
-
-  public void setYPos(double y) {
-    this.y = y;
-    this.box.updateX(y);
-
+  public double speedCap() {
+    return 2 * speed;
   }
 
   /**
-   * Updates the position given the dynamic entity's velocity
+   * Updates the position given the dynamic entity's velocity.
    */
-  public void updatePosition() {
-    updateX();
-    updateY();
+  public void updatePosition(ChunkMap chunks) {
+    System.out.println(velocityVector);
+    Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
 
+    for (Chunk chunk : chunksNear) {
+      chunk.removeDynamic(this);
+    }
+
+    Collection<CollisionBoxed> collidables = chunks
+        .getCollisionedFromChunks(chunksNear);
+
+    double minT = 1;
+    for (CollisionBoxed c : collidables) {
+      if (!c.isSolid()) {
+        continue;
+      }
+      double res = handleDynamicCollision(c.collisionBox());
+      minT = Math.min(res, minT);
+    }
+
+    changePosition(velocityVector.scalarMultiply(minT));
+
+    chunks.addDynamic(this);
+  }
+
+  public void changePosition(Vector v) {
+    center = center.add(v);
   }
 
   /**
-   * Updates the x position of the entity given its x velocity
+   * Returns the time at which the dynamic Entity will first collide with the
+   * static entity.
+   * 
+   * @param staticBoxSet
+   *          The Set of Static BoxSets that we are colliding against
+   * @return
    */
-  public void updateX() {
-    setXPos(getXPos() + xVelocity);
+  private double handleDynamicCollision(BoxSet staticBoxSet) {
+
+    double minT = 1;
+
+    for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
+      for (Entry<Box, Vector> staticBoxEntry : staticBoxSet.boxes()
+          .entrySet()) {
+        Box dynamicBox = dynamicBoxEntry.getKey();
+        Box staticBox = staticBoxEntry.getKey();
+
+        Vector dynamicCenter = center.add(collisionBoxOffset())
+            .add(dynamicBoxEntry.getValue());
+
+        Vector staticCenter = center.add(collisionBoxOffset())
+            .add(staticBoxEntry.getValue());
+        Vector u1 = dynamicCenter;
+        Vector u2 = staticCenter;
+
+        Vector u3 = u2.subtract(u1);
+        double time = u3.projectOntoMagnitude(this.velocityVector);
+
+        double timeOfMinimumDistance = timeClamp.clamp(time);
+        Vector vPrime = velocityVector.scalarMultiply(timeOfMinimumDistance)
+            .add(u1);
+        double distanceSquared = vPrime.subtract(u2).magnitudeSquared();
+        boolean collides = distanceSquared <= (dynamicBox.radius()
+            + staticBox.radius()) * (dynamicBox.radius() + staticBox.radius());
+        if (collides) {
+          // calculate the maximum time before collision
+          double a = velocityVector.innerProduct(velocityVector);
+          double b = 2 * u3.innerProduct(velocityVector);
+          double c = u3.magnitudeSquared();
+
+          double tPrime = DreamMath.quadratic(a, b, c, true);
+          minT = Math.min(tPrime, minT);
+
+        }
+      }
+    }
+
+    return minT;
 
   }
 
   /**
-   * Updates the y position of the entity given its y velocity
-   */
-  public void updateY() {
-    setYPos(getYPos() + yVelocity);
-
-  }
-
-  /**
-   * Sets the x and y velocity given the entity's speed and angle
+   * Given a clientstate, updates the internal fields of the dynamic entity to
+   * match those specified in the ClientState.
    * 
    * @param vertCoeff
    * @param horzCoeff
-   * @param theta
    */
-  protected void updateDynamic(int vertCoeff, int horzCoeff, double theta) {
-    this.theta = theta;
-
-    this.xVelocity = horzCoeff * speed;
-    this.yVelocity = vertCoeff * speed;
+  protected void updateDynamic(int vertCoeff, int horzCoeff) {
+    velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
   }
 
   /**
-   * Returns the x velocity of the entity
+   * Returns the x velocity of the entity.
    * 
    * @return the x velocity of the entity
    */
   public double getXVelocity() {
-    return xVelocity;
+    return velocityVector.x;
   }
 
   /**
-   * Returns the y velocity of the entity
+   * Returns the y velocity of the entity.
    * 
    * @return the y velocity of the entity
    */
   public double getYVelocity() {
-    return yVelocity;
-  }
-
-  @Override
-  public double getUpper() {
-    return box.getUpper() + speedCap;
-  }
-
-  @Override
-  public double getLower() {
-    return box.getLower() - speedCap;
-  }
-
-  @Override
-  public double getLeft() {
-    return box.getLeft() - speedCap;
-  }
-
-  @Override
-  public double getRight() {
-    return box.getRight() + speedCap;
+    return velocityVector.y;
   }
 
   /**
    * Given an entity that should no longer exist, this method sets its internal
-   * state to no longer be active
+   * state to no longer be active.
    */
   public abstract void kill();
 
   /**
-   * A method to determine whether this entity has collided with another
-   * StaticEntity
-   * 
-   * @param e
-   *          the static entity to test for collision/
-   * @return true if we collide, false otherwise. Collision is defined by if
-   *         there exists a point of overlap between our two boxes
-   */
-  public boolean collidesWith(StaticEntity e) {
-
-    return this.box.collides(e.getBox());
-  }
-
-  /**
-   * Returns the radius of this entity
+   * Returns the radius of this entity.
    * 
    * @return the radius of this entity
    */
   public double getRadius() {
-    return this.box.getRadius();
+    return radius;
+  }
+
+  @Override
+  public boolean isSolid() {
+    return false;
+  }
+
+  @Override
+  public BoxSet collisionBox() {
+    return collisionBox;
+  }
+
+  @Override
+  public Vector center() {
+    return center;
   }
 
 }

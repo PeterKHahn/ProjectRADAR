@@ -1,11 +1,13 @@
 package edu.brown.cs.dreamteam.main;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.utility.Logger;
-import java.util.Collection;
 
 public class GameBuilder {
 
@@ -16,22 +18,28 @@ public class GameBuilder {
 
   private GameBuilder(Architect architect) {
     this.engine = new GameEngine(architect);
+    init();
   }
 
-  public GameBuilder addHumanPlayers(Collection<PlayerSession> playerSessions) {
-    for (PlayerSession ps : playerSessions) {
+  private void init() {
+    players = new LinkedList<GamePlayer>();
+  }
+
+  public GameBuilder addHumanPlayers(Collection<GamePlayer> playersCollection) {
+    for (GamePlayer ps : playersCollection) {
       addHumanPlayer(ps);
     }
     return this;
   }
 
-  public GameBuilder addHumanPlayer(PlayerSession playerSession) {
-    GamePlayer player = new GamePlayer(playerSession.getId(), 0, 0);
+  public GameBuilder addHumanPlayer(GamePlayer player) {
+
     if (players.size() > 3) {
       Logger.logError("Only 4 players can be in a game. Not all players added");
       return this;
     }
     engine.addPlayer(player);
+
     numHumanPlayers++;
     return this;
 
@@ -55,6 +63,7 @@ public class GameBuilder {
       engine.addAiPlayer(numHumanPlayers);
       numHumanPlayers++;
     }
+
     return engine;
   }
 

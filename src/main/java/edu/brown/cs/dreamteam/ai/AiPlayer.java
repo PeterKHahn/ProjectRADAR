@@ -1,9 +1,28 @@
 package edu.brown.cs.dreamteam.ai;
 
-import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import java.util.Map;
 
+import com.google.gson.Gson;
+
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
+/**
+ * A class that represents an AI player in the game.
+ *
+ * @author efu2
+ */
 public class AiPlayer extends DynamicEntity {
   private boolean isAlive;
+
+  private enum StrategyType {
+    GATHER, OFFENSE, DEFENSE
+  }
+
+  private static final Gson GSON = new Gson();
+  private StrategyType strategy;
+  private Map<StrategyType, Strategy> strategies;
 
   /**
    * Constructs an AI player.
@@ -12,11 +31,6 @@ public class AiPlayer extends DynamicEntity {
     super(id, x, y, size);
     this.setType("AI");
     isAlive = true;
-  }
-
-  @Override
-  public void tick() {
-
   }
 
   @Override
@@ -31,6 +45,24 @@ public class AiPlayer extends DynamicEntity {
    */
   public boolean isAlive() {
     return isAlive;
+  }
+
+  @Override
+  public Vector collisionBoxOffset() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public double reach() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public void tick(ChunkMap chunkMap) {
+    // TODO Auto-generated method stub
+
   }
 
 }

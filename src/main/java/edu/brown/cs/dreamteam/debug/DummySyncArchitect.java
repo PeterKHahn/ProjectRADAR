@@ -7,7 +7,6 @@ import java.util.Map;
 
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.event.ClientState;
-import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.main.Architect;
@@ -48,13 +47,6 @@ public class DummySyncArchitect extends Architect {
 
   @Override
   public void onGameChange(ChunkMap chunks) {
-    // System.out.println("Chunks: " + chunks);
-    Chunk[][] array = chunks.getChunkArray();
-    for (int r = 0; r < array.length; r++) {
-      for (int c = 0; c < array[0].length; c++) {
-        Logger.logDebug("Chunk at (" + r + ", " + c + ") " + array[r][c]);
-      }
-    }
 
   }
 
@@ -69,7 +61,7 @@ public class DummySyncArchitect extends Architect {
   private Collection<GamePlayer> generatePlayers(int numPlayers) {
     Collection<GamePlayer> res = new LinkedList<GamePlayer>();
     for (int i = 0; i < numPlayers; i++) {
-      GamePlayer player = new GamePlayer("" + i, 3 * Math.random(),
+      GamePlayer player = GamePlayer.player("151" + i, 3 * Math.random(),
           3 * Math.random());
       res.add(player);
     }

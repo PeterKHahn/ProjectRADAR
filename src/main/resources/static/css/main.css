@@ -1,3 +1,52 @@
+@import url('https://fonts.googleapis.com/css?family=Gugi');
+
 body {
-	background-color: lightblue;
+	background-color: #424874;
+	color: #b8dbd9;
+	font-family: "Gugi", "Courier New";
+	text-align: center;
 }
+
+
+textarea,
+button,
+input,
+textarea:hover, 
+input:hover, 
+textarea:active, 
+input:active, 
+textarea:focus, 
+input:focus,
+label:focus,
+.btn:active,
+.btn.active
+{
+    outline:0px !important;
+    -webkit-appearance:none;
+    background-color: #424874;
+	color: #b8dbd9;
+	border-width: 1px;
+	padding: 0px;
+	margin: 0 auto;
+	font-family: 'Courier New';
+	font-weight: bold;
+	border-color: #b8dbd9;
+	border-radius: 2px;
+	padding: 3px;
+}
+
+a {
+	text-decoration: none;
+	color: #b8dbd9;
+}
+
+a:hover {
+	color: white;
+}
+
+.page {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+}
+

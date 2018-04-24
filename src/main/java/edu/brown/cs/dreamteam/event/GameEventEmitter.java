@@ -2,18 +2,19 @@ package edu.brown.cs.dreamteam.event;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
  * GameEventEmitter will emit at the End of every tick, information about the
  * game state, using the observer pattern
- * 
+ *
  * @author peter
  *
  */
 public class GameEventEmitter {
-
+  private static AtomicInteger num = new AtomicInteger();
   private Collection<GameEventListenerThread> listeners;
 
   public GameEventEmitter() {
@@ -27,7 +28,7 @@ public class GameEventEmitter {
   /**
    * Adds a GameEventListener to the collection of listeners who will listen for
    * this signal
-   * 
+   *
    * @param listener
    */
   public void addGameEventListener(GameEventListener listener) {
@@ -37,7 +38,7 @@ public class GameEventEmitter {
   /**
    * Emits information about a ChunkMap to all GameEventListeners in the thread.
    * It does this asynchronously
-   * 
+   *
    * @param chunks
    *          the ChunkMap to emit
    */
@@ -51,7 +52,7 @@ public class GameEventEmitter {
 
   /**
    * A wrapper class to support multithreading for each of the listeners
-   * 
+   *
    * @author peter
    *
    */
@@ -59,9 +60,11 @@ public class GameEventEmitter {
 
     private GameEventListener listener;
     private ChunkMap chunks;
+    public int id;
 
     private GameEventListenerThread(GameEventListener listener) {
       this.listener = listener;
+      this.id = num.incrementAndGet();
 
     }
 
@@ -71,6 +74,7 @@ public class GameEventEmitter {
 
     @Override
     public void run() {
+      // System.out.println("run by: " + this.id);
       listener.onGameChange(chunks);
 
     }
