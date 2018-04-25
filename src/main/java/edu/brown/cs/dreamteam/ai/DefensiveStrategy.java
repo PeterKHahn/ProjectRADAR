@@ -1,13 +1,15 @@
 package edu.brown.cs.dreamteam.ai;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
+
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.board.Position;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.game.Chunk;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
  * Strategy to avoid all enemy players to save health. If AI's health is below 2
@@ -33,52 +35,47 @@ public class DefensiveStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
-    List<DynamicEntity> enemies = getVisibleEnemies(chunks);
-    Position goal = getEscapePosition(enemies, chunks);
-    // Get player's Position in the graph
-    Position currPos = board.getPosition((int) Math.floor(player.getXPos()),
-        (int) Math.floor(player.getYPos()));
-    Position next = board.getMoveTo(currPos, goal);
-    // TODO Update player to go in direction of next
+    // Get the goal node to run to
+    Vector escape = getEscapeDir(chunks);
+    Vector position = player.center();
+    Position curr = board.addPosition(position.x, position.y);
+    Position goal = board.getEdgePosition(curr, escape);
+
+    // Get the next node to run to for the shortest path to the goal
+    Position next = board.getMoveTo(curr, goal);
+
+    // Update player to go in direction of next
+    double x = next.getX() - position.x;
+    int horzCoeff = x < 0 ? (x > 0 ? 1 : 0) : -1;
+    double y = next.getY() - position.y;
+    int vertCoeff = y < 0 ? (y > 0 ? 1 : 0) : -1;
+    player.updateDynamic(vertCoeff, horzCoeff);
+
+    // TODO Attack while running away
 
   }
 
-  private Position getEscapePosition(List<DynamicEntity> enemies,
-      Collection<Chunk> chunks) {
-    int numEnemies = enemies.size();
+  private Vector getEscapeDir(Collection<Chunk> chunks) {
+    // Get all enemies in visible range
+    Set<DynamicEntity> enemies = ChunkMap.dynamicFromChunks(chunks);
+    enemies.remove(player);
+
+    // Determine escape direction
     double escapeX = 0;
     double escapeY = 0;
-    for (int i = 0; i < numEnemies; i++) {
-      escapeX += -enemies.get(i).getXVelocity();
-      escapeY += -enemies.get(i).getYVelocity();
+    Iterator<DynamicEntity> it = enemies.iterator();
+    while (it.hasNext()) {
+      DynamicEntity enemy = it.next();
+      escapeX += enemy.getXVelocity();
+      escapeY += enemy.getYVelocity();
     }
-
-    // Convert the values to a valid direction coefficient
-    int xDir = escapeX > 0 ? (escapeX < 0 ? -1 : 0) : 1;
-    int yDir = escapeY > 0 ? (escapeY < 0 ? -1 : 0) : 1;
 
     // The enemies' directions cancelled each other out
-    while (Integer.compare(xDir, 0) == 0 && Integer.compare(yDir, 0) == 0) {
-      // Pick a random direction to go in
-      List<Integer> values = new ArrayList<>();
-      values.add(-1);
-      values.add(0);
-      values.add(1);
-
-      Random r = new Random();
-      escapeX = values.get(r.nextInt(3));
-      escapeY = values.get(r.nextInt(3));
+    if (Double.compare(escapeX, 0) == 0 && Double.compare(escapeY, 0) == 0) {
+      // TODO Pick a random map border node to go to
     }
 
-    Position goal = board.getPosition(AiController.VISIBLE_RANGE * xDir,
-        AiController.VISIBLE_RANGE * yDir);
-
-    // TODO what if goal isn't traversable? Goal node must be at least player's
-    // size positions away from obstacles
-    if (goal == null || !board.isTraversable(goal)) {
-
-    }
-    return goal;
+    return new Vector(escapeX, escapeY);
   }
 
 }

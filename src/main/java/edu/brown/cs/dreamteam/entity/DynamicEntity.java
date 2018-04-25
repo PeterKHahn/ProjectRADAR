@@ -19,7 +19,7 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
  *
  */
 public abstract class DynamicEntity extends Entity implements CollisionBoxed {
-
+  public static final double VISIBLE_RANGE = 10;
   private Vector velocityVector;
 
   private double speed = 1;
@@ -160,7 +160,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @param vertCoeff
    * @param horzCoeff
    */
-  protected void updateDynamic(int vertCoeff, int horzCoeff) {
+  public void updateDynamic(int vertCoeff, int horzCoeff) {
     velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
   }
 

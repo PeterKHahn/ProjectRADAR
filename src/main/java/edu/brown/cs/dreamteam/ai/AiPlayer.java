@@ -1,7 +1,5 @@
 package edu.brown.cs.dreamteam.ai;
 
-import java.util.Map;
-
 import com.google.gson.Gson;
 
 import edu.brown.cs.dreamteam.datastructures.Vector;
@@ -21,8 +19,7 @@ public class AiPlayer extends DynamicEntity {
   }
 
   private static final Gson GSON = new Gson();
-  private StrategyType strategy;
-  private Map<StrategyType, Strategy> strategies;
+  private AiController controller;
 
   /**
    * Constructs an AI player.
@@ -31,6 +28,10 @@ public class AiPlayer extends DynamicEntity {
     super(id, x, y, size);
     this.setType("AI");
     isAlive = true;
+  }
+
+  public void setController(AiController controller) {
+    this.controller = controller;
   }
 
   @Override
@@ -61,8 +62,8 @@ public class AiPlayer extends DynamicEntity {
 
   @Override
   public void tick(ChunkMap chunkMap) {
-    // TODO Auto-generated method stub
-
+    controller.makeNextMove(chunkMap);
+    updatePosition(chunkMap);
   }
 
 }

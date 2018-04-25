@@ -276,7 +276,7 @@ public class ChunkMap {
    *          the Collection of chunks to retrieve static entities from
    * @return A Set of Static Entities contined in chunks
    */
-  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+  public static Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
     Set<DynamicEntity> res = new HashSet<DynamicEntity>();
     for (Chunk c : chunks) {
       res.addAll(c.getDynamicEntities());

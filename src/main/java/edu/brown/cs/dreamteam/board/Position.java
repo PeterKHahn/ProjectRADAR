@@ -1,10 +1,11 @@
 package edu.brown.cs.dreamteam.board;
 
-import edu.brown.cs.dreamteam.graph.Vertex;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+
+import edu.brown.cs.dreamteam.graph.Vertex;
 
 /**
  * Represents a position on the game map and as a vertex in the graph
@@ -13,8 +14,8 @@ import java.util.Objects;
  * @author efu2
  */
 public class Position implements Vertex<Position, Move> {
-  private int x;
-  private int y;
+  private double x;
+  private double y;
   private List<Move> edges;
 
   /**
@@ -25,7 +26,7 @@ public class Position implements Vertex<Position, Move> {
    * @param y
    *          The y coordinate of this position.
    */
-  public Position(int x, int y) {
+  public Position(double x, double y) {
     this.x = x;
     this.y = y;
     edges = new ArrayList<>();
@@ -36,7 +37,7 @@ public class Position implements Vertex<Position, Move> {
    * 
    * @return An int representing the x coordinate of this position.
    */
-  public int getX() {
+  public double getX() {
     return x;
   }
 
@@ -45,7 +46,7 @@ public class Position implements Vertex<Position, Move> {
    * 
    * @return An int representing the y coordinate of this position.
    */
-  public int getY() {
+  public double getY() {
     return y;
   }
 

@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.game;
 
-import java.util.List;
 import java.util.Map;
 
 import edu.brown.cs.dreamteam.ai.AiController;
@@ -30,8 +29,6 @@ public class GameEngine implements Runnable {
 
   private boolean running = false;
   private int ticks = 0;
-
-  private List<AiController> aiControllers;
 
   /**
    * Creates a GameEngine given an Architect.
@@ -92,15 +89,7 @@ public class GameEngine implements Runnable {
     Map<String, ClientState> updatedClientStates = architect
         .retrieveClientStates();
     chunks.updateClients(updatedClientStates);
-    tickAi();
     chunks.tick();
-  }
-
-  private void tickAi() {
-    int numAi = aiControllers.size();
-    for (int i = 0; i < numAi; i++) {
-      aiControllers.get(i).makeNextMove(chunks);
-    }
   }
 
   /**
@@ -111,7 +100,6 @@ public class GameEngine implements Runnable {
    */
   public void addPlayer(GamePlayer p) {
     chunks.addPlayer(p);
-
   }
 
   public void addObstacle(Obstacle ob) {
@@ -119,8 +107,8 @@ public class GameEngine implements Runnable {
   }
 
   public void addAiPlayer(int id) {
-    aiControllers.add(new AiController(Integer.toString(id), board));
-    chunks.addDynamic(aiControllers.get(aiControllers.size() - 1).getPlayer());
+    AiController controller = new AiController(Integer.toString(id), board);
+    chunks.addDynamic(controller.getPlayer());
   }
 
   public void makeBoard() {

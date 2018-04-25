@@ -1,12 +1,15 @@
 package edu.brown.cs.dreamteam.board;
 
-import com.google.common.collect.ImmutableList;
-import edu.brown.cs.dreamteam.game.ChunkMap;
-import edu.brown.cs.dreamteam.graph.AStarSearch;
-import edu.brown.cs.dreamteam.graph.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
+
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.graph.AStarSearch;
+import edu.brown.cs.dreamteam.graph.Path;
 
 /**
  * Represents the game board as a graph with Positions as vertices and Moves as
@@ -18,7 +21,7 @@ public class Board {
   private final int width;
   private final int height;
   private AStarSearch<Position, Move> search;
-  private Map<List<Integer>, Position> positions;
+  private Map<List<Double>, Position> positions;
 
   /**
    * Constructs the graph using the given entity information at the beginning of
@@ -34,45 +37,34 @@ public class Board {
     constructGraph(chunks);
   }
 
+  public Position addPosition(double x, double y) {
+    Position pos = new Position(x, y);
+    positions.put(ImmutableList.of(x, y), pos);
+    return pos;
+  }
+
+  public void removePosition(double x, double y) {
+    positions.remove(ImmutableList.of(x, y));
+  }
+
   private void constructGraph(ChunkMap chunks) {
     positions = new HashMap<>();
-    // Only make positions that the AI player can move to (taking into
-    // account its size and hitbox)
-    for (int i = 0; i < width; i++) {
-      for (int j = 0; j < height; j++) {
-        // TODO check traversability by AI player first (obstacle collision
-        // boxes and AI player's collision box
-        Position curr = new Position(i, j);
-        addEdges(curr);
-        if (!positions.containsKey(ImmutableList.of(i, j))) {
-          positions.put(ImmutableList.of(i, j), curr);
-        }
-      }
-    }
+    // Only make positions at the edges of obstacles and at every chunk border
+    // along the edges of the map
+    // TODO
   }
 
   /**
-   * Adds a Move (edge) from this position to all adjacent traversable
-   * positions.
+   * Adds a Move (edge) between this position and all other positions that are
+   * not obstructed by an obstacle.
    *
    * @param pos
    *          The Position to add edges to.
    */
   private void addEdges(Position pos) {
-    for (int i = -1; i <= 1; i++) {
-      for (int j = -1; j <= 1; j++) {
-        // TODO Check if neighbor position is inside an obstacle
-        if (i != j) {
-          Position neighbor;
-          if (positions.containsKey(ImmutableList.of(i, j))) {
-            neighbor = positions.get(ImmutableList.of(i, j));
-          } else {
-            neighbor = new Position(i, j);
-          }
-          pos.addEdge(neighbor);
-        }
-      }
-    }
+    // TODO Find which other positions have an unobstructed straight line
+    // distance from the given position, add Move and set weight to Euclidean
+    // distance
   }
 
   /**
@@ -94,52 +86,18 @@ public class Board {
   }
 
   /**
-   * Checks if the position is valid (within the boundaries of the board, where
-   * the coordinates are 0-indexed).
-   *
-   * @param position
-   *          A Position object.
-   * @return True if the position is in bounds, false otherwise.
-   */
-  public boolean isValid(Position position) {
-    if (position.getX() >= 0 && position.getX() < width && position.getY() >= 0
-        && position.getY() < height) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Checks whether the given position is traversable by a player.
-   *
-   * @param position
+   * Returns the Position on the edge of the map that is closest to the line
+   * defined by pos and dir.
    * 
-   * @return
+   * @param pos
+   *          The position that the player is at.
+   * @param dir
+   *          The direction that the player wants to go in.
+   * @return A Position on the edge of the Map that is closest to the line
+   *         defined by pos and dir.
    */
-  public boolean isTraversable(Position position) {
-    if (isValid(position)) {
-      if (position.getEdges().size() > 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Returns the position object at the given coordinates.
-   * 
-   * @param x
-   *          The x position.
-   * @param y
-   *          The y position.
-   * @return
-   */
-  public Position getPosition(int x, int y) {
-    List<Integer> coord = ImmutableList.of(x, y);
-    if (positions.containsKey(coord)) {
-      return positions.get(ImmutableList.of(x, y));
-    }
+  public Position getEdgePosition(Position pos, Vector dir) {
+    // TODO
     return null;
   }
 

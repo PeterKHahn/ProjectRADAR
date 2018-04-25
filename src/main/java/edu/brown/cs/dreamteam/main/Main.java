@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.jetty.websocket.api.Session;
 
-import edu.brown.cs.dreamteam.ai.AiPlayer;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.Spark;
@@ -15,7 +14,6 @@ public class Main {
   private static final int DEFAULT_PORT = 4567;
   private String[] args;
   private Architect a;
-  private AiPlayer ai = new AiPlayer(null);
 
   // EXPERIMENTAL
   static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();

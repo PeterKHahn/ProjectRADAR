@@ -1,12 +1,14 @@
 package edu.brown.cs.dreamteam.ai;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A class that controls 1 AI player in the game managed by the given architect.
@@ -15,7 +17,6 @@ import java.util.Map;
  */
 public class AiController {
   private static final int AI_SIZE = 5;
-  public static final int VISIBLE_RANGE = AI_SIZE * 5;
 
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE, GOAL
@@ -24,7 +25,6 @@ public class AiController {
   private StrategyType strategy;
   private Map<StrategyType, Strategy> strategies;
   private AiPlayer player;
-  private Board board;
 
   /**
    * Initializes the AiController that makes decisions about the AiPlayer's next
@@ -38,6 +38,7 @@ public class AiController {
   public AiController(String id, Board board) {
     // TODO update starting position
     player = new AiPlayer(id, 0, 0, AI_SIZE);
+    player.setController(this);
 
     // Initialize strategies
     strategy = StrategyType.GATHER;
@@ -46,7 +47,6 @@ public class AiController {
     strategies.put(StrategyType.OFFENSE, new OffensiveStrategy(board, player));
     strategies.put(StrategyType.DEFENSE, new DefensiveStrategy(board, player));
     strategies.put(StrategyType.GOAL, new GoalStrategy(board, player));
-
   }
 
   public AiPlayer getPlayer() {
@@ -63,20 +63,10 @@ public class AiController {
    *          items/weapons at the current tick of the game.
    */
   public void makeNextMove(ChunkMap chunks) {
-    Collection<Chunk> visibleChunks = getVisibleChunks(chunks);
+    Collection<Chunk> visibleChunks = chunks.getChunksNearDynamic(player,
+        DynamicEntity.VISIBLE_RANGE);
     updateStrategy(visibleChunks);
     strategies.get(strategy).makeNextMove(visibleChunks);
-  }
-
-  private Collection<Chunk> getVisibleChunks(ChunkMap chunks) {
-    // Get chunks in the visible range
-    int currRow = chunks.getChunkRow(player.getYPos());
-    int currCol = chunks.getChunkCol(player.getXPos());
-    int fromRow = currRow - VISIBLE_RANGE;
-    int toRow = currRow + VISIBLE_RANGE;
-    int fromCol = currCol - VISIBLE_RANGE;
-    int toCol = currCol + VISIBLE_RANGE;
-    return chunks.chunksInRange(fromRow, toRow, fromCol, toCol);
   }
 
   /**
@@ -86,9 +76,10 @@ public class AiController {
    *          A Collection of all visible chunks to the player right now.
    */
   private void updateStrategy(Collection<Chunk> chunks) {
-    // Get visible enemies using one of the Strategy instances
-    Collection<DynamicEntity> enemies = strategies.get(StrategyType.OFFENSE)
-        .getVisibleEnemies(chunks);
+    // Get visible enemies and remove current AI as an enemy
+    Set<DynamicEntity> enemies = ChunkMap.dynamicFromChunks(chunks);
+    enemies.remove(player);
+
     if (enemies.size() > 0) {
       // There is an enemy in the visible range
       // TODO check player health

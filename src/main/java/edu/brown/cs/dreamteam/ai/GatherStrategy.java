@@ -52,5 +52,6 @@ public class GatherStrategy extends Strategy {
     } else {
 
     }
+    // TODO call player.updateDynamic(vertCoeff, horzCoeff)
   }
 }

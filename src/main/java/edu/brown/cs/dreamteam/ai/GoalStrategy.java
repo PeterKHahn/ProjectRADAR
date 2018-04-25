@@ -1,8 +1,9 @@
 package edu.brown.cs.dreamteam.ai;
 
+import java.util.Collection;
+
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.game.Chunk;
-import java.util.Collection;
 
 /**
  * Strategy to reach the revealed goal. Goal has been revealed! Go straight
@@ -22,6 +23,7 @@ public class GoalStrategy extends Strategy {
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
     // TODO Auto-generated method stub
+    // TODO call player.updateDynamic(vertCoeff, horzCoeff)
 
   }
 

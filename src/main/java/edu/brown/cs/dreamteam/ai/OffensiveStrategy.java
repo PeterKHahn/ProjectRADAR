@@ -32,6 +32,7 @@ public class OffensiveStrategy extends Strategy {
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
     // TODO Auto-generated method stub
+    // TODO call player.updateDynamic(vertCoeff, horzCoeff)
 
   }
 }

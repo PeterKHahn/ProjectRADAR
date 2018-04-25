@@ -1,8 +1,5 @@
 package edu.brown.cs.dreamteam.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
@@ -10,6 +7,10 @@ import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.utility.DreamMath;
+
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * The internal representation of a player in the Game.

@@ -5,10 +5,15 @@ import edu.brown.cs.dreamteam.graph.Edge;
 public class Move implements Edge<Position, Move> {
   private final Position src;
   private final Position dest;
+  private double weight;
 
   public Move(Position src, Position dest) {
     this.src = src;
     this.dest = dest;
+  }
+
+  public void setWeight(double weight) {
+    this.weight = weight;
   }
 
   @Override
@@ -41,7 +46,7 @@ public class Move implements Edge<Position, Move> {
 
   @Override
   public double getWeight() {
-    return 1;
+    return weight;
   }
 
 }
