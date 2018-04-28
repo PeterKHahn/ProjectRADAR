@@ -7,6 +7,7 @@ import java.util.Set;
 import edu.brown.cs.dreamteam.box.CollisionBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
+import edu.brown.cs.dreamteam.item.Item;
 
 /**
  * Chunked pieces of a Map for Efficiency purposes.
@@ -18,6 +19,7 @@ public class Chunk {
 
   private Set<DynamicEntity> dynamicEntities;
   private Set<StaticEntity> staticEntities;
+  private Set<Item> items;
 
   private Set<CollisionBoxed> collisionBoxedEntities;
 
@@ -106,6 +108,10 @@ public class Chunk {
    */
   public Collection<DynamicEntity> getDynamicEntities() {
     return dynamicEntities;
+  }
+
+  public Collection<Item> getItems() {
+    return items;
   }
 
   public void tick() {

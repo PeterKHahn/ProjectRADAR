@@ -5,11 +5,13 @@ import java.util.Set;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.utility.DreamMath;
+import edu.brown.cs.dreamteam.weapon.Weapon;
 
 /**
  * The internal representation of a player in the Game.
@@ -17,15 +19,17 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
  * @author peter
  *
  */
-public class GamePlayer extends DynamicEntity implements HitBoxed {
+public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
 
-  private static final int size = 5;
+  private static final int SIZE = 5;
+  private static final int MAX_HEALTH = 100;
 
   private boolean itemPickedFlag;
   private Set<Integer> itemsDropped;
-  private boolean primaryActionFlag;
+  private boolean primaryActionFlag; // whether or not we should fire
 
   private boolean isAlive;
+  private double health;
 
   private Inventory inventory;
 
@@ -47,7 +51,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
    *          the y position to start
    */
   private GamePlayer(String id, double xpos, double ypos) {
-    super(id, xpos, ypos, size);
+    super(id, xpos, ypos, SIZE);
     init();
 
   }
@@ -59,6 +63,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
     isAlive = true;
     inventory = new Inventory();
     collisionBoxOffset = new Vector(0, 0);
+    health = MAX_HEALTH;
   }
 
   /**
@@ -107,9 +112,17 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
     updatePosition(chunkMap); // Calls movement in dynamic entity
     inventory.tick();
 
+    if (primaryActionFlag) {
+      inventory.getActiveWeapon().fire();
+    }
+
     // check collision here
     if (isHitboxActive()) {
-      // onlny iterate if it is active
+      // only iterate if it is active
+    }
+
+    if (health < 0) {
+      this.kill();
     }
   }
 
@@ -138,8 +151,37 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   public double reach() {
     double tmp = DreamMath.max(
         this.collisionBox().reach() + collisionBoxOffset().magnitude(),
-        this.hitBox().reach() + hitBoxOffset().magnitude(), size);
+        this.hitBox().reach() + hitBoxOffset().magnitude(), SIZE);
     return tmp + speedCap();
+  }
+
+  @Override
+  public void hit(HurtBoxed hurtBoxed) {
+    Weapon weapon = inventory.getActiveWeapon();
+    weapon.hit(hurtBoxed);
+
+  }
+
+  @Override
+  public BoxSet hurtBox() {
+    return collisionBox();
+  }
+
+  @Override
+  public Vector hurtBoxOffset() {
+    return collisionBoxOffset();
+  }
+
+  @Override
+  public void getHit(HitBoxed hitBoxed) {
+    double damage = hitBoxed.baseDamage();
+    health -= damage;
+
+  }
+
+  @Override
+  public double baseDamage() {
+    return inventory.getActiveWeapon().baseDamage();
   }
 
 }

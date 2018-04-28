@@ -14,6 +14,7 @@ import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.item.Item;
 
 /**
  * Chunk Map is the primary location of our storage of entity information,
@@ -268,6 +269,14 @@ public class ChunkMap {
     Set<DynamicEntity> res = new HashSet<DynamicEntity>();
     for (Chunk c : chunks) {
       res.addAll(c.getDynamicEntities());
+    }
+    return res;
+  }
+
+  public Set<Item> itemsFromChunks(Collection<Chunk> chunks) {
+    Set<Item> res = new HashSet<>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getItems());
     }
     return res;
   }

@@ -146,8 +146,6 @@ public class ClientState {
     } else {
       res = leftHeld ? -1 : 1;
     }
-    leftHeld = false;
-    rightHeld = false;
 
     return res;
   }
@@ -165,8 +163,7 @@ public class ClientState {
     } else {
       res = backwardHeld ? -1 : 1;
     }
-    forwardHeld = false;
-    backwardHeld = false;
+
     return res;
   }
 

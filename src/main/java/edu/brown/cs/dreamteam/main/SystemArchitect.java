@@ -169,63 +169,42 @@ public class SystemArchitect extends Architect {
               new ClientState(Messenger.sessionUserMap.get(user)));
           break;
         case "key":
-          switch (received.get("status").getAsString()) {
-            case "left":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
+          c = clientStates.get(Messenger.sessionUserMap.get(user));
+          if (c != null) {
+            switch (received.get("status").getAsString()) {
+              case "left":
                 c.leftHeld(received.get("held").getAsBoolean());
-              }
-              break;
-            case "right":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
+                break;
+              case "right":
                 c.rightHeld(received.get("held").getAsBoolean());
-              }
-              break;
-            case "up":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
+                break;
+              case "up":
                 c.forwardHeld(received.get("held").getAsBoolean());
-              }
-              break;
-            case "down":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
+                break;
+              case "down":
                 c.backwardHeld(received.get("held").getAsBoolean());
-              }
-            case "space":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
+              case "space":
                 c.primaryAction(true);
-              }
-              break;
-            case "f":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
+                break;
+              case "f":
                 c.itemPicked(true);
-              }
-              break;
-            case "r":
-              c = clientStates.get(Messenger.sessionUserMap.get(user));
-              if (c != null) {
-                // TODO: talk to peter.
-                // c.itemDropped(true);
-              }
+                break;
+              case "r":
+                c.itemDropped(0);
+                break;
+              default:
+                System.out
+                    .println("EWWOW: key sent that isn't an option...wtf");
+                break;
+            }
+            clientStates.put(Messenger.sessionUserMap.get(user), c);
           }
+
           break;
         default:
           System.out.println("hewwo");
           break;
       }
-
-      if (c != null)
-
-      {
-        clientStates.put(Messenger.sessionUserMap.get(user), c);
-      }
-
-      // Messenger.broadcastMessage(sender = Messenger.sessionUserMap.get(user),
-      // msg = message);
     }
   }
 

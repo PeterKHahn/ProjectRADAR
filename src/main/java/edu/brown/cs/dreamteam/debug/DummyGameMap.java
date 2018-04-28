@@ -12,8 +12,8 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public Collection<Obstacle> getObstacles() {
-    Obstacle x = new Obstacle("x", new Vector(100, 100), 50);
-    Obstacle y = new Obstacle("y", new Vector(200, 200), 30);
+    Obstacle x = new Obstacle("x", new Vector(5, 5), 5);
+    Obstacle y = new Obstacle("y", new Vector(10, 10), 3);
     List<Obstacle> z = new ArrayList<>();
     z.add(x);
     z.add(y);

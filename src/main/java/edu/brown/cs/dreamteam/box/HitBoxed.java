@@ -10,4 +10,8 @@ public interface HitBoxed {
 
   public Vector hitBoxOffset();
 
+  public void hit(HurtBoxed hurtBoxed);
+
+  public double baseDamage();
+
 }
