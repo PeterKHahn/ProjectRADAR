@@ -1,7 +1,7 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, staticEntities;
+let c, ctx, offsetX, offsetY, mapHeight, staticEntities, name;
 // CHANGE THIS TO FALSE LATER.
 let gameStart = false;
 
@@ -14,24 +14,26 @@ $(document).ready(() => {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 	};
 
-	$("#getName").show();
 	$("#game").hide();
 	$("#waitingRoom").hide();
+	$("#getName").show();
+
 	
     // Send message if enter is pressed in the input field
     $("#codename").keypress(event => {
     	console.log("KEY: " + event.keyCode);
         if (event.keyCode === 13) { 
-        	let name = { name: event.target.value };
-        	webSocket.send(JSON.stringify(name)); 
+        	websocketSend(webSocket, "name", event.target.value, false);
+        	name = event.target.value;
         	$("#getName").fadeOut();
         	$("#waitingRoom").fadeIn();
         }
     });
 
+    //starts game when start button clicked.
     $("#start").click(event => {
     	let status = {status: "start"};
-    	webSocket.send("start");
+    	websocketSend(webSocket, "game", "start", false);
     	$("#waitingRoom").fadeOut();
     	$("#game").fadeIn();
     	gameStart = true;
@@ -39,12 +41,7 @@ $(document).ready(() => {
     })
 
 
-	// init();
-	// drawPlayer();
-
     webSocket.onmessage = function (msg) {
-    	// console.log(msg);
-    	// console.log(msg.data) 
     	console.log(JSON.parse(msg.data));
     	// let res = JSON.parse(msg);
     	// if (res.kind === "gamePost") {
@@ -71,14 +68,59 @@ $(document).ready(() => {
 	};
 
 	/*** Interpreting keypress events ***/
+	$(document).keydown(event => {
+		if (gameStart) {
+			switch(event.keyCode){
+				case 97: // a for wasd
+					websocketSend(webSocket, "key", "left", true); movePlayer("left"); break;
+				case 100: // d in wasd
+					websocketSend(webSocket, "key", "right", true); movePlayer("right"); break;
+				case 119: // w in wasd
+					websocketSend(webSocket, "key", "up", true); movePlayer("up"); break;
+				case 115: // s in wasd
+					websocketSend(webSocket, "key", "down", true); movePlayer("down"); break;
+			}
+		}
+	})
+
+	$(document).keyup(event => {
+		if (gameStart) {
+			switch(event.keyCode){
+				case 97: // a for wasd
+					websocketSend(webSocket, "key", "left", false); movePlayer("left"); break;
+				case 100: // d in wasd
+					websocketSend(webSocket, "key", "right", false); movePlayer("right"); break;
+				case 119: // w in wasd
+					websocketSend(webSocket, "key", "up", false); movePlayer("up"); break;
+				case 115: // s in wasd
+					websocketSend(webSocket, "key", "down", false); movePlayer("down"); break;
+			}
+		}
+	})
 
 	$(document).keypress(event => {
 		if (gameStart) {
-			keySend(event.keyCode, webSocket);
+			switch(event.keyCode){
+				case 32: // space bar for attack
+					websocketSend(webSocket, "key", "space", false); break;
+				case 102: // f for items
+					websocketSend(webSocket, "key", "f", false); break;
+				case 114: // r for radar
+					websocketSend(webSocket, "key", "r", false); break;
+			}
 		}
 	});
 });
 
+ 
+function websocketSend(webSocket, type, status, held) {
+	let x = {
+		type: type, 
+		status: status,
+		held: held
+	}
+	webSocket.send(JSON.stringify(x));
+}
 
 
 /*** CANVAS SPECIFIC FUNCTIONS ***/
@@ -153,24 +195,7 @@ function drawSquare(x, y, type) {
 	ctx.fill();
 }
 
-function keySend(code, webSocket) {
-	switch (code) {
-		case 97: // a for wasd
-			webSocket.send("left"); movePlayer("left"); break;
-		case 100: // d in wasd
-			webSocket.send("right"); movePlayer("right"); break;
-		case 119: // w in wasd
-			webSocket.send("up"); movePlayer("up"); break;
-		case 115: // s in wasd
-			webSocket.send("down"); movePlayer("down"); break;
-		case 32: // space bar for attack
-			webSocket.send("space"); break;
-		case 102: // f for items
-			webSocket.send("f"); break;
-		case 114: // r for radar
-			webSocket.send("r"); break;
-	}
-}
+
 
 /*** MISCELLANEOUS FUNCTIONS ***/
 

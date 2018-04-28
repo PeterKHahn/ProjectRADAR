@@ -18,7 +18,7 @@ public class GameLogger implements GameEventListener {
   }
 
   @Override
-  public void onGameChange(ChunkMap chunks) {
+  public void onGameChange(ChunkMap chunks, int id) {
     int tickCount = chunks.tickCount();
     Collection<Chunk> chunksInRange = chunks.chunksInRange(fromRow, toRow,
         fromCol, toCol);
