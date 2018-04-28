@@ -44,17 +44,8 @@ $(document).ready(() => {
     webSocket.onmessage = function (msg) {
     	console.log(JSON.parse(msg.data));
     	data = JSON.parse(msg.data);
-    	player = data.player;
-    	// let res = JSON.parse(msg);
-    	// if (res.kind === "gamePost") {
-    	// 	console.log("whomst")
-    	// }
-    	// if (res.kind === "gamePlayerList") {
-    	// 	for (let i = 0; i < res.players.length; i++) {
-    	// 		$("#users").append($("<li/>").html(res.players[i]));
-    	// 	}
-    	// }
-    	// updateChat(msg); 
+    	// player = data.player;
+    	// staticEntities = data.statics;
     };
 
     webSocket.onclose = function () { 
@@ -89,13 +80,13 @@ $(document).ready(() => {
 		if (gameStart) {
 			switch(event.keyCode){
 				case 97: // a for wasd
-					websocketSend(webSocket, "key", "left", false); movePlayer("left"); break;
+					websocketSend(webSocket, "key", "left", false); break;
 				case 100: // d in wasd
-					websocketSend(webSocket, "key", "right", false); movePlayer("right"); break;
+					websocketSend(webSocket, "key", "right", false); break;
 				case 119: // w in wasd
-					websocketSend(webSocket, "key", "up", false); movePlayer("up"); break;
+					websocketSend(webSocket, "key", "up", false); break;
 				case 115: // s in wasd
-					websocketSend(webSocket, "key", "down", false); movePlayer("down"); break;
+					websocketSend(webSocket, "key", "down", false); break;
 			}
 		}
 	})
@@ -135,23 +126,20 @@ function init() {
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-	// staticEntities = [
-	// 	{x:20, y:60, type:"weapon"},
-	// 	{x:420, y:390, type: "item"},
-	// 	{x: 333, y:270, type:"deco"},
-	// 	{x: 700, y:270, type:"item"},
-	// 	{x: 1000, y:270, type:"weapon"}
-	// ];
-	// //TESTING DUMMY PLAYER
-	// player = {
-	// 	x: 100,
-	// 	y: 200
-	// }
-	console.log("player position is now (" + player.x + ", " + player.y + ")");
-	determineOffset();
+	staticEntities = [
+		{x:20, y:60, type:"weapon"},
+		{x:420, y:390, type: "item"},
+		{x: 333, y:270, type:"deco"},
+		{x: 700, y:270, type:"item"},
+		{x: 1000, y:270, type:"weapon"}
+	];
+	//TESTING DUMMY PLAYER
+	player = {
+		x: 100,
+		y: 200
+	}
 	drawPlayer();
 	drawStatic();
-
 };
 
 function drawPlayer() {
@@ -165,19 +153,19 @@ function drawPlayer() {
 function movePlayer(direction) {
 	switch(direction) {
 		case "left":
-			player.x=player.x-10;
+			player.center.x=player.center.x-10;
 			offsetX+=10; break;
 		case "right":
-			player.x=player.x+10;
+			player.center.x=player.center.x+10;
 			offsetX-=10; break;
 		case "up":
-			player.y=player.y-10;
+			player.center.y=player.center.y-10;
 			offsetY+=10; break;
 		case "down":
-			player.y=player.y+10;
+			player.center.y=player.center.y+10;
 			offsetY-=10; break;
 	}
-	console.log("player position is now (" + player.x + ", " + player.y + ")");
+	console.log("player position is now (" + player.center.x + ", " + player.center.y + ")");
 	clearCanvas();
 	drawStatic();
 	drawPlayer();
@@ -215,9 +203,14 @@ function drawSquare(x, y, type) {
 
 /*** MISCELLANEOUS FUNCTIONS ***/
 
+function drawHP() {
+	player.center.hp;
+}
+
 function determineOffset() {
-	 offsetX = player.x - c.width/2;
-	 offsetY = convertToCoord(player.y) - c.height/2;
+     console.log(player);
+	 offsetX = player.center.x - c.width/2;
+	 offsetY = convertToCoord(player.center.y) - c.height/2;
 	// figure out upper right of shrunk map
 	// that is the offset, subtract from each number
 }
