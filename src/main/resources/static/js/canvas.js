@@ -100,7 +100,6 @@ $(document).ready(() => {
 	})
 
 	$(document).keypress(event => {
-        console.log(event.keyCode)
 		if (gameStart) {
 			switch(event.keyCode){
 				case 32: // space bar for attack
@@ -135,18 +134,18 @@ function init() {
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-	staticEntities = [
-		{x:20, y:60, type:"weapon"},
-		{x:420, y:390, type: "item"},
-		{x: 333, y:270, type:"deco"},
-		{x: 700, y:270, type:"item"},
-		{x: 1000, y:270, type:"weapon"}
-	];
-	//TESTING DUMMY PLAYER
-	player = {
-		x: 100,
-		y: 200
-	}
+	// staticEntities = [
+	// 	{x:20, y:60, type:"weapon"},
+	// 	{x:420, y:390, type: "item"},
+	// 	{x: 333, y:270, type:"deco"},
+	// 	{x: 700, y:270, type:"item"},
+	// 	{x: 1000, y:270, type:"weapon"}
+	// ];
+	// //TESTING DUMMY PLAYER
+	// player = {
+	// 	x: 100,
+	// 	y: 200
+	// }
 	console.log("player position is now (" + player.x + ", " + player.y + ")");
 	determineOffset();
 	drawPlayer();
@@ -232,6 +231,7 @@ function drawStatic() {
 	}
 }
 
+// TODO FIGURE THIS OUT
 function convertToCoord(y) {
 	return -1*y;
 }
