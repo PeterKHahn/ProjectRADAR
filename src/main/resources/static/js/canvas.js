@@ -74,8 +74,23 @@ $(document).ready(() => {
 
 	/*** Interpreting keypress events ***/
 
+
+	// $(document).keydown(event => {
+ //        console.log(event.keyCode)
+	// 	if (gameStart) {
+	// 		keySend(event.keyCode, webSocket);
+	// 	}
+	// });
+
+	// $(document).keyup(event => {
+ //        console.log(event.keyCode)
+	// 	if (gameStart) {
+	// 		keySend(event.keyCode, webSocket);
+	// 	}
+	// });
+
+
 	$(document).keypress(event => {
-        console.log(event.keyCode)
 		if (gameStart) {
 			keySend(event.keyCode, webSocket);
 		}
@@ -208,6 +223,7 @@ function drawStatic() {
 	}
 }
 
+// TODO FIGURE THIS OUT
 function convertToCoord(y) {
 	return -1*y;
 }

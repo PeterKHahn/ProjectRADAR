@@ -43,7 +43,7 @@ public class DefaultWeapon extends Weapon {
   }
 
   @Override
-  public boolean isActive() {
+  public boolean isHitboxActive() {
     return false;
   }
 

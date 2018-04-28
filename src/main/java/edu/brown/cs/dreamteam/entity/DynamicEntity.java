@@ -20,9 +20,6 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
  */
 public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
-  private double xVelocity;
-  private double yVelocity;
-
   private Vector velocityVector;
 
   private double speed = 1;
@@ -48,7 +45,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   public DynamicEntity(String id, double x, double y, double radius) {
     super(id);
     this.radius = radius;
-    this.velocityVector = new Vector(x, y);
+    this.velocityVector = new Vector(0, 0);
     this.center = new Vector(x, y);
     this.collisionBox = new BoxSet(new Box(radius));
     init();
@@ -66,6 +63,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * Updates the position given the dynamic entity's velocity.
    */
   public void updatePosition(ChunkMap chunks) {
+    System.out.println(velocityVector);
     Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
 
     for (Chunk chunk : chunksNear) {
@@ -152,9 +150,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * 
    */
   protected void updateDynamic(int vertCoeff, int horzCoeff) {
+    velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
 
-    this.xVelocity = horzCoeff * speed;
-    this.yVelocity = horzCoeff * speed;
   }
 
   /**
@@ -163,7 +160,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @return the x velocity of the entity
    */
   public double getXVelocity() {
-    return xVelocity;
+    return velocityVector.x;
   }
 
   /**
@@ -172,7 +169,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @return the y velocity of the entity
    */
   public double getYVelocity() {
-    return yVelocity;
+    return velocityVector.y;
   }
 
   /**
