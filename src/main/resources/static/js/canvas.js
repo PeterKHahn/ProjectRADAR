@@ -41,6 +41,7 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	console.log(JSON.parse(msg.data)); 
+    	data = JSON.parse(msg.data);
     	player = data.player;
     };
 
