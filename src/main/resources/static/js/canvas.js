@@ -44,8 +44,8 @@ $(document).ready(() => {
     webSocket.onmessage = function (msg) {
     	console.log(JSON.parse(msg.data));
     	data = JSON.parse(msg.data);
-    	// player = data.player;
-    	// staticEntities = data.statics;
+    	player = data.player;
+    	staticEntities = data.statics;
     };
 
     webSocket.onclose = function () { 
@@ -126,20 +126,20 @@ function init() {
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-	staticEntities = [
-		{x:20, y:60, type:"weapon"},
-		{x:420, y:390, type: "item"},
-		{x: 333, y:270, type:"deco"},
-		{x: 700, y:270, type:"item"},
-		{x: 1000, y:270, type:"weapon"}
-	];
-	//TESTING DUMMY PLAYER
-	player = {
-		x: 100,
-		y: 200
-	}
+	// staticEntities = [
+	// 	{x:20, y:60, type:"weapon"},
+	// 	{x:420, y:390, type: "item"},
+	// 	{x: 333, y:270, type:"deco"},
+	// 	{x: 700, y:270, type:"item"},
+	// 	{x: 1000, y:270, type:"weapon"}
+	// ];
+	// //TESTING DUMMY PLAYER
+	// player = {
+	// 	x: 100,
+	// 	y: 200
+	// }
 	drawPlayer();
-	drawStatic();
+	// drawStatic();
 };
 
 function drawPlayer() {
@@ -221,7 +221,7 @@ function validMovement() {
 
 function drawStatic() {
 	for (let i = 0; i < staticEntities.length; i++) {
-		drawSquare(staticEntities[i].x+offsetX, staticEntities[i].y+offsetY, staticEntities[i].type);		
+		drawSquare(staticEntities[i].center.x+offsetX, staticEntities[i].center.y+offsetY, staticEntities[i].type);		
 	}
 }
 
