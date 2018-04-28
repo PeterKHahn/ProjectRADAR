@@ -12,7 +12,7 @@
  
      <#list roomIDs as ID>
   		 ${ID?counter}: <a href="/game/${ID}/${codename}"> ${ID} </a> <br>
-	 </#list>
+	   </#list>
 
      <p id="result">  </p>
   </body>

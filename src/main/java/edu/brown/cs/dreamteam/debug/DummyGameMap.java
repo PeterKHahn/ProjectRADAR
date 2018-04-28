@@ -18,7 +18,6 @@ public class DummyGameMap implements GameMap {
     z.add(x);
     z.add(y);
     return z;
-
   }
 
 }
