@@ -32,7 +32,6 @@ $(document).ready(() => {
 
     //starts game when start button clicked.
     $("#start").click(event => {
-    	let status = {status: "start"};
     	websocketSend(webSocket, "game", "start", false);
     	$("#waitingRoom").fadeOut();
     	$("#game").fadeIn();
@@ -42,26 +41,13 @@ $(document).ready(() => {
 
 
     webSocket.onmessage = function (msg) {
-    	console.log(JSON.parse(msg.data));
-    	// let res = JSON.parse(msg);
-    	// if (res.kind === "gamePost") {
-    	// 	console.log("whomst")
-    	// }
-    	// if (res.kind === "gamePlayerList") {
-    	// 	for (let i = 0; i < res.players.length; i++) {
-    	// 		$("#users").append($("<li/>").html(res.players[i]));
-    	// 	}
-    	// }
-    	// updateChat(msg); 
+    	console.log(JSON.parse(msg.data)); 
     };
 
     webSocket.onclose = function () { 
     	console.log("websocket connection closed.")
-    	// alert("WebSocket connection closed") 
     };
-    // Show a connected message when the WebSocket is opened.
 	
-	// Handle any errors that occur.
 	webSocket.onerror = function(error) {
 	  console.log(error);
 	  console.log('WebSocket Error: ' + error);
@@ -72,13 +58,22 @@ $(document).ready(() => {
 		if (gameStart) {
 			switch(event.keyCode){
 				case 97: // a for wasd
-					websocketSend(webSocket, "key", "left", true); movePlayer("left"); break;
+					console.log("hewwooo")
+					websocketSend(webSocket, "key", "left", true); 
+					movePlayer("left"); 
+					break;
 				case 100: // d in wasd
-					websocketSend(webSocket, "key", "right", true); movePlayer("right"); break;
+					websocketSend(webSocket, "key", "right", true); 
+					movePlayer("right"); 
+					break;
 				case 119: // w in wasd
-					websocketSend(webSocket, "key", "up", true); movePlayer("up"); break;
+					websocketSend(webSocket, "key", "up", true); 
+					movePlayer("up"); 
+					break;
 				case 115: // s in wasd
-					websocketSend(webSocket, "key", "down", true); movePlayer("down"); break;
+					websocketSend(webSocket, "key", "down", true); 
+					movePlayer("down"); 
+					break;
 			}
 		}
 	})
@@ -86,14 +81,20 @@ $(document).ready(() => {
 	$(document).keyup(event => {
 		if (gameStart) {
 			switch(event.keyCode){
+
 				case 97: // a for wasd
-					websocketSend(webSocket, "key", "left", false); movePlayer("left"); break;
+					console.log("hewwo")
+					websocketSend(webSocket, "key", "left", false); 
+					break;
 				case 100: // d in wasd
-					websocketSend(webSocket, "key", "right", false); movePlayer("right"); break;
+					websocketSend(webSocket, "key", "right", false); 
+					break;
 				case 119: // w in wasd
-					websocketSend(webSocket, "key", "up", false); movePlayer("up"); break;
+					websocketSend(webSocket, "key", "up", false); 
+					break;
 				case 115: // s in wasd
-					websocketSend(webSocket, "key", "down", false); movePlayer("down"); break;
+					websocketSend(webSocket, "key", "down", false); 
+					break;
 			}
 		}
 	})
