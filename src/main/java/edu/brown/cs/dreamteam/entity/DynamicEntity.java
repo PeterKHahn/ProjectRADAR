@@ -1,11 +1,11 @@
 package edu.brown.cs.dreamteam.entity;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 
 import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.CollisionBoxed;
-import edu.brown.cs.dreamteam.box.Point;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
@@ -20,14 +20,11 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
  */
 public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
-  private double xVelocity;
-  private double yVelocity;
-
   private Vector velocityVector;
 
   private double speed = 1;
   private double radius;
-  private Point center;
+  private Vector center;
 
   private BoxSet collisionBox;
 
@@ -48,9 +45,9 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   public DynamicEntity(String id, double x, double y, double radius) {
     super(id);
     this.radius = radius;
-    this.velocityVector = new Vector(x, y);
-    this.center = new Point(x, y);
-    this.collisionBox = new BoxSet(new Box(x, y, radius));
+    this.velocityVector = new Vector(0, 0);
+    this.center = new Vector(x, y);
+    this.collisionBox = new BoxSet(new Box(radius));
     init();
   }
 
@@ -62,15 +59,11 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
     return 2 * speed;
   }
 
-  @Override
-  public void tick(ChunkMap chunks) {
-    updatePosition(chunks);
-  }
-
   /**
    * Updates the position given the dynamic entity's velocity.
    */
   public void updatePosition(ChunkMap chunks) {
+    System.out.println(velocityVector);
     Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
 
     for (Chunk chunk : chunksNear) {
@@ -95,8 +88,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   }
 
   public void changePosition(Vector v) {
-    collisionBox.move(v);
-    center = center.move(v);
+    center = center.add(v);
   }
 
   /**
@@ -111,11 +103,19 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
     double minT = 1;
 
-    for (Box dynamicBox : collisionBox.boxes()) {
-      for (Box staticBox : staticBoxSet.boxes()) {
-        Point center = staticBox.center();
-        Vector u2 = new Vector(center);
-        Vector u1 = new Vector(dynamicBox.center());
+    for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
+      for (Entry<Box, Vector> staticBoxEntry : staticBoxSet.boxes()
+          .entrySet()) {
+        Box dynamicBox = dynamicBoxEntry.getKey();
+        Box staticBox = staticBoxEntry.getKey();
+
+        Vector dynamicCenter = center.add(collisionBoxOffset())
+            .add(dynamicBoxEntry.getValue());
+
+        Vector staticCenter = center.add(collisionBoxOffset())
+            .add(staticBoxEntry.getValue());
+        Vector u1 = dynamicCenter;
+        Vector u2 = staticCenter;
 
         Vector u3 = u2.subtract(u1);
         double time = u3.projectOntoMagnitude(this.velocityVector);
@@ -150,9 +150,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * 
    */
   protected void updateDynamic(int vertCoeff, int horzCoeff) {
+    velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
 
-    this.xVelocity = horzCoeff * speed;
-    this.yVelocity = horzCoeff * speed;
   }
 
   /**
@@ -161,7 +160,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @return the x velocity of the entity
    */
   public double getXVelocity() {
-    return xVelocity;
+    return velocityVector.x;
   }
 
   /**
@@ -170,7 +169,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * @return the y velocity of the entity
    */
   public double getYVelocity() {
-    return yVelocity;
+    return velocityVector.y;
   }
 
   /**
@@ -199,13 +198,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   }
 
   @Override
-  public double reach() {
-    double tmp = DreamMath.max(this.collisionBox().reach());
-    return tmp + radius + speedCap();
-  }
-
-  @Override
-  public Point center() {
+  public Vector center() {
     return center;
   }
 

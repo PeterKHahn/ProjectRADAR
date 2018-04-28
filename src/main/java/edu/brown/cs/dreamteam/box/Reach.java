@@ -4,6 +4,4 @@ public interface Reach {
 
   public double reach();
 
-  public Point center();
-
 }

@@ -1,8 +1,7 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, staticEntities, name;
-// CHANGE THIS TO FALSE LATER.
+let c, ctx, offsetX, offsetY, mapHeight, staticEntities, data, player, name;
 let gameStart = false;
 
 $(document).ready(() => {
@@ -42,6 +41,7 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	console.log(JSON.parse(msg.data)); 
+    	player = data.player;
     };
 
     webSocket.onclose = function () { 
@@ -100,6 +100,7 @@ $(document).ready(() => {
 	})
 
 	$(document).keypress(event => {
+        console.log(event.keyCode)
 		if (gameStart) {
 			switch(event.keyCode){
 				case 32: // space bar for attack
@@ -137,10 +138,19 @@ function init() {
 	staticEntities = [
 		{x:20, y:60, type:"weapon"},
 		{x:420, y:390, type: "item"},
-		{x: 333, y:270, type:"deco"}
+		{x: 333, y:270, type:"deco"},
+		{x: 700, y:270, type:"item"},
+		{x: 1000, y:270, type:"weapon"}
 	];
+	//TESTING DUMMY PLAYER
+	player = {
+		x: 100,
+		y: 200
+	}
+	console.log("player position is now (" + player.x + ", " + player.y + ")");
+	determineOffset();
 	drawPlayer();
-	drawDummies();
+	drawStatic();
 
 };
 
@@ -155,16 +165,21 @@ function drawPlayer() {
 function movePlayer(direction) {
 	switch(direction) {
 		case "left":
+			player.x=player.x-10;
 			offsetX+=10; break;
 		case "right":
+			player.x=player.x+10;
 			offsetX-=10; break;
 		case "up":
+			player.y=player.y-10;
 			offsetY+=10; break;
 		case "down":
+			player.y=player.y+10;
 			offsetY-=10; break;
 	}
+	console.log("player position is now (" + player.x + ", " + player.y + ")");
 	clearCanvas();
-	drawDummies();
+	drawStatic();
 	drawPlayer();
 }
 
@@ -201,6 +216,8 @@ function drawSquare(x, y, type) {
 /*** MISCELLANEOUS FUNCTIONS ***/
 
 function determineOffset() {
+	 offsetX = player.x - c.width/2;
+	 offsetY = convertToCoord(player.y) - c.height/2;
 	// figure out upper right of shrunk map
 	// that is the offset, subtract from each number
 }
@@ -209,14 +226,14 @@ function validMovement() {
 	// is the player movement going to go out of bounds?
 }
 
-function drawDummies() {
-	drawSquare(staticEntities[0].x+offsetX, staticEntities[0].y+offsetY, staticEntities[0].type);
-	drawSquare(staticEntities[1].x+offsetX, staticEntities[1].y+offsetY, staticEntities[1].type);
-	drawSquare(staticEntities[2].x+offsetX, staticEntities[2].y+offsetY, staticEntities[2].type);
+function drawStatic() {
+	for (let i = 0; i < staticEntities.length; i++) {
+		drawSquare(staticEntities[i].x+offsetX, staticEntities[i].y+offsetY, staticEntities[i].type);		
+	}
 }
 
 function convertToCoord(y) {
-	y = mapHeight - y;
+	return -1*y;
 }
 
 

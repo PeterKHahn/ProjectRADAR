@@ -1,7 +1,7 @@
 package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.CollisionBoxed;
-import edu.brown.cs.dreamteam.box.Point;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 
 /**
  * A StaticEntity is a Rectangular entity that does not change position.
@@ -11,17 +11,17 @@ import edu.brown.cs.dreamteam.box.Point;
  */
 public abstract class StaticEntity extends Entity implements CollisionBoxed {
 
-  private Point center;
+  private Vector center;
   private double radius;
 
-  public StaticEntity(String id, Point center, double radius) {
+  public StaticEntity(String id, Vector center, double radius) {
     super(id);
     this.center = center;
     this.radius = radius;
   }
 
   @Override
-  public Point center() {
+  public Vector center() {
     return center;
   }
 
