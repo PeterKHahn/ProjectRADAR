@@ -17,6 +17,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import edu.brown.cs.dreamteam.debug.DummyGameMap;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
@@ -99,7 +100,8 @@ public class SystemArchitect extends Architect {
   }
 
   @Override
-  public void onGameChange(ChunkMap chunks) {
+  public void onGameChange(ChunkMap chunks, int id) {
+    System.out.println("trying to run thread " + id);
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
     int once = 0;
@@ -149,60 +151,76 @@ public class SystemArchitect extends Architect {
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
       System.out.println(Messenger.sessionUserMap.get(user));
-
+      JsonObject received = GSON.fromJson(message, JsonObject.class);
       ClientState c = null;
-      switch (message) {
-        case "start":
+      switch (received.get("type").getAsString()) {
+        case "name":
+          break;
+        case "game":
           GameEngine engine = GameBuilder.create(a)
               .addHumanPlayer(GamePlayer
                   .player(Messenger.sessionUserMap.get(user), 0.0, 0.0))
               .generateMap(new DummyGameMap()).complete();
           new Thread(engine).start();
           if (Messenger.sessionUserMap.get(user) == null) {
-            System.out.println("get fuckt");
+            System.out.println("CANT FIND THIS USER SUM TING WONG");
           }
           putClientState(Messenger.sessionUserMap.get(user),
               new ClientState(Messenger.sessionUserMap.get(user)));
-
           break;
-        case "left":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            c.leftHeld(true);
+        case "key":
+          switch (received.get("status").getAsString()) {
+            case "left":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                c.leftHeld(received.get("held").getAsBoolean());
+              }
+              break;
+            case "right":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                c.rightHeld(received.get("held").getAsBoolean());
+              }
+              break;
+            case "up":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                c.forwardHeld(received.get("held").getAsBoolean());
+              }
+              break;
+            case "down":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                c.backwardHeld(received.get("held").getAsBoolean());
+              }
+            case "space":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                c.primaryAction(true);
+              }
+              break;
+            case "f":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                c.itemPicked(true);
+              }
+              break;
+            case "r":
+              c = clientStates.get(Messenger.sessionUserMap.get(user));
+              if (c != null) {
+                // TODO: talk to peter.
+                // c.itemDropped(true);
+              }
           }
           break;
-        case "right":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            c.rightHeld(true);
-          }
-          break;
-        case "up":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            c.forwardHeld(true);
-          }
-          break;
-        case "down":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            c.backwardHeld(true);
-          }
-        case "space":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            c.primaryAction(true);
-          }
-          break;
-        case "f":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            c.itemPicked(true);
-          }
+        default:
+          System.out.println("hewwo");
           break;
       }
 
-      if (c != null) {
+      if (c != null)
+
+      {
         clientStates.put(Messenger.sessionUserMap.get(user), c);
       }
 
@@ -226,50 +244,6 @@ public class SystemArchitect extends Architect {
       return new ModelAndView(variables, "game.ftl");
     }
   }
-  //
-  // /**
-  // * the handler for on start of the homepage.
-  // *
-  // * @author anina
-  // */
-  // private class JoinHandler implements TemplateViewRoute {
-  //
-  // @Override
-  // public ModelAndView handle(Request arg0, Response arg1) throws Exception {
-  // QueryParamsMap qm = arg0.queryMap();
-  // List<String> room = new ArrayList<>(rooms.getNotPlayingYetRoomIDs());
-  // String codename = qm.value("codename");
-  // if (codename == null || codename.equals("")) {
-  // codename = "Guest";
-  // }
-  // Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-  // .put("title", "Join R.A.D.A.R.").put("codename", codename)
-  // .put("roomIDs", room).build();
-  // return new ModelAndView(variables, "join.ftl");
-  // }
-  // }
-  //
-  // /**
-  // * the handler for on start of the homepage.
-  // *
-  // * @author anina
-  // */
-  // private class CreateHandler implements TemplateViewRoute {
-  //
-  // @Override
-  // public ModelAndView handle(Request arg0, Response arg1) throws Exception {
-  // String newRoomID = rooms.generateNewRoom();
-  // QueryParamsMap qm = arg0.queryMap();
-  // String codename = qm.value("codename");
-  // if (codename == null || codename.equals("")) {
-  // codename = "Guest";
-  // }
-  // Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-  // .put("title", "Create R.A.D.A.R.").put("codename", codename)
-  // .put("newRoomID", newRoomID).build();
-  // return new ModelAndView(variables, "create.ftl");
-  // }
-  // }
 
   /**
    * the handler for on start of the homepage.

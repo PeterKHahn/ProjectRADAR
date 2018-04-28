@@ -4,7 +4,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 
 public class Box implements Reach {
 
-  private double radius;
+  private final double radius;
 
   /**
    * Constructor for a box that takes a point and a radius.

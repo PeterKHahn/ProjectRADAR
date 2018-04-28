@@ -1,12 +1,9 @@
 package edu.brown.cs.dreamteam.weapon;
 
 import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.item.InventoryItem;
 
-public abstract class Weapon implements HitBoxed {
-
-  public Weapon() {
-
-  }
+public abstract class Weapon extends InventoryItem implements HitBoxed {
 
   public abstract void fire();
 

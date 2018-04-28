@@ -4,7 +4,7 @@ import edu.brown.cs.dreamteam.game.Inventory;
 
 public class WeaponHandler {
 
-  public void add(Inventory inventory, String item) {
+  public void add(Inventory inventory, Item item) {
 
   }
 

@@ -8,9 +8,9 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 
 public class BoxSet implements Reach {
 
-  private Map<Box, Vector> boxes;
+  private final Map<Box, Vector> boxes;
 
-  private double reach;
+  private final double reach;
 
   /**
    * The BoxSet constructor that is just a box.
@@ -34,10 +34,12 @@ public class BoxSet implements Reach {
    */
   public BoxSet(Map<Box, Vector> boxes) {
     this.boxes = boxes;
+    double reach = 0;
     for (Entry<Box, Vector> box : boxes.entrySet()) {
       double tmp = box.getValue().magnitude() + box.getKey().radius();
       reach = Math.max(reach, tmp);
     }
+    this.reach = reach;
   }
 
   private void init() {
