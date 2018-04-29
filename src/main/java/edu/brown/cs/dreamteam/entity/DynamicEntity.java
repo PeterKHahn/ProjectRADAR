@@ -67,9 +67,9 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
     Logger.logDebug(center.toString());
     Collection<Chunk> chunksNear = chunks.chunksInRange(this);
 
-    for (Chunk chunk : chunksNear) {
-      chunk.removeDynamic(this);
-    }
+    /*
+     * for (Chunk chunk : chunksNear) { chunk.removeDynamic(this); }
+     */
 
     Collection<CollisionBoxed> collidables = chunks
         .getCollisionedFromChunks(chunksNear);
@@ -80,6 +80,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         continue;
       }
       double res = handleDynamicCollision(c);
+
       minT = Math.min(res, minT);
     }
 
@@ -87,7 +88,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
     Collection<Chunk> newChunks = chunks.chunksInRange(this);
 
-    chunks.addDynamic(this, newChunks);
+    // chunks.addDynamic(this, newChunks);
   }
 
   public void changePosition(Vector v) {
@@ -109,8 +110,6 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
     for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
       for (Entry<Box, Vector> staticBoxEntry : staticBoxSet.boxes()
           .entrySet()) {
-        Logger.logDebug("Testing for collision...");
-
         Box dynamicBox = dynamicBoxEntry.getKey();
         Box staticBox = staticBoxEntry.getKey();
 
@@ -121,7 +120,9 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
             .add(staticBoxEntry.getValue());
 
         Logger.logDebug("Dynamic Center: " + dynamicCenter);
+        Logger.logDebug("Dynamic Radius: " + dynamicBox.radius());
         Logger.logDebug("Static Center: " + staticCenter);
+        Logger.logDebug("Static Center: " + staticBox.radius());
 
         Logger.logDebug(
             "Distance between: " + dynamicCenter.distance(staticCenter));
@@ -129,10 +130,11 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
 
-        Vector u3 = u2.subtract(u1);
+        Vector u3 = u2.subtract(u1); // Difference vector
         double time = u3.projectOntoMagnitude(this.velocityVector);
 
         double timeOfMinimumDistance = timeClamp.clamp(time);
+        Logger.logDebug("Time of Minimum Distance: " + timeOfMinimumDistance);
         Vector vPrime = velocityVector.scalarMultiply(timeOfMinimumDistance)
             .add(u1);
         double distanceSquared = vPrime.subtract(u2).magnitudeSquared();
@@ -140,15 +142,25 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
             + staticBox.radius()) * (dynamicBox.radius() + staticBox.radius());
         if (collides) {
           // calculate the maximum time before collision
-          double a = velocityVector.innerProduct(velocityVector);
-          double b = 2 * u3.innerProduct(velocityVector);
-          double c = u3.magnitudeSquared();
+          double sumRadiusSquared = (dynamicBox.radius() + staticBox.radius())
+              * (dynamicBox.radius() + staticBox.radius());
+
+          double a = velocityVector.magnitudeSquared();
+          double b = -2 * u3.innerProduct(velocityVector);
+          double c = u3.magnitudeSquared() - sumRadiusSquared;
 
           double tPrime = DreamMath.quadratic(a, b, c, true);
+          if (tPrime > 0) {
+            tPrime -= 0.0001; // Janky fix for now
+          }
           minT = Math.min(tPrime, minT);
 
         }
       }
+    }
+    if (minT < 1) {
+      Logger.logDebug("COLLISION, Vector: " + minT);
+
     }
 
     return minT;

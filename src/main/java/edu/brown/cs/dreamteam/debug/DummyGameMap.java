@@ -14,11 +14,11 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public Collection<Obstacle> getObstacles() {
-    Obstacle x = new Obstacle("x", new Vector(30, 30), 25);
-    Obstacle y = new Obstacle("y", new Vector(50, 50), 3);
+    Obstacle x = new Obstacle("x", new Vector(15, 15), 5);
+    // Obstacle y = new Obstacle("y", new Vector(50, 50), 3);
     List<Obstacle> z = new ArrayList<>();
     z.add(x);
-    z.add(y);
+    // z.add(y);
     return z;
   }
 
