@@ -1,15 +1,20 @@
 package edu.brown.cs.dreamteam.board;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-
+import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.graph.AStarSearch;
 import edu.brown.cs.dreamteam.graph.Path;
+import edu.brown.cs.dreamteam.kdtree.KDTree;
+import edu.brown.cs.dreamteam.utility.DreamMath;
 
 /**
  * Represents the game board as a graph with Positions as vertices and Moves as
@@ -21,7 +26,10 @@ public class Board {
   private final int width;
   private final int height;
   private AStarSearch<Position, Move> search;
-  private Map<List<Double>, Position> positions;
+  private KDTree<Position> tree;
+  private List<Position> positions;
+  private Map<Obstacle, List<Position>> obstacleCorners;
+  private ChunkMap initialMap;
 
   /**
    * Constructs the graph using the given entity information at the beginning of
@@ -31,27 +39,161 @@ public class Board {
    *          A ChunkMap containing all entities in the game.
    */
   public Board(ChunkMap chunks) {
-    width = chunks.getTotalWidth();
-    height = chunks.getTotalHeight();
+    initialMap = chunks;
+    width = chunks.getWidth();
+    height = chunks.getHeight();
     search = new AStarSearch<>();
-    constructGraph(chunks);
+    constructGraph();
   }
 
-  public Position addPosition(double x, double y) {
-    Position pos = new Position(x, y);
-    positions.put(ImmutableList.of(x, y), pos);
-    return pos;
+  private void constructGraph() {
+    obstacleCorners = new HashMap<>();
+    positions = new ArrayList<>();
+
+    // Get all obstacles from chunks
+    Collection<Obstacle> obstacles = initialMap.getObstaclesInRange(
+        initialMap.chunksInRange(0, height - 1, 0, width - 1));
+    List<Obstacle> addedObstacles = new ArrayList<>();
+
+    // Make positions at the edges of obstacles
+    Iterator<Obstacle> it = obstacles.iterator();
+    while (it.hasNext()) {
+      Obstacle obstacle = it.next();
+      positions.addAll(addObstacleCorners(addedObstacles, obstacle));
+    }
+
+    // Make positions at every chunk edge along the edges of the map
+    positions.addAll(makeMapEdgePositions());
+
+    tree = new KDTree<>(positions, 2);
   }
 
-  public void removePosition(double x, double y) {
-    positions.remove(ImmutableList.of(x, y));
+  private Collection<Position> makeMapEdgePositions() {
+    int chunkSize = initialMap.getChunkSize();
+    List<Position> added = new ArrayList<>();
+    // One new position at the border of every chunk on the edge of the map.
+    // Boundary condition is width - 1 to avoid double-counting the positions at
+    // the corners of the map
+    for (int i = 0; i < width - 1; i++) {
+      // Top edge
+      Position pos = new Position(i * chunkSize, 0);
+      addEdgesFor(pos, true);
+      added.add(pos);
+
+      // Right edge
+      pos = new Position(width * chunkSize, i * chunkSize);
+      addEdgesFor(pos, true);
+      added.add(pos);
+
+      // Bottom edge
+      pos = new Position(i * chunkSize, height * chunkSize);
+      addEdgesFor(pos, true);
+      added.add(pos);
+
+      // Left edge
+      pos = new Position(0, i * chunkSize);
+      addEdgesFor(pos, true);
+      added.add(pos);
+    }
+    return added;
   }
 
-  private void constructGraph(ChunkMap chunks) {
-    positions = new HashMap<>();
-    // Only make positions at the edges of obstacles and at every chunk border
-    // along the edges of the map
-    // TODO
+  private Collection<Position> addObstacleCorners(List<Obstacle> addedObstacles,
+      Obstacle obstacle) {
+    // Get the reach and center of the obstacle. Adds the AiPlayer size to the
+    // reach to ensure the player won't collide, because the available Positions
+    // represent where the center of the AiPlayer can traverse to
+    double reach = obstacle.reach() + AiController.AI_SIZE;
+    Vector center = obstacle.center();
+
+    // Make one Position at each corner, extending the circular collision box
+    // to a square
+    Position bottomLeft = new Position(center.x - reach, center.y - reach);
+    Position topLeft = new Position(center.x - reach, center.y + reach);
+    Position bottomRight = new Position(center.x + reach, center.y - reach);
+    Position topRight = new Position(center.x + reach, center.y + reach);
+    List<Position> corners = new ArrayList<>();
+    corners.add(bottomLeft);
+    corners.add(topLeft);
+    corners.add(bottomRight);
+    corners.add(topRight);
+    obstacleCorners.put(obstacle, corners);
+
+    // Add edges between the edges that don't cross the obstacle
+    bottomLeft.addEdge(topLeft);
+    bottomLeft.addEdge(bottomRight);
+    topLeft.addEdge(bottomLeft);
+    topLeft.addEdge(topRight);
+    bottomRight.addEdge(bottomLeft);
+    bottomRight.addEdge(topLeft);
+    topRight.addEdge(topLeft);
+    topRight.addEdge(bottomRight);
+
+    // Add edges between new corners and previous obstacles' corners in toAdd.
+    for (Obstacle otherObstacle : addedObstacles) {
+      // Add edges between each of the new corners and each of the corners of
+      // this obstacle as appropriate
+      addEdgeBetweenCorners(addedObstacles, otherObstacle, bottomLeft);
+      addEdgeBetweenCorners(addedObstacles, otherObstacle, topLeft);
+      addEdgeBetweenCorners(addedObstacles, otherObstacle, bottomRight);
+      addEdgeBetweenCorners(addedObstacles, otherObstacle, topRight);
+    }
+
+    return corners;
+  }
+
+  private void addEdgeBetweenCorners(List<Obstacle> addedObstacles,
+      Obstacle obstacle, Position curr) {
+    List<Position> corners = obstacleCorners.get(obstacle);
+    // Add edges against each of the corners
+    for (Position corner : corners) {
+      Vector dir = curr.subtract(corner);
+      boolean canAddEdge = true;
+      // Check whether any other obstacle is in the way
+      for (Obstacle otherObstacle : addedObstacles) {
+        if (obstacle != otherObstacle) {
+          canAddEdge = obstacleNotInLine(otherObstacle, corner, dir);
+        }
+      }
+      // No obstacles were in the way
+      if (canAddEdge) {
+        corner.addEdge(curr);
+        curr.addEdge(corner);
+      }
+    }
+  }
+
+  /**
+   * Checks whether a specific obstacle intersects with the given line segment.
+   * 
+   * @param obstacle
+   *          The obstacle we are looking at.
+   * @param start
+   *          The start position of the line segment.
+   * @param dir
+   *          The direction of the line segment that also defines the end of the
+   *          line segment.
+   * @return True if the obstacle does not intersect the line segment, false
+   *         otherwise.
+   */
+  private boolean obstacleNotInLine(Obstacle obstacle, Position start,
+      Vector dir) {
+    List<Position> checkCorners = obstacleCorners.get(obstacle);
+    Position bottomLeft = checkCorners.get(0);
+    Position topLeft = checkCorners.get(1);
+    Position bottomRight = checkCorners.get(2);
+    Position topRight = checkCorners.get(3);
+    if (DreamMath.doIntersect(bottomLeft,
+        new Vector(0, topLeft.y - bottomLeft.y), start, dir)
+        || DreamMath.doIntersect(bottomLeft,
+            new Vector(bottomRight.x - bottomLeft.x, 0), start, dir)
+        || DreamMath.doIntersect(topLeft, new Vector(topRight.x - topLeft.x, 0),
+            start, dir)
+        || DreamMath.doIntersect(bottomRight,
+            new Vector(0, topRight.y - bottomRight.y), start, dir)) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -60,11 +202,27 @@ public class Board {
    *
    * @param pos
    *          The Position to add edges to.
+   * @param reverse
+   *          Whether or not to also add edges from other positions with the
+   *          given position.
    */
-  private void addEdges(Position pos) {
-    // TODO Find which other positions have an unobstructed straight line
-    // distance from the given position, add Move and set weight to Euclidean
-    // distance
+  public void addEdgesFor(Position pos, boolean reverse) {
+    // Add edges to all other positions have an unobstructed straight line
+    // distance from the given position
+    Collection<Obstacle> obstacles = initialMap.getObstaclesInRange(
+        initialMap.chunksInRange(0, height - 1, 0, width - 1));
+    for (Position otherPos : positions) {
+      boolean canAddEdge = true;
+      for (Obstacle obstacle : obstacles) {
+        canAddEdge = obstacleNotInLine(obstacle, pos, otherPos.subtract(pos));
+      }
+      if (canAddEdge) {
+        pos.addEdge(otherPos);
+        if (reverse) {
+          otherPos.addEdge(pos);
+        }
+      }
+    }
   }
 
   /**
@@ -97,8 +255,17 @@ public class Board {
    *         defined by pos and dir.
    */
   public Position getEdgePosition(Position pos, Vector dir) {
-    // TODO
-    return null;
+    double xFactor = width - pos.x / dir.x;
+    double yFactor = width - pos.y / dir.y;
+    double factor = xFactor > yFactor ? yFactor : xFactor;
+
+    // Use the Position that is as close to either border as the center of
+    // the position we want to search for.
+    Position center = new Position(pos.x + factor * dir.x,
+        pos.y + factor * dir.y);
+
+    // Get the nearest neighbor to the center position
+    return tree.kNearestNeighbors(1, center, false).get(0);
   }
 
 }

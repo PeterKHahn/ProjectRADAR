@@ -12,6 +12,7 @@ import edu.brown.cs.dreamteam.box.CollisionBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
@@ -56,6 +57,14 @@ public class ChunkMap {
     totalWidth = width * chunkSize;
     totalHeight = height * chunkSize;
     init();
+  }
+
+  public int getWidth() {
+    return width;
+  }
+
+  public int getHeight() {
+    return height;
   }
 
   public int getTotalWidth() {
@@ -264,6 +273,24 @@ public class ChunkMap {
     Set<CollisionBoxed> res = new HashSet<CollisionBoxed>();
     for (Chunk c : chunks) {
       res.addAll(c.getCollisionBoxedEntities());
+    }
+
+    return res;
+  }
+
+  /**
+   * Gets all obstacles (CollisionBoxed objects that return true on call to
+   * isSolid) in the given collection of chunks.
+   *
+   * @return A Collection of Obstacles.
+   */
+  public Collection<Obstacle> getObstaclesInRange(Collection<Chunk> chunks) {
+    Collection<CollisionBoxed> collision = getCollisionedFromChunks(chunks);
+    Set<Obstacle> res = new HashSet<>();
+    for (CollisionBoxed entity : collision) {
+      if (entity.isSolid()) {
+        res.add((Obstacle) entity);
+      }
     }
 
     return res;

@@ -38,20 +38,21 @@ public class DefensiveStrategy extends Strategy {
     // Get the goal node to run to
     Vector escape = getEscapeDir(chunks);
     Vector position = player.center();
-    Position curr = board.addPosition(position.x, position.y);
+    Position curr = new Position(position.x, position.y);
+    board.addEdgesFor(curr, false);
     Position goal = board.getEdgePosition(curr, escape);
 
     // Get the next node to run to for the shortest path to the goal
     Position next = board.getMoveTo(curr, goal);
 
     // Update player to go in direction of next
-    double x = next.getX() - position.x;
+    double x = next.x - position.x;
     int horzCoeff = x < 0 ? (x > 0 ? 1 : 0) : -1;
-    double y = next.getY() - position.y;
+    double y = next.y - position.y;
     int vertCoeff = y < 0 ? (y > 0 ? 1 : 0) : -1;
     player.updateDynamic(vertCoeff, horzCoeff);
 
-    // TODO Attack while running away
+    // TODO Attack while running away?
 
   }
 

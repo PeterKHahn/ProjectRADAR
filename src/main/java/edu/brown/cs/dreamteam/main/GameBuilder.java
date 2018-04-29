@@ -10,6 +10,7 @@ import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameBuilder {
+  private static final int NUM_PLAYERS = 4;
 
   private int numHumanPlayers = 0;
   private Collection<GamePlayer> players;
@@ -59,7 +60,7 @@ public class GameBuilder {
 
   public GameEngine complete() {
     engine.makeBoard();
-    while (numHumanPlayers < 4) {
+    while (numHumanPlayers < NUM_PLAYERS) {
       engine.addAiPlayer(numHumanPlayers);
       numHumanPlayers++;
     }

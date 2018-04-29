@@ -16,7 +16,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * @author efu2
  */
 public class AiController {
-  private static final int AI_SIZE = 5;
+  public static final int AI_SIZE = 5;
 
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE, GOAL
