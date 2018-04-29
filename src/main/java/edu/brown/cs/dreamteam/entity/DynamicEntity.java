@@ -65,7 +65,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    */
   public void updatePosition(ChunkMap chunks) {
     Logger.logDebug(center.toString());
-    Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
+    Collection<Chunk> chunksNear = chunks.chunksInRange(this);
 
     for (Chunk chunk : chunksNear) {
       chunk.removeDynamic(this);
@@ -79,13 +79,15 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
       if (!c.isSolid()) {
         continue;
       }
-      double res = handleDynamicCollision(c.collisionBox());
+      double res = handleDynamicCollision(c);
       minT = Math.min(res, minT);
     }
 
     changePosition(velocityVector.scalarMultiply(minT));
 
-    chunks.addDynamic(this);
+    Collection<Chunk> newChunks = chunks.chunksInRange(this);
+
+    chunks.addDynamic(this, newChunks);
   }
 
   public void changePosition(Vector v) {
@@ -100,8 +102,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    *          The Set of Static BoxSets that we are colliding against
    * @return
    */
-  private double handleDynamicCollision(BoxSet staticBoxSet) {
-
+  private double handleDynamicCollision(CollisionBoxed collisionBoxed) {
+    BoxSet staticBoxSet = collisionBoxed.collisionBox();
     double minT = 1;
 
     for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
@@ -115,7 +117,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         Vector dynamicCenter = center.add(collisionBoxOffset())
             .add(dynamicBoxEntry.getValue());
 
-        Vector staticCenter = center.add(collisionBoxOffset())
+        Vector staticCenter = collisionBoxed.center().add(collisionBoxOffset())
             .add(staticBoxEntry.getValue());
 
         Logger.logDebug("Dynamic Center: " + dynamicCenter);

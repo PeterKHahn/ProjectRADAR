@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.box.CollisionBoxed;
+import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
@@ -123,10 +125,11 @@ public class ChunkMap {
    * @param player
    *          the game player to be added
    */
-  public void addPlayer(GamePlayer player) {
-
-    addDynamic(player);
+  public void addPlayer(GamePlayer player, Collection<Chunk> chunks) {
     players.put(player.getId(), player);
+    addDynamic(player, chunks);
+    addHitboxed(player, chunks);
+    addHurtboxed(player, chunks);
 
   }
 
@@ -136,8 +139,7 @@ public class ChunkMap {
    * @param dynamic
    *          The dynamic to be added
    */
-  public void addDynamic(DynamicEntity dynamic) {
-    Collection<Chunk> chunks = chunksInRange(dynamic);
+  public void addDynamic(DynamicEntity dynamic, Collection<Chunk> chunks) {
     for (Chunk c : chunks) {
       c.addDynamic(dynamic);
     }
@@ -150,8 +152,7 @@ public class ChunkMap {
    * @param staticEntity
    *          the staticEntity we are adding
    */
-  public void addStatic(StaticEntity staticEntity) {
-    Collection<Chunk> chunks = chunksInRange(staticEntity);
+  public void addStatic(StaticEntity staticEntity, Collection<Chunk> chunks) {
 
     Logger.logMessage(
         "Adding static entities to map across " + chunks.size() + " chunks.");
@@ -159,16 +160,41 @@ public class ChunkMap {
 
     for (Chunk c : chunks) {
       c.addStatic(staticEntity);
+      c.addCollisionBoxedEntities(staticEntity);
+
     }
     entities.put(staticEntity.getId(), staticEntity);
 
   }
 
-  private Collection<Chunk> chunksInRange(Entity e) {
-    double left = e.center().x - e.reach();
-    double right = e.center().x + e.reach();
-    double top = e.center().y + e.reach();
-    double bottom = e.center().y - e.reach();
+  public void addCollisioned(CollisionBoxed entity, Collection<Chunk> chunks) {
+    for (Chunk c : chunks) {
+      c.addCollisionBoxedEntities(entity);
+    }
+  }
+
+  public void addHitboxed(HitBoxed entity, Collection<Chunk> chunks) {
+    for (Chunk c : chunks) {
+      c.addHitBoxed(entity);
+    }
+  }
+
+  public void addHurtboxed(HurtBoxed entity, Collection<Chunk> chunks) {
+    for (Chunk c : chunks) {
+      c.addHurtBoxed(entity);
+    }
+  }
+
+  public Collection<Chunk> chunksInRange(Entity e) {
+    return chunksInRange(e, e.reach());
+
+  }
+
+  public Collection<Chunk> chunksInRange(Entity e, double radius) {
+    double left = e.center().x - radius;
+    double right = e.center().x + radius;
+    double top = e.center().y + radius;
+    double bottom = e.center().y - radius;
 
     int fromRow = getChunkRow(top);
     int toRow = getChunkRow(bottom);
@@ -176,7 +202,6 @@ public class ChunkMap {
     int toCol = getChunkCol(right);
 
     return chunksInRange(fromRow, toRow, fromCol, toCol);
-
   }
 
   /**
@@ -218,39 +243,6 @@ public class ChunkMap {
       res.addAll(c.getStaticEntities());
     }
     return res;
-  }
-
-  /**
-   * Gets all Chunks in a square box that are near a player, with a distance
-   * metric specified by radius.
-   * 
-   * @param player
-   *          The player to look around
-   * @param radius
-   *          the distance we are looking horizontally and vertically for chunks
-   * @return
-   */
-  public Collection<Chunk> getChunksNearDynamic(DynamicEntity player,
-      double radius) {
-    double xPos = player.center().x;
-    double yPos = player.center().y;
-
-    double leftBound = xPos - radius;
-    double rightBound = xPos + radius;
-    double upperBound = yPos + radius;
-    double lowerBound = yPos - radius;
-
-    int fromRow = getChunkRow(upperBound);
-    int toRow = getChunkRow(lowerBound);
-    int fromCol = getChunkCol(leftBound);
-    int toCol = getChunkCol(rightBound);
-
-    return chunksInRange(fromRow, toRow, fromCol, toCol);
-
-  }
-
-  public Collection<Chunk> getChunksNearDynamic(DynamicEntity dynamic) {
-    return getChunksNearDynamic(dynamic, dynamic.reach());
   }
 
   public Collection<CollisionBoxed> getCollisionedFromChunks(

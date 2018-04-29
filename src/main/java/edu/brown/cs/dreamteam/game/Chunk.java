@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.box.CollisionBoxed;
+import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.item.Item;
@@ -21,7 +23,9 @@ public class Chunk {
   private Set<StaticEntity> staticEntities;
   private Set<Item> items;
 
-  private Set<CollisionBoxed> collisionBoxedEntities;
+  private Set<CollisionBoxed> collisionBoxed;
+  private Set<HitBoxed> hitBoxed;
+  private Set<HurtBoxed> hurtBoxed;
 
   private int row;
   private int col;
@@ -44,7 +48,9 @@ public class Chunk {
   private void init() {
     dynamicEntities = new HashSet<DynamicEntity>();
     staticEntities = new HashSet<StaticEntity>();
-    collisionBoxedEntities = new HashSet<>();
+    collisionBoxed = new HashSet<>();
+    hitBoxed = new HashSet<>();
+    hurtBoxed = new HashSet<>();
 
   }
 
@@ -59,12 +65,12 @@ public class Chunk {
   /**
    * Adds a DynamicEntity to the Chunk.
    *
-   * @param d
+   * @param dynamimc
    *          The dynamic entity we are adding
    */
   public void addDynamic(DynamicEntity dynamic) {
     dynamicEntities.add(dynamic);
-    collisionBoxedEntities.add(dynamic);
+    collisionBoxed.add(dynamic);
   }
 
   /**
@@ -75,7 +81,7 @@ public class Chunk {
    */
   public void removeDynamic(DynamicEntity dynamic) {
     dynamicEntities.remove(dynamic);
-    collisionBoxedEntities.remove(dynamic);
+    collisionBoxed.remove(dynamic);
   }
 
   /**
@@ -97,8 +103,28 @@ public class Chunk {
     return staticEntities;
   }
 
+  public void addCollisionBoxedEntities(CollisionBoxed entity) {
+    collisionBoxed.add(entity);
+  }
+
   public Collection<CollisionBoxed> getCollisionBoxedEntities() {
-    return collisionBoxedEntities;
+    return collisionBoxed;
+  }
+
+  public void addHitBoxed(HitBoxed entity) {
+    hitBoxed.add(entity);
+  }
+
+  public Collection<HitBoxed> getHitboxed() {
+    return hitBoxed;
+  }
+
+  public void addHurtBoxed(HurtBoxed entity) {
+    hurtBoxed.add(entity);
+  }
+
+  public Collection<HurtBoxed> getHurtBoxed() {
+    return hurtBoxed;
   }
 
   /**

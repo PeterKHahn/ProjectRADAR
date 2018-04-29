@@ -107,7 +107,7 @@ public class SystemArchitect extends Architect {
     int once = 0;
     for (GamePlayer p : movingThings) {
       once++;
-      Collection<Chunk> chunksNeeded = chunks.getChunksNearDynamic(p, radius);
+      Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
           .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
