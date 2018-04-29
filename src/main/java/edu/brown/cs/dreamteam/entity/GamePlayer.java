@@ -1,5 +1,8 @@
 package edu.brown.cs.dreamteam.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
@@ -8,10 +11,6 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.utility.DreamMath;
 
-import java.util.HashSet;
-import java.util.Set;
-
-
 /**
  * The internal representation of a player in the Game.
  * 
@@ -19,8 +18,6 @@ import java.util.Set;
  *
  */
 public class GamePlayer extends DynamicEntity implements HitBoxed {
-
-  private static final int size = 5;
 
   private boolean itemPickedFlag;
   private Set<Integer> itemsDropped;
@@ -48,7 +45,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
    *          the y position to start
    */
   public GamePlayer(String id, double xPos, double yPos) {
-    super(id, xPos, yPos, size);
+    super(id, xPos, yPos, DynamicEntity.PLAYER_SIZE);
     this.setType("HUMAN");
 
     init();
@@ -141,7 +138,8 @@ public class GamePlayer extends DynamicEntity implements HitBoxed {
   public double reach() {
     double tmp = DreamMath.max(
         this.collisionBox().reach() + collisionBoxOffset().magnitude(),
-        this.hitBox().reach() + hitBoxOffset().magnitude(), size);
+        this.hitBox().reach() + hitBoxOffset().magnitude(),
+        DynamicEntity.PLAYER_SIZE);
     return tmp + speedCap();
   }
 

@@ -16,7 +16,6 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * @author efu2
  */
 public class AiController {
-  public static final int AI_SIZE = 5;
 
   private enum StrategyType {
     GATHER, OFFENSE, DEFENSE, GOAL
@@ -37,7 +36,7 @@ public class AiController {
    */
   public AiController(String id, Board board) {
     // TODO update starting position
-    player = new AiPlayer(id, 0, 0, AI_SIZE);
+    player = new AiPlayer(id, 0, 0, DynamicEntity.PLAYER_SIZE);
     player.setController(this);
 
     // Initialize strategies

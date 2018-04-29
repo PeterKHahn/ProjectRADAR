@@ -86,6 +86,9 @@ public class Chunk {
    */
   public void addStatic(StaticEntity staticEntity) {
     staticEntities.add(staticEntity);
+    if (staticEntity.isSolid()) {
+      collisionBoxedEntities.add(staticEntity);
+    }
   }
 
   /**

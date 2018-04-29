@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.graph.AStarSearch;
@@ -46,6 +46,10 @@ public class Board {
     constructGraph();
   }
 
+  public List<Position> getPositions() {
+    return positions;
+  }
+
   private void constructGraph() {
     obstacleCorners = new HashMap<>();
     positions = new ArrayList<>();
@@ -63,39 +67,38 @@ public class Board {
     }
 
     // Make positions at every chunk edge along the edges of the map
-    positions.addAll(makeMapEdgePositions());
+    makeMapEdgePositions();
 
-    tree = new KDTree<>(positions, 2);
+    tree = new KDTree<>(new ArrayList<>(positions), 2);
   }
 
-  private Collection<Position> makeMapEdgePositions() {
+  private void makeMapEdgePositions() {
     int chunkSize = initialMap.getChunkSize();
     List<Position> added = new ArrayList<>();
     // One new position at the border of every chunk on the edge of the map.
-    // Boundary condition is width - 1 to avoid double-counting the positions at
-    // the corners of the map
-    for (int i = 0; i < width - 1; i++) {
+    for (int i = 0; i < width; i++) {
       // Top edge
       Position pos = new Position(i * chunkSize, 0);
-      addEdgesFor(pos, true);
       added.add(pos);
 
       // Right edge
       pos = new Position(width * chunkSize, i * chunkSize);
-      addEdgesFor(pos, true);
       added.add(pos);
 
       // Bottom edge
       pos = new Position(i * chunkSize, height * chunkSize);
-      addEdgesFor(pos, true);
       added.add(pos);
 
       // Left edge
       pos = new Position(0, i * chunkSize);
-      addEdgesFor(pos, true);
       added.add(pos);
     }
-    return added;
+
+    // Add edges between newly added positions
+    positions.addAll(added);
+    for (Position pos : added) {
+      addEdgesFor(pos, true);
+    }
   }
 
   private Collection<Position> addObstacleCorners(List<Obstacle> addedObstacles,
@@ -103,7 +106,7 @@ public class Board {
     // Get the reach and center of the obstacle. Adds the AiPlayer size to the
     // reach to ensure the player won't collide, because the available Positions
     // represent where the center of the AiPlayer can traverse to
-    double reach = obstacle.reach() + AiController.AI_SIZE;
+    double reach = obstacle.reach() + DynamicEntity.PLAYER_SIZE;
     Vector center = obstacle.center();
 
     // Make one Position at each corner, extending the circular collision box
@@ -152,7 +155,10 @@ public class Board {
       // Check whether any other obstacle is in the way
       for (Obstacle otherObstacle : addedObstacles) {
         if (obstacle != otherObstacle) {
-          canAddEdge = obstacleNotInLine(otherObstacle, corner, dir);
+          if (!obstacleNotInLine(otherObstacle, corner, dir)) {
+            canAddEdge = false;
+            break;
+          }
         }
       }
       // No obstacles were in the way
@@ -201,7 +207,8 @@ public class Board {
    * not obstructed by an obstacle.
    *
    * @param pos
-   *          The Position to add edges to.
+   *          The Position to add edges to. Assumes that this position is not
+   *          inside of any obstacle.
    * @param reverse
    *          Whether or not to also add edges from other positions with the
    *          given position.
@@ -214,9 +221,12 @@ public class Board {
     for (Position otherPos : positions) {
       boolean canAddEdge = true;
       for (Obstacle obstacle : obstacles) {
-        canAddEdge = obstacleNotInLine(obstacle, pos, otherPos.subtract(pos));
+        if (!obstacleNotInLine(obstacle, pos, otherPos.subtract(pos))) {
+          canAddEdge = false;
+          break;
+        }
       }
-      if (canAddEdge) {
+      if (canAddEdge && !pos.equals(otherPos)) {
         pos.addEdge(otherPos);
         if (reverse) {
           otherPos.addEdge(pos);

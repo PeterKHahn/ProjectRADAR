@@ -48,13 +48,16 @@ public class DreamMath {
   public static boolean doIntersect(Vector pos1, Vector a1, Vector pos2,
       Vector a2) {
     if (a1.cross(a2) == 0) {
+      if (pos2.subtract(pos1).cross(a1) == 0) {
+        return true;
+      }
       return false;
     }
 
     double t = pos2.subtract(pos1).cross(a2) / a1.cross(a2);
     double u = pos2.subtract(pos1).cross(a1) / a1.cross(a2);
-    if (Double.compare(t, 0) != -1 && Double.compare(t, 1) != 1
-        && Double.compare(u, 0) != -1 && Double.compare(u, 1) != 1) {
+    if (Double.compare(t, 0) != 1 && Double.compare(t, -1) != -1
+        && Double.compare(u, 0) != 1 && Double.compare(u, -1) != -1) {
       return true;
     }
     return false;
