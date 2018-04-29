@@ -247,7 +247,7 @@ function determineOffset() {
 function drawStatic() {
 	for (let i = 0; i < staticEntities.length; i++) {
 		console.log(staticEntities[i].radius)
-		drawCircle(staticEntities[i].center.x+offsetX, staticEntities[i].center.y+offsetY, staticEntities[i].radius, "none");		
+		drawCircle(staticEntities[i].center.x+offsetX, convertToCoord(staticEntities[i].center.y)+offsetY, staticEntities[i].radius, "none");		
 	}
 }
 
