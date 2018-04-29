@@ -15,6 +15,7 @@ import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * Chunk Map is the primary location of our storage of entity information,
@@ -89,7 +90,6 @@ public class ChunkMap {
   public void updateClients(Map<String, ClientState> clientStates) {
 
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
-      System.out.println("made it to updateclients");
       String clientId = entry.getKey();
       GamePlayer player = players.get(clientId);
       player.update(entry.getValue());
@@ -152,6 +152,11 @@ public class ChunkMap {
    */
   public void addStatic(StaticEntity staticEntity) {
     Collection<Chunk> chunks = chunksInRange(staticEntity);
+
+    Logger.logMessage(
+        "Adding static entities to map across " + chunks.size() + " chunks.");
+    Logger.logMessage(staticEntity.toString());
+
     for (Chunk c : chunks) {
       c.addStatic(staticEntity);
     }

@@ -11,12 +11,12 @@ import edu.brown.cs.dreamteam.main.Architect;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 30;
+  private static final int FPS = 5;
   private static final int PRINT_RATE = 3;
 
   private static final int HEIGHT = 5;
   private static final int WIDTH = 5;
-  private static final int CHUNK_SIZE = 3;
+  private static final int CHUNK_SIZE = 15;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;

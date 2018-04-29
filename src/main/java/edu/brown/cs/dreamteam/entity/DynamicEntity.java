@@ -11,6 +11,7 @@ import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.utility.Clamp;
 import edu.brown.cs.dreamteam.utility.DreamMath;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * A dynamic entity is an entity that has a dynamic position and angle.
@@ -63,7 +64,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * Updates the position given the dynamic entity's velocity.
    */
   public void updatePosition(ChunkMap chunks) {
-    System.out.println(velocityVector);
+    Logger.logDebug(center.toString());
     Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
 
     for (Chunk chunk : chunksNear) {
@@ -72,7 +73,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
     Collection<CollisionBoxed> collidables = chunks
         .getCollisionedFromChunks(chunksNear);
-
+    Logger.logDebug("Number of collidables: " + collidables.size());
     double minT = 1;
     for (CollisionBoxed c : collidables) {
       if (!c.isSolid()) {
@@ -106,6 +107,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
     for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
       for (Entry<Box, Vector> staticBoxEntry : staticBoxSet.boxes()
           .entrySet()) {
+        Logger.logDebug("Testing for collision...");
+
         Box dynamicBox = dynamicBoxEntry.getKey();
         Box staticBox = staticBoxEntry.getKey();
 
@@ -114,6 +117,13 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
         Vector staticCenter = center.add(collisionBoxOffset())
             .add(staticBoxEntry.getValue());
+
+        Logger.logDebug("Dynamic Center: " + dynamicCenter);
+        Logger.logDebug("Static Center: " + staticCenter);
+
+        Logger.logDebug(
+            "Distance between: " + dynamicCenter.distance(staticCenter));
+
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
 

@@ -150,13 +150,15 @@ public class SystemArchitect extends Architect {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-      System.out.println(Messenger.sessionUserMap.get(user));
+      // System.out.println(Messenger.sessionUserMap.get(user));
       JsonObject received = GSON.fromJson(message, JsonObject.class);
       ClientState c = null;
+
       switch (received.get("type").getAsString()) {
         case "name":
           break;
         case "game":
+          Logger.logMessage("Creating a new Game");
           GameEngine engine = GameBuilder.create(a)
               .addHumanPlayer(GamePlayer
                   .player(Messenger.sessionUserMap.get(user), 0.0, 0.0))

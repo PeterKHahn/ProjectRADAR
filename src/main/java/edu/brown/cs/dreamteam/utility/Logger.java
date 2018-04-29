@@ -12,7 +12,7 @@ public final class Logger {
 
   }
 
-  private static boolean debug = false;
+  private static boolean debug = true;
 
   /**
    * Sets the debug state to the specified value. Setting to this value to true
@@ -35,7 +35,7 @@ public final class Logger {
    */
   public static void logDebug(String message) {
     if (debug) {
-      // System.out.println(message);
+      System.out.println(message);
 
     }
   }
@@ -47,7 +47,7 @@ public final class Logger {
    *          THe message to print
    */
   public static void logMessage(String message) {
-    // System.out.println(message);
+    System.out.println(message);
 
   }
 

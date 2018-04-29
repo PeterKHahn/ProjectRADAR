@@ -57,44 +57,48 @@ $(document).ready(() => {
 
 	/*** Interpreting keypress events ***/
 	$(document).keydown(event => {
+
 		if (gameStart) {
+
 			switch(event.keyCode){
-				case 97: // a for wasd
-					console.log("hewwooo")
+				case 65: // a for wasd
+
 					websocketSend(webSocket, "key", "left", true); 
-					movePlayer("left"); 
+					//movePlayer("left"); 
 					break;
-				case 100: // d in wasd
+				case 68: // d in wasd
 					websocketSend(webSocket, "key", "right", true); 
-					movePlayer("right"); 
+					//movePlayer("right"); 
 					break;
-				case 119: // w in wasd
+				case 87: // w in wasd
 					websocketSend(webSocket, "key", "up", true); 
-					movePlayer("up"); 
+					//movePlayer("up"); 
 					break;
-				case 115: // s in wasd
+				case 83: // s in wasd
 					websocketSend(webSocket, "key", "down", true); 
-					movePlayer("down"); 
+					//movePlayer("down"); 
 					break;
 			}
 		}
 	})
 
 	$(document).keyup(event => {
+
 		if (gameStart) {
+
 			switch(event.keyCode){
 
-				case 97: // a for wasd
+				case 65: // a for wasd
 					console.log("hewwo")
 					websocketSend(webSocket, "key", "left", false); 
 					break;
-				case 100: // d in wasd
+				case 68: // d in wasd
 					websocketSend(webSocket, "key", "right", false); 
 					break;
-				case 119: // w in wasd
+				case 87: // w in wasd
 					websocketSend(webSocket, "key", "up", false); 
 					break;
-				case 115: // s in wasd
+				case 83: // s in wasd
 					websocketSend(webSocket, "key", "down", false); 
 					break;
 			}

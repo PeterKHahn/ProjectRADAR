@@ -25,4 +25,12 @@ public abstract class StaticEntity extends Entity implements CollisionBoxed {
     return center;
   }
 
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(
+        "STATIC ENTITY: " + getId() + ", Radius=" + radius + " at " + center);
+    return sb.toString();
+  }
+
 }

@@ -57,6 +57,10 @@ public class Vector {
     return v.scalarMultiply(factor);
   }
 
+  public double distance(Vector v) {
+    return Math.sqrt(innerProduct(v));
+  }
+
   @Override
   public String toString() {
     return "<" + x + ", " + y + ">";
