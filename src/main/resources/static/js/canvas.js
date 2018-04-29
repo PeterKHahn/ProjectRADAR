@@ -172,7 +172,7 @@ function drawPlayer() {
 	ctx.beginPath();
 	ctx.strokeStyle = "#b8dbd9";
 	ctx.lineWidth = 2;
-	ctx.arc(c.width/2, c.height/2, 25, 0, 2*Math.PI);
+	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
 	ctx.stroke();
 }
 
@@ -247,7 +247,7 @@ function determineOffset() {
 function drawStatic() {
 	for (let i = 0; i < staticEntities.length; i++) {
 		console.log(staticEntities[i].radius)
-		drawCircle(staticEntities[i].center.x+offsetX, staticEntities[i].center.y+offsetY, staticEntities[i].radius, "none");		
+		drawCircle(staticEntities[i].center.x+offsetX, convertToCoord(staticEntities[i].center.y)+offsetY, staticEntities[i].radius, "none");		
 	}
 }
 
