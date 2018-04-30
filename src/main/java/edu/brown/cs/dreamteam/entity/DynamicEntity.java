@@ -73,7 +73,6 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
     Collection<CollisionBoxed> collidables = chunks
         .getCollisionedFromChunks(chunksNear);
-    Logger.logDebug("Number of collidables: " + collidables.size());
     double minT = 1;
     for (CollisionBoxed c : collidables) {
       if (!c.isSolid()) {
@@ -119,13 +118,13 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         Vector staticCenter = collisionBoxed.center().add(collisionBoxOffset())
             .add(staticBoxEntry.getValue());
 
-        Logger.logDebug("Dynamic Center: " + dynamicCenter);
-        Logger.logDebug("Dynamic Radius: " + dynamicBox.radius());
-        Logger.logDebug("Static Center: " + staticCenter);
-        Logger.logDebug("Static Center: " + staticBox.radius());
+        // Logger.logDebug("Dynamic Center: " + dynamicCenter);
+        // Logger.logDebug("Dynamic Radius: " + dynamicBox.radius());
+        // Logger.logDebug("Static Center: " + staticCenter);
+        // Logger.logDebug("Static Center: " + staticBox.radius());
 
-        Logger.logDebug(
-            "Distance between: " + dynamicCenter.distance(staticCenter));
+        // Logger.logDebug(
+        // "Distance between: " + dynamicCenter.distance(staticCenter));
 
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
@@ -134,7 +133,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         double time = u3.projectOntoMagnitude(this.velocityVector);
 
         double timeOfMinimumDistance = timeClamp.clamp(time);
-        Logger.logDebug("Time of Minimum Distance: " + timeOfMinimumDistance);
+        // Logger.logDebug("Time of Minimum Distance: " +
+        // timeOfMinimumDistance);
         Vector vPrime = velocityVector.scalarMultiply(timeOfMinimumDistance)
             .add(u1);
         double distanceSquared = vPrime.subtract(u2).magnitudeSquared();
@@ -157,10 +157,6 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
         }
       }
-    }
-    if (minT < 1) {
-      Logger.logDebug("COLLISION, Vector: " + minT);
-
     }
 
     return minT;

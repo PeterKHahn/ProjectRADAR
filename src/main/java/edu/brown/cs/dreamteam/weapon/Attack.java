@@ -7,6 +7,7 @@ import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 public class Attack implements HitBoxed {
 
@@ -43,6 +44,10 @@ public class Attack implements HitBoxed {
 
   public void tick() {
     if (attacking) {
+      Logger.logDebug("Frame: " + frame);
+      Logger.logDebug("Damage: " + currentAttackFrame.baseDamage());
+      Logger.logDebug("Active: " + currentAttackFrame.isHitboxActive());
+
       currentAttackFrame = next();
 
       frame++;
@@ -51,7 +56,9 @@ public class Attack implements HitBoxed {
   }
 
   public void attack() {
-    attacking = true;
+    if (canStartAttack()) {
+      attacking = true;
+    }
 
   }
 
@@ -64,6 +71,8 @@ public class Attack implements HitBoxed {
         || currentFrame >= currentAttackFrame.duration()) {
       if (frames.isEmpty()) {
         attacking = false;
+        frame = 0;
+        currentFrame = 0;
         return new InactiveAttackFrame();
       }
       currentAttackFrame = frames.poll();

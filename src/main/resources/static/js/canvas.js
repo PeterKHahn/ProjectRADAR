@@ -102,7 +102,7 @@ $(document).ready(() => {
 					websocketSend(webSocket, "key", "left", false);
 					break;
 				case "d": // d in wasd
-				case "ArrowDown":
+				case "ArrowRight":
 					websocketSend(webSocket, "key", "right", false);
 					break;
 				case "w": // w in wasd
@@ -110,7 +110,7 @@ $(document).ready(() => {
 					websocketSend(webSocket, "key", "up", false);
 					break;
 				case "s": // s in wasd
-				case "ArrowRight":
+				case "ArrowDown":
 					websocketSend(webSocket, "key", "down", false);
 					break;
 			}
@@ -120,11 +120,11 @@ $(document).ready(() => {
 	$(document).keypress(event => {
 		if (gameStart) {
 			switch(event.keyCode){
-				case 32: // space bar for attack
+				case "space": // space bar for attack
 					websocketSend(webSocket, "key", "space", false); break;
-				case 102: // f for items
+				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
-				case 114: // r for radar
+				case "r": // r for radar
 					websocketSend(webSocket, "key", "r", false); break;
 			}
 		}

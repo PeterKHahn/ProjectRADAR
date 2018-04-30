@@ -3,16 +3,13 @@ package edu.brown.cs.dreamteam.weapon;
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 public class EnergyBlast extends Weapon {
 
   private static final double BASE_DAMAGE = 10;
 
   private Attack attack;
-
-  private int cooldown = 30;
-
-  private int timeActive = 0;
 
   public EnergyBlast() {
     init();
@@ -30,7 +27,9 @@ public class EnergyBlast extends Weapon {
 
   @Override
   public void fire() {
+    Logger.logDebug("Firing...");
     if (canStartAttack()) {
+      Logger.logDebug("Free to start attack");
       attack.attack();
     }
 
