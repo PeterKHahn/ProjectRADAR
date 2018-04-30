@@ -265,8 +265,8 @@ public class Board {
    *         defined by pos and dir.
    */
   public Position getEdgePosition(Position pos, Vector dir) {
-    double xFactor = width - pos.x / dir.x;
-    double yFactor = width - pos.y / dir.y;
+    double xFactor = (width - pos.x) / Math.abs(dir.x);
+    double yFactor = (height - pos.y) / Math.abs(dir.y);
     double factor = xFactor > yFactor ? yFactor : xFactor;
 
     // Use the Position that is as close to either border as the center of

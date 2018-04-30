@@ -82,10 +82,12 @@ public class AiController {
     if (enemies.size() > 0) {
       // There is an enemy in the visible range
       // TODO check player health
+      strategy = StrategyType.DEFENSE;
 
     } else {
       // No enemy in visible range
       // TODO Check if the goal is revealed
+      strategy = StrategyType.GATHER;
     }
   }
 

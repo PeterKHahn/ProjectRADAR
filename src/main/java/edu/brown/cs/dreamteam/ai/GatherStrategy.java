@@ -3,6 +3,8 @@ package edu.brown.cs.dreamteam.ai;
 import java.util.Collection;
 
 import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.board.Position;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.Chunk;
 
 /**
@@ -22,14 +24,54 @@ import edu.brown.cs.dreamteam.game.Chunk;
  * @author efu2
  */
 public class GatherStrategy extends Strategy {
+  private Position goal;
 
   public GatherStrategy(Board board, AiPlayer player) {
     super(board, player);
-    // TODO Auto-generated constructor stub
   }
 
-  private void placeRadar(Collection<Chunk> chunks) {
+  public void reset() {
+    goal = null;
+  }
+
+  @Override
+  void makeNextMove(Collection<Chunk> chunks) {
+    if (canMakeRadar(chunks)) {
+      // AI player has enough material to make a radar
+      goal = placeRadar(chunks);
+    } else {
+      // AI player doesn't have enough material to make a radar
+      // Get position of closest item
+      // TODO Check # of visible items
+      if (itemsInRange(chunks)) {
+        goal = getGoalItemPosition(chunks);
+      } else {
+        // No items in the visible range
+
+        // Choose a random direction to go in if the goal is not already set
+        if (goal == null) {
+          Vector dir = new Vector(10 * (Math.random() - 0.5),
+              10 * (Math.random() - 0.5));
+          goal = board.getEdgePosition(getCurrentPosition(), dir);
+        }
+      }
+    }
+    moveTo(goal);
+  }
+
+  private boolean itemsInRange(Collection<Chunk> chunks) {
+    // TODO
+    return false;
+  }
+
+  private Position getGoalItemPosition(Collection<Chunk> chunks) {
+    // TODO
+    return new Position(0, 0);
+  }
+
+  private Position placeRadar(Collection<Chunk> chunks) {
     // TODO: calculate the position to place the radar at.
+    return new Position(0, 0);
   }
 
   /**
@@ -42,16 +84,5 @@ public class GatherStrategy extends Strategy {
   private boolean canMakeRadar(Collection<Chunk> chunks) {
     // TODO
     return false;
-  }
-
-  @Override
-  void makeNextMove(Collection<Chunk> chunks) {
-    // TODO
-    if (canMakeRadar(chunks)) {
-      placeRadar(chunks);
-    } else {
-
-    }
-    // TODO call player.updateDynamic(vertCoeff, horzCoeff)
   }
 }

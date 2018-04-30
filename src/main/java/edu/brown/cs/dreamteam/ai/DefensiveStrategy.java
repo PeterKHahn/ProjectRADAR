@@ -36,24 +36,21 @@ public class DefensiveStrategy extends Strategy {
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
     // Get the goal node to run to
-    Vector escape = getEscapeDir(chunks);
-    Vector position = player.center();
-    Position curr = new Position(position.x, position.y);
-    board.addEdgesFor(curr, false);
-    Position goal = board.getEdgePosition(curr, escape);
-
-    // Get the next node to run to for the shortest path to the goal
-    Position next = board.getMoveTo(curr, goal);
-
-    // Update player to go in direction of next
-    double x = next.x - position.x;
-    int horzCoeff = x < 0 ? (x > 0 ? 1 : 0) : -1;
-    double y = next.y - position.y;
-    int vertCoeff = y < 0 ? (y > 0 ? 1 : 0) : -1;
-    player.updateDynamic(vertCoeff, horzCoeff);
+    Position goal = getEscapeGoal(chunks);
+    moveTo(goal);
 
     // TODO Attack while running away?
+  }
 
+  private Position getEscapeGoal(Collection<Chunk> chunks) {
+    // Determine the direction to escape in
+    Vector escape = getEscapeDir(chunks);
+    Position curr = getCurrentPosition();
+    board.addEdgesFor(curr, false);
+
+    // Get the next position in the shortest path to the furthest position in
+    // the escape direction
+    return board.getEdgePosition(curr, escape);
   }
 
   private Vector getEscapeDir(Collection<Chunk> chunks) {
