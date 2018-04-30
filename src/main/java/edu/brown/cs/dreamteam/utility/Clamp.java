@@ -63,4 +63,8 @@ public class Clamp {
         || c.clamp(this.greaterBound) == this.greaterBound;
   }
 
+  public boolean contains(double value) {
+    return clamp(value) == value;
+  }
+
 }

@@ -1,126 +1,69 @@
 package edu.brown.cs.dreamteam.datastructures;
 
+import edu.brown.cs.dreamteam.box.Point;
+
 /**
- * An abstract datastructure that stores dimensioned data, where each element
- * can be retrieved. In addition, there are methods that allow for operations on
- * different vectors
+ * An immutable vector of two dimensions. The x coordinate is defined as index 0
+ * and y coordinate is defined as index 1 of the vector
  *
  * @author peter
  *
  */
-public abstract class Vector {
-  private final int dimensions;
+public class Vector {
 
-  /**
-   * Constructor for a vector with dimensions dimensions.
-   *
-   * @param dimensions
-   *          the number of dimensions this vector will have
-   */
-  public Vector(int dimensions) {
-    this.dimensions = dimensions;
+  public final double x;
+  public final double y;
+
+  public Vector(double x, double y) {
+    this.x = x;
+    this.y = y;
   }
 
-  /**
-   * Returns the number of dimensions this vector has.
-   *
-   * @return the number of dimensions this vector has
-   */
-  public int getNumDimensions() {
-    return dimensions;
+  public Vector(Point p) {
+    this.x = p.x;
+    this.y = p.x;
   }
 
-  /**
-   * Returns the double at the given legal index.
-   *
-   * @param index
-   *          the index we are trying to get the value of vector at
-   * @return the value of the vector at index
-   */
-  public abstract double getIndex(int index);
-
-  /**
-   * Returns the unscaled, Euclidean distance between two vectors.
-   *
-   * @param d
-   *          the vector we are comparing to
-   * @return the euclidean distance between this and d
-   */
-  public double distance(Vector d) {
-
-    return Math.sqrt(innerProduct(d));
+  public Vector add(Vector v) {
+    return new Vector(this.x + v.x, this.y + v.y);
   }
 
-  /**
-   * Returns the unscaled, Euclidean distance squared between two vectors.
-   *
-   * @param d
-   *          the vector which we are hoping to find the distance to, where d is
-   *          the same dimension as this.
-   * @return a double representing the distance squared between this vector and
-   *         d.
-   */
-  public double distanceSquared(Vector d) {
-    return innerProduct(d);
+  public Vector subtract(Vector v) {
+    return new Vector(this.x - v.x, this.y - v.y);
   }
 
-  /**
-   * Inner product function that takes the dot product of this vector and d,
-   * given that they are of the same dimension.
-   *
-   * @param d
-   *          a vector to find the dot product with, where d is the same
-   *          dimension as this.
-   * @return
-   */
-  private double innerProduct(Vector d) {
-    if (d.getNumDimensions() != this.getNumDimensions()) {
-      throw new IllegalVectorSizeException();
-    }
-    double sum = 0;
-    for (int i = 0; i < getNumDimensions(); i++) {
-      double aIndex = this.getIndex(i);
-      double bIndex = d.getIndex(i);
+  public Vector scalarMultiply(double c) {
+    return new Vector(this.x * c, this.y * c);
+  }
 
-      sum += (aIndex - bIndex) * (aIndex - bIndex);
-    }
+  public double innerProduct(Vector v) {
+    return this.x * v.x + this.y * v.y;
+  }
 
-    return sum;
+  public double magnitudeSquared() {
+    return this.innerProduct(this);
+  }
+
+  public double magnitude() {
+    return Math.sqrt(magnitudeSquared());
+  }
+
+  public double projectOntoMagnitude(Vector v) {
+    return v.innerProduct(this) / v.magnitudeSquared();
+  }
+
+  public Vector projectOnto(Vector v) {
+    double factor = this.projectOntoMagnitude(v);
+    return v.scalarMultiply(factor);
+  }
+
+  public double distance(Vector v) {
+    return this.subtract(v).magnitude();
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < dimensions; i++) {
-      sb.append(getIndex(i) + " ");
-    }
-
-    return "<" + sb.toString().trim() + ">";
+    return "<" + x + ", " + y + ">";
   }
 
-  /**
-   * Checks whether a given dimension falls within the bounds of the vector.
-   *
-   * @param index
-   *          the index that we are checking
-   * @return true if the index is within bound, false otherwise
-   */
-  public boolean isLegalDimension(int index) {
-    return index > -1 && index < getNumDimensions();
-  }
-
-  /**
-   * An exception class that throws upon encountering a vector of illegal size.
-   *
-   * @author peter
-   *
-   */
-  class IllegalVectorSizeException extends RuntimeException {
-
-    private static final long serialVersionUID = -5918013048369980257L;
-
-    IllegalVectorSizeException() {
-      super("Illegal dimension size for vector");
-    }
-  }
 }

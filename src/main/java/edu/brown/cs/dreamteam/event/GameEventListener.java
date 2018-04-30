@@ -16,7 +16,8 @@ public interface GameEventListener {
    * 
    * @param chunks
    *          The ChunkMap from the GameEventEmitter
+   * @param id
    */
-  public void onGameChange(ChunkMap chunks);
+  public void onGameChange(ChunkMap chunks, int id);
 
 }

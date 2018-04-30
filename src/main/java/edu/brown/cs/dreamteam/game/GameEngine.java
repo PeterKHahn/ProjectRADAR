@@ -3,22 +3,26 @@ package edu.brown.cs.dreamteam.game;
 import java.util.Map;
 
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.main.Architect;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 30;
+  private static final int FPS = 5;
   private static final int PRINT_RATE = 3;
 
   private static final int HEIGHT = 5;
   private static final int WIDTH = 5;
-  private static final int CHUNK_SIZE = 3;
+  private static final int CHUNK_SIZE = 100;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;
+  private EntityFactory entityFactory;
 
   private ChunkMap chunks;
 
@@ -26,20 +30,21 @@ public class GameEngine implements Runnable {
   private int ticks = 0;
 
   /**
-   * Creates a GameEngine given an Architect
-   * 
+   * Creates a GameEngine given an Architect.
+   *
    * @param architect
    *          The Architecture that the GameEngine is a part of
    */
   public GameEngine(Architect architect) {
     this.architect = architect;
-
     init();
+
   }
 
   private void init() {
     chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
     eventEmitter = new GameEventEmitter();
+    entityFactory = new EntityFactory(chunks);
     this.addGameEventListener(architect);
 
   }
@@ -69,16 +74,17 @@ public class GameEngine implements Runnable {
   }
 
   /**
-   * Adds a listener to the game engine's GameEventEmitter
-   * 
+   * Adds a listener to the game engine's GameEventEmitter.
+   *
    * @param listener
+   *          the listener to add
    */
   public void addGameEventListener(GameEventListener listener) {
     eventEmitter.addGameEventListener(listener);
   }
 
   /**
-   * Represents a change in game event, by updating internal states
+   * Represents a change in game event, by updating internal states.
    */
   private void tick() {
     Map<String, ClientState> updatedClientStates = architect
@@ -88,16 +94,30 @@ public class GameEngine implements Runnable {
   }
 
   /**
-   * Adds a player to the Game
-   * 
+   * Adds a player to the Game.
+   *
    * @param p
    *          the player to add
    */
   public void addPlayer(GamePlayer p) {
-    chunks.addPlayer(p);
+    Logger.logMessage("Added game player: " + p.getId());
+    entityFactory.addPlayer(p);
+
+  }
+
+  public void addObstacle(Obstacle ob) {
+    entityFactory.addObstacle(ob);
+  }
+
+  public void addItem(Item item) {
+    entityFactory.addItem(item);
+  }
+
+  public void addAiPlayer() {
+
   }
 
   private void log() {
-    System.out.println("Ticks: " + ticks);
+    // System.out.println("Ticks: " + ticks);
   }
 }

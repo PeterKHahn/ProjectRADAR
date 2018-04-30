@@ -2,13 +2,17 @@ package edu.brown.cs.dreamteam.entity;
 
 import java.util.Objects;
 
+import edu.brown.cs.dreamteam.box.Reach;
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+
 /**
- * The base class for many elements of our game
+ * The base class for many elements of our game.
  * 
  * @author peter
  *
  */
-public abstract class Entity {
+public abstract class Entity implements Reach {
 
   private final String id;
 
@@ -17,6 +21,7 @@ public abstract class Entity {
    * same ID, they are considered the same entity
    * 
    * @param id
+   *          The ID of the Entity
    */
   public Entity(String id) {
     this.id = id;
@@ -44,9 +49,13 @@ public abstract class Entity {
     return false;
   }
 
+  public abstract void tick(ChunkMap chunkMap);
+
   @Override
   public int hashCode() {
     return Objects.hash(id);
   }
+
+  public abstract Vector center();
 
 }

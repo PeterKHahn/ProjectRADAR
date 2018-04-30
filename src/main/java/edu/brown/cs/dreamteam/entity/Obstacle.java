@@ -1,66 +1,65 @@
 package edu.brown.cs.dreamteam.entity;
 
-import edu.brown.cs.dreamteam.box.RectangleBox;
-import edu.brown.cs.dreamteam.datastructures.TwoDVector;
+import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
- * A StaticEntity that represents Solid, Rectangular Obstacles in the field
+ * A StaticEntity that represents Solid, Rectangular Obstacles in the field.
  * 
  * @author peter
  *
  */
 public class Obstacle extends StaticEntity {
 
-  private TwoDVector upperLeft;
-  private TwoDVector lowerRight;
-
-  private RectangleBox box;
+  private BoxSet box;
+  private Vector offset;
 
   /**
-   * The constructor for Obstacle. UpperLeft and LowerRight are named as such,
-   * but flipping these will still yield the intended result
+   * Creates an Obstacle.
    * 
    * @param id
-   *          The ID of the obstacle
-   * @param upperLeft
-   *          the upperLeft corner of the Obstacle
-   * @param lowerRight
-   *          the lowerRight corner of the Obstacle
+   *          the id of the Obstacle
+   * @param center
+   *          The Center point the y position of the obstacle
+   * @param radius
+   *          the radius of the obstacle
    */
-  public Obstacle(String id, TwoDVector upperLeft, TwoDVector lowerRight) {
-    super(id);
-    this.upperLeft = upperLeft;
-    this.lowerRight = lowerRight;
+  public Obstacle(String id, Vector center, double radius) {
+    super(id, center, radius);
+    box = new BoxSet(radius);
     init();
+
   }
 
   private void init() {
-    box = new RectangleBox(upperLeft, lowerRight);
+    offset = new Vector(0, 0);
   }
 
   @Override
-  public RectangleBox getBox() {
+  public void tick(ChunkMap chunkMap) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public boolean isSolid() {
+    return true;
+  }
+
+  @Override
+  public BoxSet collisionBox() {
     return box;
   }
 
   @Override
-  public double getUpper() {
-    return box.getUpper();
+  public double reach() {
+    return box.reach();
   }
 
   @Override
-  public double getLower() {
-    return box.getLower();
-  }
-
-  @Override
-  public double getLeft() {
-    return box.getLeft();
-  }
-
-  @Override
-  public double getRight() {
-    return box.getRight();
+  public Vector collisionBoxOffset() {
+    return offset;
   }
 
 }
