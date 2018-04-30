@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.item.Item;
 
 public class EntityFactory {
 
@@ -21,6 +22,11 @@ public class EntityFactory {
   public void addPlayer(GamePlayer entity) {
     Collection<Chunk> chunksInRange = chunks.chunksInRange(entity);
     chunks.addPlayer(entity, chunksInRange);
+  }
+
+  public void addItem(Item item) {
+    Collection<Chunk> chunkInRange = chunks.chunksInRange(item);
+    chunks.addItem(item, chunkInRange);
   }
 
 }

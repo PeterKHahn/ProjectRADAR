@@ -51,6 +51,7 @@ public class Chunk {
     collisionBoxed = new HashSet<>();
     hitBoxed = new HashSet<>();
     hurtBoxed = new HashSet<>();
+    items = new HashSet<Item>();
 
   }
 
@@ -138,6 +139,10 @@ public class Chunk {
 
   public Collection<Item> getItems() {
     return items;
+  }
+
+  public void addItem(Item item) {
+    items.add(item);
   }
 
   public void tick() {

@@ -7,6 +7,7 @@ import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.main.Architect;
 import edu.brown.cs.dreamteam.utility.Logger;
 
@@ -105,9 +106,11 @@ public class GameEngine implements Runnable {
   }
 
   public void addObstacle(Obstacle ob) {
-    Logger.logMessage("Added obstacle: " + ob.getId());
-
     entityFactory.addObstacle(ob);
+  }
+
+  public void addItem(Item item) {
+    entityFactory.addItem(item);
   }
 
   public void addAiPlayer() {

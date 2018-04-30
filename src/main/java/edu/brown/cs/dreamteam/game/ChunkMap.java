@@ -167,6 +167,12 @@ public class ChunkMap {
 
   }
 
+  public void addItem(Item item, Collection<Chunk> chunkInRange) {
+    for (Chunk c : chunkInRange) {
+      c.addItem(item);
+    }
+  }
+
   public void addCollisioned(CollisionBoxed entity, Collection<Chunk> chunks) {
     for (Chunk c : chunks) {
       c.addCollisionBoxedEntities(entity);

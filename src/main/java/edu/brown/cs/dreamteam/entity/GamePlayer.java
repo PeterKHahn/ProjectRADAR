@@ -1,5 +1,6 @@
 package edu.brown.cs.dreamteam.entity;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,8 +9,10 @@ import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.event.ClientState;
+import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.utility.DreamMath;
 import edu.brown.cs.dreamteam.weapon.Weapon;
 
@@ -23,6 +26,8 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
 
   private static final int SIZE = 5;
   private static final int MAX_HEALTH = 100;
+
+  private static final int ITEM_PICK_RANGE = 3;
 
   private boolean itemPickedFlag;
   private Set<Integer> itemsDropped;
@@ -113,6 +118,22 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
 
     if (primaryActionFlag) {
       inventory.getActiveWeapon().fire();
+    }
+    if (itemPickedFlag) {
+      Collection<Chunk> chunksInRange = chunkMap.chunksInRange(this);
+      Collection<Item> items = chunkMap.itemsFromChunks(chunksInRange);
+      Item closest = null;
+      for (Item i : items) {
+        if (closest == null) {
+          closest = i;
+        } else {
+          closest = i.center().distance(center()) < closest.center()
+              .distance(center()) ? i : closest;
+        }
+      }
+      if (closest != null) {
+        inventory.addItem(closest);
+      }
     }
 
     // check collision here
