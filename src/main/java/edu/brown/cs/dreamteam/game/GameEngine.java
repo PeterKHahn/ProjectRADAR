@@ -12,7 +12,7 @@ import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 5;
+  private static final int FPS = 30;
   private static final int PRINT_RATE = 3;
 
   private static final int HEIGHT = 5;

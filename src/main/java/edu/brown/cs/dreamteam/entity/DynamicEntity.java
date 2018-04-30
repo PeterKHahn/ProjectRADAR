@@ -48,7 +48,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
     this.radius = radius;
     this.velocityVector = new Vector(0, 0);
     this.center = new Vector(x, y);
-    this.collisionBox = new BoxSet(new Box(radius));
+    this.collisionBox = new BoxSet(radius);
     init();
   }
 

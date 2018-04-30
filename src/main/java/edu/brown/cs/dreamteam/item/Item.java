@@ -7,17 +7,14 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 public class Item extends Entity {
 
   private Type type;
-  private int subType;
   private InventoryItem item;
 
   private Vector center;
 
-  public Item(String id, Vector center, Type type, int subType,
-      InventoryItem item) {
+  public Item(String id, Vector center, Type type, InventoryItem item) {
     super(id);
     this.center = center;
     this.type = type;
-    this.subType = subType;
     this.item = item;
   }
 

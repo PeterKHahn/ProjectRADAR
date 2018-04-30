@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.entity;
 
-import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.ChunkMap;
@@ -28,7 +27,7 @@ public class Obstacle extends StaticEntity {
    */
   public Obstacle(String id, Vector center, double radius) {
     super(id, center, radius);
-    box = new BoxSet(new Box(radius));
+    box = new BoxSet(radius);
     init();
 
   }

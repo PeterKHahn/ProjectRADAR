@@ -18,12 +18,12 @@ public class BoxSet implements Reach {
    * @param box
    *          The box that is the BoxSet
    */
-  public BoxSet(Box box) {
+  public BoxSet(double radius) {
     init();
     boxes = new HashMap<Box, Vector>();
-    boxes.put(box, new Vector(0, 0));
+    boxes.put(new Box(radius), new Vector(0, 0));
 
-    reach = box.radius();
+    reach = radius;
   }
 
   /**

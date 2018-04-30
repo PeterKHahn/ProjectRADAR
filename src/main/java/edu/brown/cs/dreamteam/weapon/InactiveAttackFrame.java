@@ -6,4 +6,8 @@ public class InactiveAttackFrame extends AttackFrame {
     super(duration, 0, false, null, null);
   }
 
+  public InactiveAttackFrame() {
+    super(0, 0, false, null, null);
+  }
+
 }
