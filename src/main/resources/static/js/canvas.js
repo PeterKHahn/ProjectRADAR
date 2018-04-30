@@ -49,7 +49,8 @@ $(document).ready(() => {
     		clearCanvas();
     		determineOffset();
     		drawStatic();  
-			drawPlayer();  		
+			drawPlayer();
+			drawHP();	
     	}
     };
 
@@ -119,12 +120,12 @@ $(document).ready(() => {
 
 	$(document).keypress(event => {
 		if (gameStart) {
-			switch(event.keyCode){
-				case 32: // space bar for attack
+			switch(event.key){
+				case "Space": // space bar for attack
 					websocketSend(webSocket, "key", "space", false); break;
-				case 102: // f for items
+				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
-				case 114: // r for radar
+				case "r": // r for radar
 					websocketSend(webSocket, "key", "r", false); break;
 			}
 		}
@@ -229,8 +230,10 @@ function drawCircle(x, y, radius, type) {
 
 /*** MISCELLANEOUS FUNCTIONS ***/
 
-function drawHP() {
-	player.center.hp;
+function drawHP() {	
+	achepee = player.health;
+	ctx.font = "25px Lucida Sans Unicode";
+	ctx.strokeText(achepee,30,30);
 }
 
 function determineOffset() {
