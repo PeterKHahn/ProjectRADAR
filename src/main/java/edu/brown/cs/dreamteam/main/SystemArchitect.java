@@ -185,8 +185,10 @@ public class SystemArchitect extends Architect {
                 break;
               case "down":
                 c.backwardHeld(received.get("held").getAsBoolean());
+                break;
               case "space":
                 c.primaryAction(true);
+                Logger.logDebug("Primary ACtion set to true");
                 break;
               case "f":
                 c.itemPicked(true);
