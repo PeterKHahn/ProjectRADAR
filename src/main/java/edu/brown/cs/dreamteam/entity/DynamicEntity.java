@@ -20,6 +20,10 @@ import edu.brown.cs.dreamteam.utility.Logger;
  *
  */
 public abstract class DynamicEntity extends Entity implements CollisionBoxed {
+  public static final double VISIBLE_RANGE = 10;
+  public static final double SIZE = 5;
+  public static final int MAX_HEALTH = 100;
+  public static final int ITEM_PICK_RANGE = 3;
 
   private Vector velocityVector;
 
@@ -31,8 +35,10 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
   private Clamp timeClamp;
 
+  private String type;
+
   /**
-   * Standard constructor for dynamicentity, initializing their fields.
+   * Standard constructor for dynamic entity, initializing their fields.
    * 
    * @param id
    *          id of the dynamicEntity
@@ -54,6 +60,14 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
 
   private void init() {
     timeClamp = new Clamp(0, 1);
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getType() {
+    return type;
   }
 
   public double speedCap() {
@@ -167,11 +181,11 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * Given a clientstate, updates the internal fields of the dynamic entity to
    * match those specified in the ClientState.
    * 
-   * 
+   * @param vertCoeff
+   * @param horzCoeff
    */
-  protected void updateDynamic(int vertCoeff, int horzCoeff) {
+  public void updateDynamic(int vertCoeff, int horzCoeff) {
     velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
-
   }
 
   /**

@@ -23,12 +23,6 @@ import edu.brown.cs.dreamteam.weapon.Weapon;
  *
  */
 public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
-
-  private static final int SIZE = 5;
-  private static final int MAX_HEALTH = 100;
-
-  private static final int ITEM_PICK_RANGE = 3;
-
   private boolean itemPickedFlag;
   private Set<Integer> itemsDropped;
   private boolean primaryActionFlag; // whether or not we should fire
@@ -55,10 +49,11 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
    * @param yPos
    *          the y position to start
    */
-  private GamePlayer(String id, double xpos, double ypos) {
-    super(id, xpos, ypos, SIZE);
-    init();
+  public GamePlayer(String id, double xPos, double yPos) {
+    super(id, xPos, yPos, DynamicEntity.SIZE);
+    this.setType("HUMAN");
 
+    init();
   }
 
   private void init() {
@@ -171,7 +166,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
   public double reach() {
     double tmp = DreamMath.max(
         this.collisionBox().reach() + collisionBoxOffset().magnitude(),
-        this.hitBox().reach() + hitBoxOffset().magnitude(), SIZE);
+        this.hitBox().reach() + hitBoxOffset().magnitude(), DynamicEntity.SIZE);
     return tmp + speedCap();
   }
 

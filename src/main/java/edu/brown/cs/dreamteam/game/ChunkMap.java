@@ -14,6 +14,7 @@ import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
@@ -61,6 +62,22 @@ public class ChunkMap {
     init();
   }
 
+  public int getWidth() {
+    return width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public int getTotalWidth() {
+    return totalWidth;
+  }
+
+  public int getTotalHeight() {
+    return totalHeight;
+  }
+
   private void init() {
     chunks = new Chunk[height][width];
     entities = new HashMap<String, Entity>();
@@ -80,6 +97,10 @@ public class ChunkMap {
 
       }
     }
+  }
+
+  public int getChunkSize() {
+    return chunkSize;
   }
 
   /**
@@ -262,13 +283,31 @@ public class ChunkMap {
   }
 
   /**
+   * Gets all obstacles (CollisionBoxed objects that return true on call to
+   * isSolid) in the given collection of chunks.
+   *
+   * @return A Collection of Obstacles.
+   */
+  public Collection<Obstacle> getObstaclesInRange(Collection<Chunk> chunks) {
+    Collection<CollisionBoxed> collision = getCollisionedFromChunks(chunks);
+    Set<Obstacle> res = new HashSet<>();
+    for (CollisionBoxed entity : collision) {
+      if (entity.isSolid()) {
+        res.add((Obstacle) entity);
+      }
+    }
+
+    return res;
+  }
+
+  /**
    * Returns the set of dynamicEntities within the chunks.
    * 
    * @param chunks
    *          the Collection of chunks to retrieve static entities from
    * @return A Set of Static Entities contined in chunks
    */
-  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+  public static Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
     Set<DynamicEntity> res = new HashSet<DynamicEntity>();
     for (Chunk c : chunks) {
       res.addAll(c.getDynamicEntities());

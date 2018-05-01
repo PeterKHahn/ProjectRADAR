@@ -2,3 +2,5 @@
 
 .gitignore
 .settings
+*.uxf
+*/.DS_Store

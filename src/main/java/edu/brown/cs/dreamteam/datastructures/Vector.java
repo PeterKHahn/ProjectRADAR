@@ -61,6 +61,11 @@ public class Vector {
     return this.subtract(v).magnitude();
   }
 
+  // 2D cross product
+  public double cross(Vector v) {
+    return this.x * v.y - this.y * v.x;
+  }
+
   @Override
   public String toString() {
     return "<" + x + ", " + y + ">";
