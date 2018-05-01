@@ -36,7 +36,7 @@ public class GatherStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
-    if (canMakeRadar(chunks)) {
+    if (canMakeRadar()) {
       // AI player has enough material to make a radar
       goal = placeRadar(chunks);
     } else {
@@ -46,7 +46,7 @@ public class GatherStrategy extends Strategy {
       if (itemsInRange(chunks)) {
         goal = getGoalItemPosition(chunks);
       } else {
-        // No items in the visible range
+        // No items in visible range
 
         // Choose a random direction to go in if the goal is not already set
         if (goal == null) {
@@ -70,7 +70,11 @@ public class GatherStrategy extends Strategy {
   }
 
   private Position placeRadar(Collection<Chunk> chunks) {
-    // TODO: calculate the position to place the radar at.
+    // TODO Check if any radars are already placed
+    // if (radarsPlaced) {
+    // } else {
+    // TODO No other radars are placed, so just place it right here
+
     return new Position(0, 0);
   }
 
@@ -81,7 +85,7 @@ public class GatherStrategy extends Strategy {
    *          The entity information given by networking.
    * @return True if there are sufficient materials, false otherwise.
    */
-  private boolean canMakeRadar(Collection<Chunk> chunks) {
+  private boolean canMakeRadar() {
     // TODO
     return false;
   }
