@@ -7,7 +7,6 @@ import java.util.Set;
 import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Chunk;
@@ -22,7 +21,7 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
  * @author peter
  *
  */
-public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
+public class GamePlayer extends DynamicEntity {
 
   private static final int SIZE = 5;
   private static final int MAX_HEALTH = 100;
@@ -143,8 +142,9 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
 
     // check collision here
     if (isHitboxActive()) { // only iterate if it is active
-      Set<Entity> entities = chunkMap.entitiesFromChunks(chunksInRange);
-      for (Entity e : entities) {
+      Set<Interactable> interactables = chunkMap
+          .entitiesFromChunks(chunksInRange);
+      for (Interactable e : interactables) {
         if (hits(e)) {
 
         }
@@ -158,7 +158,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
     } else {
       Collection<Chunk> newChunks = chunkMap.chunksInRange(this);
       for (Chunk c : newChunks) {
-        c.addEntity(this);
+        c.addInteractable(this);
       }
     }
   }
@@ -197,7 +197,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
   }
 
   @Override
-  public boolean hits(Entity hurtBoxed) {
+  public boolean hits(Interactable hurtBoxed) {
     if (!isHitboxActive()) {
       return false;
     }
@@ -221,7 +221,7 @@ public class GamePlayer extends DynamicEntity implements HitBoxed, HurtBoxed {
   }
 
   @Override
-  public void hit(Entity e) {
+  public void hit(Interactable e) {
     // TODO LATER
   }
 

@@ -18,7 +18,7 @@ import edu.brown.cs.dreamteam.utility.Logger;
  * @author peter
  *
  */
-public abstract class DynamicEntity extends Entity implements CollisionBoxed {
+public abstract class DynamicEntity extends Interactable {
 
   private Vector velocityVector;
 
@@ -70,10 +70,10 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
      * for (Chunk chunk : chunksNear) { chunk.removeDynamic(this); }
      */
 
-    Collection<CollisionBoxed> collidables = chunks
-        .getCollisionedFromChunks(chunksNear);
+    Collection<Interactable> collidables = chunks
+        .entitiesFromChunks(chunksNear);
     double minT = 1;
-    for (CollisionBoxed c : collidables) {
+    for (Interactable c : collidables) {
       if (!c.isSolid()) {
         continue;
       }

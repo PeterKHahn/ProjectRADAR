@@ -19,11 +19,6 @@ public class Item extends Entity {
   }
 
   @Override
-  public double reach() {
-    return 0;
-  }
-
-  @Override
   public void tick(ChunkMap chunkMap) {
 
   }

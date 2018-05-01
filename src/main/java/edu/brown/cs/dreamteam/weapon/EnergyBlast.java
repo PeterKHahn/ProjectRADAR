@@ -1,8 +1,6 @@
 package edu.brown.cs.dreamteam.weapon;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
-import edu.brown.cs.dreamteam.box.HurtBoxed;
-import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.utility.Logger;
 
 public class EnergyBlast extends Weapon {
@@ -48,17 +46,6 @@ public class EnergyBlast extends Weapon {
   @Override
   public BoxSet hitBox() {
     return attack.hitBox();
-  }
-
-  @Override
-  public Vector hitBoxOffset() {
-    return attack.hitBoxOffset();
-  }
-
-  @Override
-  public void hit(HurtBoxed hurtBoxed) {
-    attack.hit(hurtBoxed);
-
   }
 
   @Override

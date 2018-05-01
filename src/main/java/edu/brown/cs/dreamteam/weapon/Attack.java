@@ -5,7 +5,6 @@ import java.util.Queue;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.utility.Logger;
 
@@ -92,16 +91,6 @@ public class Attack implements HitBoxed {
   @Override
   public BoxSet hitBox() {
     return currentAttackFrame.hitBox();
-  }
-
-  @Override
-  public Vector hitBoxOffset() {
-    return currentAttackFrame.hitBoxOffset();
-  }
-
-  @Override
-  public void hit(HurtBoxed hurtBoxed) {
-    currentAttackFrame.hit(hurtBoxed);
   }
 
   @Override

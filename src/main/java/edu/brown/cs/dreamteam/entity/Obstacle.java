@@ -68,7 +68,7 @@ public class Obstacle extends StaticEntity {
   }
 
   @Override
-  public void hit(Entity hurtBoxed) {
+  public void hit(Interactable hurtBoxed) {
     return;
 
   }
@@ -85,7 +85,7 @@ public class Obstacle extends StaticEntity {
   }
 
   @Override
-  public boolean hits(Entity hurtBoxed) {
+  public boolean hits(Interactable hurtBoxed) {
     return false;
   }
 

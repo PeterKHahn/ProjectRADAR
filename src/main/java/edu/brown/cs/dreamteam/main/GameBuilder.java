@@ -49,7 +49,7 @@ public class GameBuilder {
   public GameBuilder generateMap(GameMap map) {
     Collection<Obstacle> obs = map.getObstacles();
     for (Obstacle ob : obs) {
-      engine.addObstacle(ob);
+      engine.addInteractable(ob);
     }
     Collection<Item> items = map.getItems();
     for (Item i : items) {

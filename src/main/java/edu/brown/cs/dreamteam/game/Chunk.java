@@ -8,6 +8,7 @@ import edu.brown.cs.dreamteam.box.CollisionBoxed;
 import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.item.Item;
 
 /**
@@ -18,7 +19,7 @@ import edu.brown.cs.dreamteam.item.Item;
  */
 public class Chunk {
 
-  private Set<Entity> entities;
+  private Set<Interactable> interactable;
 
   private Set<Item> items;
 
@@ -45,7 +46,7 @@ public class Chunk {
   }
 
   private void init() {
-    entities = new HashSet<Entity>();
+    interactable = new HashSet<Interactable>();
 
     collisionBoxed = new HashSet<>();
     hitBoxed = new HashSet<>();
@@ -62,16 +63,16 @@ public class Chunk {
     return col;
   }
 
-  public void addEntity(Entity e) {
-    entities.add(e);
+  public void addInteractable(Interactable e) {
+    interactable.add(e);
   }
 
-  public Set<Entity> getEntities() {
-    return entities;
+  public Set<Interactable> getInteractable() {
+    return interactable;
   }
 
   public void removeEntity(Entity e) {
-    entities.remove(e);
+    interactable.remove(e);
   }
 
   public Collection<Item> getItems() {

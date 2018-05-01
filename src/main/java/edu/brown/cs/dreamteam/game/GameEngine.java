@@ -3,13 +3,12 @@ package edu.brown.cs.dreamteam.game;
 import java.util.Map;
 
 import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.main.Architect;
-import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameEngine implements Runnable {
 
@@ -22,7 +21,6 @@ public class GameEngine implements Runnable {
 
   private GameEventEmitter eventEmitter;
   private Architect architect;
-  private EntityFactory entityFactory;
 
   private ChunkMap chunks;
 
@@ -44,7 +42,6 @@ public class GameEngine implements Runnable {
   private void init() {
     chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
     eventEmitter = new GameEventEmitter();
-    entityFactory = new EntityFactory(chunks);
     this.addGameEventListener(architect);
 
   }
@@ -100,17 +97,17 @@ public class GameEngine implements Runnable {
    *          the player to add
    */
   public void addPlayer(GamePlayer p) {
-    Logger.logMessage("Added game player: " + p.getId());
-    entityFactory.addPlayer(p);
+    chunks.addInteractable(p);
+    chunks.addPlayer(p);
 
   }
 
-  public void addObstacle(Obstacle ob) {
-    entityFactory.addObstacle(ob);
+  public void addInteractable(Interactable e) {
+    chunks.addInteractable(e);
   }
 
   public void addItem(Item item) {
-    entityFactory.addItem(item);
+    chunks.addItem(item);
   }
 
   public void addAiPlayer() {

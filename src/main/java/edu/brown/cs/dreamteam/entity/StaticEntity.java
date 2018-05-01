@@ -8,7 +8,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
  * @author peter
  *
  */
-public abstract class StaticEntity extends Entity {
+public abstract class StaticEntity extends Interactable {
 
   private Vector center;
   private double radius;
