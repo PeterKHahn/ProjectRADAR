@@ -1,4 +1,4 @@
-package edu.brown.cs.dreamteam.main;
+package networking;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,8 +10,8 @@ import com.google.gson.Gson;
 
 public class Messenger {
   private static final Gson GSON = new Gson();
-  static Map<String, Session> userSessionMap = new ConcurrentHashMap<>();
-  static Map<Session, String> sessionUserMap = new ConcurrentHashMap<>();
+  public static Map<String, Session> userSessionMap = new ConcurrentHashMap<>();
+  public static Map<Session, String> sessionUserMap = new ConcurrentHashMap<>();
   static int nextUserNumber = 1;
 
   public static void addUserUserId(Session user) {

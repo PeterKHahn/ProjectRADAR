@@ -85,7 +85,6 @@ $(document).ready(() => {
 			switch(event.keyCode){
 
 				case 97: // a for wasd
-					console.log("hewwo")
 					websocketSend(webSocket, "key", "left", false); 
 					break;
 				case 100: // d in wasd

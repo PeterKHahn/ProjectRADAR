@@ -27,6 +27,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.utility.Logger;
 import freemarker.template.Configuration;
+import networking.Messenger;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
 import spark.Request;
@@ -146,6 +147,7 @@ public class SystemArchitect extends Architect {
       Messenger.userSessionMap.remove(username);
       Messenger.broadcastMessage(sender = "Server",
           msg = (username + " left the chat"));
+
     }
 
     @OnWebSocketMessage
@@ -218,6 +220,7 @@ public class SystemArchitect extends Architect {
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       String room = arg0.params(":roomID");
+      Room newRoom = new Room(room);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "Game R.A.D.A.R.").put("roomID", room).build();
       return new ModelAndView(variables, "game.ftl");

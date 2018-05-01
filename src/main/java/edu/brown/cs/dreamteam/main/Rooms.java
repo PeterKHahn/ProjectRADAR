@@ -1,25 +1,23 @@
 package edu.brown.cs.dreamteam.main;
 
-import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Rooms {
 
-  private Set<String> notPlayingYetRoomIDs;
-  private Set<Socket> players;
-  private Set<String> playingRoomIDs;
+  private Map<String, Room> notPlayingYetRoomIDs;
+  private Map<String, Room> playingRoomIDs;
 
   public Rooms() {
-    notPlayingYetRoomIDs = new HashSet<>();
-    playingRoomIDs = new HashSet<>();
+    notPlayingYetRoomIDs = new ConcurrentHashMap<>();
+    playingRoomIDs = new ConcurrentHashMap<>();
   }
 
-  public Set<String> getNotPlayingYetRoomIDs() {
+  public Map<String, Room> getNotPlayingYetRoomIDs() {
     return notPlayingYetRoomIDs;
   }
 
-  public Set<String> getAllRoomIDs() {
+  public Map<String, Room> getAllRoomIDs() {
     return playingRoomIDs;
   }
 
@@ -35,19 +33,25 @@ public class Rooms {
       }
 
     }
-    while (notPlayingYetRoomIDs.contains(result)) {
+    while (notPlayingYetRoomIDs.keySet().contains(result)
+        || playingRoomIDs.keySet().contains(result)) {
       result = generateNewRoom();
     }
-    notPlayingYetRoomIDs.add(result);
+    notPlayingYetRoomIDs.put(result, new Room(result));
     return result;
   }
 
   public void startRoom(String id) {
-    if (notPlayingYetRoomIDs.contains(id)) {
+    if (notPlayingYetRoomIDs.keySet().contains(id)) {
+      Room temp = notPlayingYetRoomIDs.get(id);
       notPlayingYetRoomIDs.remove(id);
-      playingRoomIDs.add(id);
+      playingRoomIDs.put(id, temp);
+    } else if (playingRoomIDs.keySet().contains(id)) {
+      System.out
+          .println("TIME TO DEAL WITH THE DISCONNECT RECONNECT ISSUE BINCH.");
     } else {
-      throw new IllegalArgumentException("This room was never initialized!");
+      throw new IllegalArgumentException(
+          "This room was never initialized, or it has already started.");
     }
   }
 
