@@ -122,10 +122,13 @@ $(document).ready(() => {
 		if (gameStart) {
 			switch(event.key){
 				case "Space": // space bar for attack
+					console.log("pushed space")
 					websocketSend(webSocket, "key", "space", false); break;
 				case "f": // f for items
+					console.log("pushed f")
 					websocketSend(webSocket, "key", "f", false); break;
 				case "r": // r for radar
+					console.log("pushed r")
 					websocketSend(webSocket, "key", "r", false); break;
 			}
 		}
