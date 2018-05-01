@@ -16,9 +16,9 @@ public class GameEngine implements Runnable {
   private static final int FPS = 5;
   private static final int PRINT_RATE = 3;
 
-  private static final int HEIGHT = 5;
-  private static final int WIDTH = 5;
-  private static final int CHUNK_SIZE = 100;
+  private static final int HEIGHT = 1;
+  private static final int WIDTH = 1;
+  private static final int CHUNK_SIZE = 1000;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;

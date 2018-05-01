@@ -1,7 +1,6 @@
 package edu.brown.cs.dreamteam.entity;
 
 import java.util.Collection;
-import java.util.Map.Entry;
 
 import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
@@ -105,26 +104,11 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
   private double handleDynamicCollision(CollisionBoxed collisionBoxed) {
     BoxSet staticBoxSet = collisionBoxed.collisionBox();
     double minT = 1;
+    for (Box dynamicBox : collisionBox().boxes()) {
+      for (Box staticBox : staticBoxSet.boxes()) {
 
-    for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
-      for (Entry<Box, Vector> staticBoxEntry : staticBoxSet.boxes()
-          .entrySet()) {
-        Box dynamicBox = dynamicBoxEntry.getKey();
-        Box staticBox = staticBoxEntry.getKey();
-
-        Vector dynamicCenter = center.add(collisionBoxOffset())
-            .add(dynamicBoxEntry.getValue());
-
-        Vector staticCenter = collisionBoxed.center().add(collisionBoxOffset())
-            .add(staticBoxEntry.getValue());
-
-        // Logger.logDebug("Dynamic Center: " + dynamicCenter);
-        // Logger.logDebug("Dynamic Radius: " + dynamicBox.radius());
-        // Logger.logDebug("Static Center: " + staticCenter);
-        // Logger.logDebug("Static Center: " + staticBox.radius());
-
-        // Logger.logDebug(
-        // "Distance between: " + dynamicCenter.distance(staticCenter));
+        Vector dynamicCenter = dynamicBox.offset().add(center);
+        Vector staticCenter = staticBox.offset().add(center);
 
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
@@ -133,8 +117,6 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         double time = u3.projectOntoMagnitude(this.velocityVector);
 
         double timeOfMinimumDistance = timeClamp.clamp(time);
-        // Logger.logDebug("Time of Minimum Distance: " +
-        // timeOfMinimumDistance);
         Vector vPrime = velocityVector.scalarMultiply(timeOfMinimumDistance)
             .add(u1);
         double distanceSquared = vPrime.subtract(u2).magnitudeSquared();

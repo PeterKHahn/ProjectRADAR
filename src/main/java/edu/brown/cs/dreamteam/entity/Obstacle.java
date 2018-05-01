@@ -1,6 +1,7 @@
 package edu.brown.cs.dreamteam.entity;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
@@ -13,7 +14,6 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 public class Obstacle extends StaticEntity {
 
   private BoxSet box;
-  private Vector offset;
 
   /**
    * Creates an Obstacle.
@@ -33,7 +33,6 @@ public class Obstacle extends StaticEntity {
   }
 
   private void init() {
-    offset = new Vector(0, 0);
   }
 
   @Override
@@ -58,8 +57,41 @@ public class Obstacle extends StaticEntity {
   }
 
   @Override
-  public Vector collisionBoxOffset() {
-    return offset;
+  public boolean isHitboxActive() {
+    return false;
+  }
+
+  @Override
+  public BoxSet hitBox() {
+    return BoxSet.NullBoxSet();
+
+  }
+
+  @Override
+  public void hit(Entity hurtBoxed) {
+    return;
+
+  }
+
+  @Override
+  public BoxSet hurtBox() {
+    return BoxSet.NullBoxSet();
+  }
+
+  @Override
+  public void getHit(HitBoxed hitBoxed) {
+    return;
+
+  }
+
+  @Override
+  public boolean hits(Entity hurtBoxed) {
+    return false;
+  }
+
+  @Override
+  public double baseDamage() {
+    return 0;
   }
 
 }

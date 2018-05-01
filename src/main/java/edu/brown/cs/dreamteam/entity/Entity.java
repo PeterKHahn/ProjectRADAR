@@ -2,6 +2,9 @@ package edu.brown.cs.dreamteam.entity;
 
 import java.util.Objects;
 
+import edu.brown.cs.dreamteam.box.CollisionBoxed;
+import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.box.Reach;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.ChunkMap;
@@ -12,7 +15,8 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * @author peter
  *
  */
-public abstract class Entity implements Reach {
+public abstract class Entity
+    implements Reach, HitBoxed, HurtBoxed, CollisionBoxed {
 
   private final String id;
 
@@ -36,6 +40,10 @@ public abstract class Entity implements Reach {
   public String toString() {
     return id;
   }
+
+  public abstract void hit(Entity e);
+
+  public abstract boolean hits(Entity e);
 
   @Override
   /**

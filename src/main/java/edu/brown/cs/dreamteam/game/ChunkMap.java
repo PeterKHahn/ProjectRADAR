@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.box.CollisionBoxed;
-import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
@@ -173,24 +172,6 @@ public class ChunkMap {
     }
   }
 
-  public void addCollisioned(CollisionBoxed entity, Collection<Chunk> chunks) {
-    for (Chunk c : chunks) {
-      c.addCollisionBoxedEntities(entity);
-    }
-  }
-
-  public void addHitboxed(HitBoxed entity, Collection<Chunk> chunks) {
-    for (Chunk c : chunks) {
-      c.addHitBoxed(entity);
-    }
-  }
-
-  public void addHurtboxed(HurtBoxed entity, Collection<Chunk> chunks) {
-    for (Chunk c : chunks) {
-      c.addHurtBoxed(entity);
-    }
-  }
-
   public Collection<Chunk> chunksInRange(Entity e) {
     return chunksInRange(e, e.reach());
 
@@ -261,6 +242,16 @@ public class ChunkMap {
     return res;
   }
 
+  public Collection<HurtBoxed> getHurtBoxedFromChunks(
+      Collection<Chunk> chunks) {
+    Set<HurtBoxed> res = new HashSet<HurtBoxed>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getHurtBoxed());
+    }
+    return res;
+
+  }
+
   /**
    * Returns the set of dynamicEntities within the chunks.
    * 
@@ -273,6 +264,15 @@ public class ChunkMap {
     for (Chunk c : chunks) {
       res.addAll(c.getDynamicEntities());
     }
+    return res;
+  }
+
+  public Set<Entity> entitiesFromChunks(Collection<Chunk> chunks) {
+    Set<Entity> res = new HashSet<Entity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getEntities());
+    }
+
     return res;
   }
 

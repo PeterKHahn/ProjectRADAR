@@ -24,9 +24,9 @@ public class EntityFactory {
     chunks.addPlayer(entity, chunksInRange);
   }
 
-  public void addItem(Item item) {
-    Collection<Chunk> chunkInRange = chunks.chunksInRange(item);
-    chunks.addItem(item, chunkInRange);
+  public void addItem(Item entity) {
+    Collection<Chunk> chunkInRange = chunks.chunksInRange(entity);
+    chunks.addItem(entity, chunkInRange);
   }
 
 }
