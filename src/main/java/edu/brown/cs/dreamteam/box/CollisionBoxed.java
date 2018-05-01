@@ -9,4 +9,6 @@ public interface CollisionBoxed {
   public BoxSet collisionBox();
 
   public Vector collisionBoxOffset();
+
+  public Vector center();
 }

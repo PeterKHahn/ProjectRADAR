@@ -11,6 +11,7 @@ import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.utility.Clamp;
 import edu.brown.cs.dreamteam.utility.DreamMath;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * A dynamic entity is an entity that has a dynamic position and angle.
@@ -47,7 +48,7 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
     this.radius = radius;
     this.velocityVector = new Vector(0, 0);
     this.center = new Vector(x, y);
-    this.collisionBox = new BoxSet(new Box(radius));
+    this.collisionBox = new BoxSet(radius);
     init();
   }
 
@@ -63,28 +64,30 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    * Updates the position given the dynamic entity's velocity.
    */
   public void updatePosition(ChunkMap chunks) {
-    System.out.println(velocityVector);
-    Collection<Chunk> chunksNear = chunks.getChunksNearDynamic(this);
+    Logger.logDebug(center.toString());
+    Collection<Chunk> chunksNear = chunks.chunksInRange(this);
 
-    for (Chunk chunk : chunksNear) {
-      chunk.removeDynamic(this);
-    }
+    /*
+     * for (Chunk chunk : chunksNear) { chunk.removeDynamic(this); }
+     */
 
     Collection<CollisionBoxed> collidables = chunks
         .getCollisionedFromChunks(chunksNear);
-
     double minT = 1;
     for (CollisionBoxed c : collidables) {
       if (!c.isSolid()) {
         continue;
       }
-      double res = handleDynamicCollision(c.collisionBox());
+      double res = handleDynamicCollision(c);
+
       minT = Math.min(res, minT);
     }
 
     changePosition(velocityVector.scalarMultiply(minT));
 
-    chunks.addDynamic(this);
+    Collection<Chunk> newChunks = chunks.chunksInRange(this);
+
+    // chunks.addDynamic(this, newChunks);
   }
 
   public void changePosition(Vector v) {
@@ -99,8 +102,8 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
    *          The Set of Static BoxSets that we are colliding against
    * @return
    */
-  private double handleDynamicCollision(BoxSet staticBoxSet) {
-
+  private double handleDynamicCollision(CollisionBoxed collisionBoxed) {
+    BoxSet staticBoxSet = collisionBoxed.collisionBox();
     double minT = 1;
 
     for (Entry<Box, Vector> dynamicBoxEntry : collisionBox.boxes().entrySet()) {
@@ -112,15 +115,26 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
         Vector dynamicCenter = center.add(collisionBoxOffset())
             .add(dynamicBoxEntry.getValue());
 
-        Vector staticCenter = center.add(collisionBoxOffset())
+        Vector staticCenter = collisionBoxed.center().add(collisionBoxOffset())
             .add(staticBoxEntry.getValue());
+
+        // Logger.logDebug("Dynamic Center: " + dynamicCenter);
+        // Logger.logDebug("Dynamic Radius: " + dynamicBox.radius());
+        // Logger.logDebug("Static Center: " + staticCenter);
+        // Logger.logDebug("Static Center: " + staticBox.radius());
+
+        // Logger.logDebug(
+        // "Distance between: " + dynamicCenter.distance(staticCenter));
+
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
 
-        Vector u3 = u2.subtract(u1);
+        Vector u3 = u2.subtract(u1); // Difference vector
         double time = u3.projectOntoMagnitude(this.velocityVector);
 
         double timeOfMinimumDistance = timeClamp.clamp(time);
+        // Logger.logDebug("Time of Minimum Distance: " +
+        // timeOfMinimumDistance);
         Vector vPrime = velocityVector.scalarMultiply(timeOfMinimumDistance)
             .add(u1);
         double distanceSquared = vPrime.subtract(u2).magnitudeSquared();
@@ -128,11 +142,17 @@ public abstract class DynamicEntity extends Entity implements CollisionBoxed {
             + staticBox.radius()) * (dynamicBox.radius() + staticBox.radius());
         if (collides) {
           // calculate the maximum time before collision
-          double a = velocityVector.innerProduct(velocityVector);
-          double b = 2 * u3.innerProduct(velocityVector);
-          double c = u3.magnitudeSquared();
+          double sumRadiusSquared = (dynamicBox.radius() + staticBox.radius())
+              * (dynamicBox.radius() + staticBox.radius());
+
+          double a = velocityVector.magnitudeSquared();
+          double b = -2 * u3.innerProduct(velocityVector);
+          double c = u3.magnitudeSquared() - sumRadiusSquared;
 
           double tPrime = DreamMath.quadratic(a, b, c, true);
+          if (tPrime > 0) {
+            tPrime -= 0.0001; // Janky fix for now
+          }
           minT = Math.min(tPrime, minT);
 
         }

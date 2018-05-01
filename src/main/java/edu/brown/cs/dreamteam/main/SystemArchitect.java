@@ -108,7 +108,7 @@ public class SystemArchitect extends Architect {
     int once = 0;
     for (GamePlayer p : movingThings) {
       once++;
-      Collection<Chunk> chunksNeeded = chunks.getChunksNearDynamic(p, radius);
+      Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
           .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
@@ -152,13 +152,15 @@ public class SystemArchitect extends Architect {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-      System.out.println(Messenger.sessionUserMap.get(user));
+      // System.out.println(Messenger.sessionUserMap.get(user));
       JsonObject received = GSON.fromJson(message, JsonObject.class);
       ClientState c = null;
+
       switch (received.get("type").getAsString()) {
         case "name":
           break;
         case "game":
+          Logger.logMessage("Creating a new Game");
           GameEngine engine = GameBuilder.create(a)
               .addHumanPlayer(GamePlayer
                   .player(Messenger.sessionUserMap.get(user), 0.0, 0.0))
@@ -185,8 +187,10 @@ public class SystemArchitect extends Architect {
                 break;
               case "down":
                 c.backwardHeld(received.get("held").getAsBoolean());
+                break;
               case "space":
                 c.primaryAction(true);
+                Logger.logDebug("Primary ACtion set to true");
                 break;
               case "f":
                 c.itemPicked(true);

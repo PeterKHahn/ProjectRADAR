@@ -40,10 +40,17 @@ $(document).ready(() => {
 
 
     webSocket.onmessage = function (msg) {
-    	console.log(JSON.parse(msg.data)); 
+    	// console.log(JSON.parse(msg.data)); 
     	data = JSON.parse(msg.data);
+    	console.log(data);
     	player = data.player;
     	staticEntities = data.statics;
+    	if (gameStart) {
+    		clearCanvas();
+    		determineOffset();
+    		drawStatic();  
+			drawPlayer();  		
+    	}
     };
 
     webSocket.onclose = function () { 
@@ -57,24 +64,30 @@ $(document).ready(() => {
 
 	/*** Interpreting keypress events ***/
 	$(document).keydown(event => {
+
 		if (gameStart) {
-			switch(event.keyCode){
-				case 97: // a for wasd
+
+			switch(event.key){
+				case "a": // a for wasd
+				case "ArrowLeft":
 					console.log("hewwooo")
 					websocketSend(webSocket, "key", "left", true); 
-					movePlayer("left"); 
+					//movePlayer("left"); 
 					break;
-				case 100: // d in wasd
+				case "d": // d in wasd
+				case "ArrowDown":
 					websocketSend(webSocket, "key", "right", true); 
-					movePlayer("right"); 
+					//movePlayer("right"); 
 					break;
-				case 119: // w in wasd
+				case "w": // w in wasd
+				case "ArrowUp":
 					websocketSend(webSocket, "key", "up", true); 
-					movePlayer("up"); 
+					//movePlayer("up"); 
 					break;
-				case 115: // s in wasd
+				case "s": // s in wasd
+				case "ArrowRight":
 					websocketSend(webSocket, "key", "down", true); 
-					movePlayer("down"); 
+					//movePlayer("down"); 
 					break;
 			}
 		}
@@ -82,19 +95,22 @@ $(document).ready(() => {
 
 	$(document).keyup(event => {
 		if (gameStart) {
-			switch(event.keyCode){
-
-				case 97: // a for wasd
-					websocketSend(webSocket, "key", "left", false); 
+			switch(event.key){
+				case "a": // a for wasd
+				case "ArrowLeft":
+					websocketSend(webSocket, "key", "left", false);
 					break;
-				case 100: // d in wasd
-					websocketSend(webSocket, "key", "right", false); 
+				case "d": // d in wasd
+				case "ArrowRight":
+					websocketSend(webSocket, "key", "right", false);
 					break;
-				case 119: // w in wasd
-					websocketSend(webSocket, "key", "up", false); 
+				case "w": // w in wasd
+				case "ArrowUp":
+					websocketSend(webSocket, "key", "up", false);
 					break;
-				case 115: // s in wasd
-					websocketSend(webSocket, "key", "down", false); 
+				case "s": // s in wasd
+				case "ArrowDown":
+					websocketSend(webSocket, "key", "down", false);
 					break;
 			}
 		}
@@ -103,11 +119,11 @@ $(document).ready(() => {
 	$(document).keypress(event => {
 		if (gameStart) {
 			switch(event.keyCode){
-				case 32: // space bar for attack
+				case "space": // space bar for attack
 					websocketSend(webSocket, "key", "space", false); break;
-				case 102: // f for items
+				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
-				case 114: // r for radar
+				case "r": // r for radar
 					websocketSend(webSocket, "key", "r", false); break;
 			}
 		}
@@ -155,29 +171,22 @@ function drawPlayer() {
 	ctx.beginPath();
 	ctx.strokeStyle = "#b8dbd9";
 	ctx.lineWidth = 2;
-	ctx.arc(c.width/2, c.height/2, 25, 0, 2*Math.PI);
+	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
 	ctx.stroke();
 }
 
 function movePlayer(direction) {
 	switch(direction) {
 		case "left":
-			player.center.x=player.center.x-10;
-			offsetX+=10; break;
+			console.log("made it to move left"); break;
 		case "right":
-			player.center.x=player.center.x+10;
-			offsetX-=10; break;
+			console.log("made it to move left"); break;
 		case "up":
-			player.center.y=player.center.y-10;
-			offsetY+=10; break;
+			console.log("made it to move up"); break;
 		case "down":
-			player.center.y=player.center.y+10;
-			offsetY-=10; break;
+			console.log("made it to move down"); break;
 	}
-	console.log("player position is now (" + player.center.x + ", " + player.center.y + ")");
-	clearCanvas();
-	drawStatic();
-	drawPlayer();
+	console.log()
 }
 
 // clears canvas to redraw items.
@@ -185,26 +194,33 @@ function clearCanvas() {
 	ctx.clearRect(0, 0, c.width, c.height);
 }
 
-
-// draws square. type = weapon, item, or decoration
-function drawSquare(x, y, type) {
+function drawCircle(x, y, radius, type) {
 	ctx.beginPath();
-	ctx.rect(x, y, 50, 50);
-	ctx.fillStyle = "white";
-	switch(type) {
+		switch(type) {
 		case "weapon":
+			ctx.strokeStyle = "red";
 			ctx.fillStyle = "red";
 			// maybe change color?? can pick up
 			break;
 		case "item":
+			ctx.strokeStyle = "white";
 			ctx.fillStyle = "white";
 			// change color ??? can pick up
 			break;
 		case "deco":
+			ctx.strokeStyle = "green";
 			ctx.fillStyle = "green";
 			// change color ??? can pick up
 			break;
+		case "none":
+			ctx.strokeStyle = "orange";
+			ctx.fillStyle = "orange";
+			break;
 	}
+	ctx.lineWidth = 2;
+	//TODO CHANGE OBSTACLE
+	ctx.arc(x, y, radius, 0, 2*Math.PI);
+	ctx.stroke();
 	ctx.fill();
 }
 
@@ -217,20 +233,20 @@ function drawHP() {
 }
 
 function determineOffset() {
-     console.log(player);
-	 offsetX = player.center.x - c.width/2;
-	 offsetY = convertToCoord(player.center.y) - c.height/2;
-	// figure out upper right of shrunk map
-	// that is the offset, subtract from each number
+	 offsetX = convertToCoord(player.center.x) + c.width/2;
+	 offsetY = player.center.y + c.height/2;
+	// how much we have to offset from (0,0) to keep player at center
+	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
 
-function validMovement() {
-	// is the player movement going to go out of bounds?
-}
+// function validMovement() {
+// 	// is the player movement going to go out of bounds?
+// }
 
 function drawStatic() {
 	for (let i = 0; i < staticEntities.length; i++) {
-		drawSquare(staticEntities[i].center.x+offsetX, staticEntities[i].center.y+offsetY, staticEntities[i].type);		
+		console.log(staticEntities[i].radius)
+		drawCircle(staticEntities[i].center.x+offsetX, convertToCoord(staticEntities[i].center.y)+offsetY, staticEntities[i].radius, "none");		
 	}
 }
 

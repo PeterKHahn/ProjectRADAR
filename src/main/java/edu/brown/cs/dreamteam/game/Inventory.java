@@ -3,12 +3,10 @@ package edu.brown.cs.dreamteam.game;
 import edu.brown.cs.dreamteam.item.InventoryItem;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.Type;
-import edu.brown.cs.dreamteam.weapon.DefaultWeapon;
+import edu.brown.cs.dreamteam.weapon.EnergyBlast;
 import edu.brown.cs.dreamteam.weapon.Weapon;
 
 public class Inventory {
-
-  private int maxWeapons = 3;
 
   private Weapon weapon;
 
@@ -17,7 +15,7 @@ public class Inventory {
   }
 
   private void init() {
-    weapon = new DefaultWeapon();
+    weapon = new EnergyBlast();
   }
 
   public Weapon getActiveWeapon() {

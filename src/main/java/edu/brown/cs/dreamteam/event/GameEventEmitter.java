@@ -74,7 +74,6 @@ public class GameEventEmitter {
 
     @Override
     public void run() {
-      // System.out.println("run by: " + this.id);
       listener.onGameChange(chunks, this.id);
 
     }

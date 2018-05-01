@@ -7,6 +7,7 @@ import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.game.GameMap;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameBuilder {
@@ -49,6 +50,10 @@ public class GameBuilder {
     Collection<Obstacle> obs = map.getObstacles();
     for (Obstacle ob : obs) {
       engine.addObstacle(ob);
+    }
+    Collection<Item> items = map.getItems();
+    for (Item i : items) {
+      engine.addItem(i);
     }
     return this;
   }

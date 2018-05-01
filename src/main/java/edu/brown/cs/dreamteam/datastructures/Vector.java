@@ -29,7 +29,7 @@ public class Vector {
   }
 
   public Vector subtract(Vector v) {
-    return new Vector(this.x + v.x, this.y - v.y);
+    return new Vector(this.x - v.x, this.y - v.y);
   }
 
   public Vector scalarMultiply(double c) {
@@ -55,6 +55,10 @@ public class Vector {
   public Vector projectOnto(Vector v) {
     double factor = this.projectOntoMagnitude(v);
     return v.scalarMultiply(factor);
+  }
+
+  public double distance(Vector v) {
+    return this.subtract(v).magnitude();
   }
 
   @Override
