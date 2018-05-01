@@ -1,5 +1,7 @@
 package edu.brown.cs.dreamteam.datastructures;
 
+import java.util.Objects;
+
 import edu.brown.cs.dreamteam.box.Point;
 
 /**
@@ -69,6 +71,29 @@ public class Vector {
   @Override
   public String toString() {
     return "<" + x + ", " + y + ">";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof Vector)) {
+      return false;
+    }
+
+    Vector other = (Vector) o;
+    if (Double.compare(other.x, x) == 0 && Double.compare(other.y, y) == 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y);
   }
 
 }

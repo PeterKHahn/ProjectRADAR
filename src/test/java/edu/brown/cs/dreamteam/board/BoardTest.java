@@ -23,13 +23,18 @@ public class BoardTest {
 
   @Before
   public void setup() {
+    Board.setEntitySize(1);
+
     emptyChunks = new ChunkMap(10, 10, 1);
     SystemArchitect architect = new SystemArchitect();
     oneObstacle = new GameEngine(architect, 10, 10, 1);
-    oneObstacle.addObstacle(new Obstacle("1", new Vector(5, 5), 1));
+    oneObstacle.addObstacle(new Obstacle("1", new Vector(5, 5), 0));
+    oneObstacle.makeBoard();
+
     multObstacles = new GameEngine(architect, 10, 10, 1);
-    multObstacles.addObstacle(new Obstacle("1", new Vector(2, 2), 1));
-    multObstacles.addObstacle(new Obstacle("2", new Vector(7, 7), 2));
+    multObstacles.addObstacle(new Obstacle("1", new Vector(2, 2), 0));
+    multObstacles.addObstacle(new Obstacle("2", new Vector(7, 7), 1));
+    multObstacles.makeBoard();
   }
 
   @Test
@@ -85,79 +90,60 @@ public class BoardTest {
     assertEquals(44, positions.size());
   }
 
-  // Expected values vary with AI player's size
-  // @Test
-  // public void testEdgesWithOneObstacle() {
-  // Board b = new Board(oneObstacle);
-  // Position curr;
-  // for (int i = 0; i < 10; i++) {
-  // // Position on top edge
-  // curr = new Position(i, 0);
-  // b.addEdgesFor(curr, false);
-  // List<Move> edges = curr.getEdges();
-  // if (i == 0) {
-  // assertEquals(35, edges.size());
-  // } else if (i == 4 || i == 6) {
-  // assertEquals(38, edges.size());
-  // } else if (i == 5) {
-  // assertEquals(37, edges.size());
-  // } else {
-  // assertEquals(36, edges.size());
-  // }
-  //
-  // // Position on right edge
-  // curr = new Position(10, i);
-  // b.addEdgesFor(curr, false);
-  // edges = curr.getEdges();
-  // if (i == 0) {
-  // assertEquals(35, edges.size());
-  // } else if (i == 4 || i == 6) {
-  // assertEquals(38, edges.size());
-  // } else if (i == 5) {
-  // assertEquals(37, edges.size());
-  // } else {
-  // assertEquals(36, edges.size());
-  // }
-  //
-  // // Position on bottom edge
-  // curr = new Position(i, 10);
-  // b.addEdgesFor(curr, false);
-  // edges = curr.getEdges();
-  // if (i == 0) {
-  // assertEquals(35, edges.size());
-  // } else if (i == 4 || i == 6) {
-  // assertEquals(38, edges.size());
-  // } else if (i == 5) {
-  // assertEquals(37, edges.size());
-  // } else {
-  // assertEquals(36, edges.size());
-  // }
-  //
-  // // Position on left edge
-  // curr = new Position(0, i);
-  // b.addEdgesFor(curr, false);
-  // edges = curr.getEdges();
-  // if (i == 0) {
-  // assertEquals(35, edges.size());
-  // } else if (i == 4 || i == 6) {
-  // assertEquals(38, edges.size());
-  // } else if (i == 5) {
-  // assertEquals(37, edges.size());
-  // } else {
-  // assertEquals(36, edges.size());
-  // }
-  // }
-  // }
+  @Test
+  public void testEdgesWithOneObstacle() {
+    Board b = oneObstacle.getBoard();
+    Position curr;
+    for (int i = 0; i < 10; i++) {
+      // Position on top edge
+      curr = new Position(i, 10);
+      b.addEdgesFor(curr, false);
+      List<Move> edges = curr.getEdges();
+      if (i == 0 || i == 4 || i == 6) {
+        assertEquals(35, edges.size());
+      } else {
+        assertEquals(36, edges.size());
+      }
 
-  // @Test
-  // public void testAddPositionWithOneObstacle() {
-  // Board b = new Board(oneObstacle);
-  // Position test = new Position(2, 2);
-  // b.addEdgesFor(test, false);
-  // List<Move> edges = test.getEdges();
-  // // Note that the expected value changes if we change
-  // // DynamicEntity.PLAYER_SIZE
-  // assertEquals(22, edges.size());
-  // }
+      // Position on right edge
+      curr = new Position(10, 10 - i);
+      b.addEdgesFor(curr, false);
+      edges = curr.getEdges();
+      if (i == 0 || i == 4 || i == 6) {
+        assertEquals(35, edges.size());
+      } else {
+        assertEquals(36, edges.size());
+      }
+
+      // Position on bottom edge
+      curr = new Position(10 - i, 0);
+      b.addEdgesFor(curr, false);
+      edges = curr.getEdges();
+      if (i == 0 || i == 4 || i == 6) {
+        assertEquals(35, edges.size());
+      } else {
+        assertEquals(36, edges.size());
+      }
+
+      // Position on left edge
+      curr = new Position(0, i);
+      b.addEdgesFor(curr, false);
+      edges = curr.getEdges();
+      if (i == 0 || i == 4 || i == 6) {
+        assertEquals(35, edges.size());
+      } else {
+        assertEquals(36, edges.size());
+      }
+    }
+  }
+
+  @Test
+  public void testAddPositionWithOneObstacle() {
+    Board b = oneObstacle.getBoard();
+    Position test = new Position(2, 2);
+    b.addEdgesFor(test, false);
+    List<Move> edges = test.getEdges();
+    assertEquals(36, edges.size());
+  }
 
 }

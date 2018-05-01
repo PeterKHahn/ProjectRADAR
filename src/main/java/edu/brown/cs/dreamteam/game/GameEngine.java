@@ -43,6 +43,10 @@ public class GameEngine implements Runnable {
     init(WIDTH, HEIGHT, CHUNK_SIZE);
   }
 
+  /**
+   * Constructor that allows specification of the ChunkMap's width, height, and
+   * chunkSize.
+   */
   public GameEngine(Architect architect, int width, int height, int chunkSize) {
     this.architect = architect;
     init(width, height, chunkSize);

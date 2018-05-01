@@ -47,20 +47,31 @@ public class DreamMath {
    */
   public static boolean doIntersect(Vector pos1, Vector a1, Vector pos2,
       Vector a2) {
+    Vector intersection = intersect(pos1, a1, pos2, a2);
+    if (intersection != null) {
+      return true;
+    }
+    return false;
+  }
+
+  public static Vector intersect(Vector pos1, Vector a1, Vector pos2,
+      Vector a2) {
     if (a1.cross(a2) == 0) {
+      // Collinear
       if (pos2.subtract(pos1).cross(a1) == 0) {
-        return true;
+        return pos1.add(a1);
       }
-      return false;
+      // No intersection
+      return null;
     }
 
     double t = pos2.subtract(pos1).cross(a2) / a1.cross(a2);
     double u = pos2.subtract(pos1).cross(a1) / a1.cross(a2);
-    if (Double.compare(t, 0) != 1 && Double.compare(t, -1) != -1
-        && Double.compare(u, 0) != 1 && Double.compare(u, -1) != -1) {
-      return true;
+    if (t >= 0.0 && t <= 1.0 && u >= 0.0 && u <= 1.0) {
+      return pos1.add(a1.scalarMultiply(t));
     }
-    return false;
+    // No intersect
+    return null;
   }
 
 }

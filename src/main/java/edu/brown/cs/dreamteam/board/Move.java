@@ -49,4 +49,9 @@ public class Move implements Edge<Position, Move> {
     return weight;
   }
 
+  @Override
+  public String toString() {
+    return src.toString() + "->" + dest.toString();
+  }
+
 }
