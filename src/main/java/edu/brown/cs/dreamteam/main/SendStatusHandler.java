@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
 import edu.brown.cs.dreamteam.event.ClientState;
-import edu.brown.cs.dreamteam.utility.Logger;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
@@ -36,8 +35,6 @@ public class SendStatusHandler implements Route {
     Boolean itemPicked = Boolean.getBoolean(qm.value("itemPick"));
     Integer dropped = Integer.valueOf(qm.value("droppedItem"));
     Boolean primaryAction = Boolean.getBoolean(qm.value("action"));
-    Logger.logDebug("Primary Action Flag: " + primaryAction);
-    Logger.logDebug("Left Held: " + left);
 
     cPlayer.leftHeld(left);
     cPlayer.rightHeld(right);

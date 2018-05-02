@@ -4,27 +4,26 @@ import java.util.Map;
 
 import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.main.Architect;
-import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 5;
+  private static final int FPS = 20;
   private static final int PRINT_RATE = 3;
 
-  private static final int HEIGHT = 5;
-  private static final int WIDTH = 5;
-  private static final int CHUNK_SIZE = 100;
+  private static final int HEIGHT = 1;
+  private static final int WIDTH = 1;
+  private static final int CHUNK_SIZE = 1000;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;
-  private EntityFactory entityFactory;
 
   private ChunkMap chunks;
   private Board board; // Graph representation of the completed ChunkMap
@@ -55,7 +54,6 @@ public class GameEngine implements Runnable {
   private void init(int width, int height, int chunkSize) {
     chunks = new ChunkMap(width, height, chunkSize);
     eventEmitter = new GameEventEmitter();
-    entityFactory = new EntityFactory(chunks);
     this.addGameEventListener(architect);
   }
 
@@ -110,16 +108,20 @@ public class GameEngine implements Runnable {
    *          the player to add
    */
   public void addPlayer(GamePlayer p) {
-    Logger.logMessage("Added game player: " + p.getId());
-    entityFactory.addPlayer(p);
+    chunks.addPlayer(p);
+
   }
 
-  public void addObstacle(Obstacle ob) {
-    entityFactory.addObstacle(ob);
+  public void addStatic(StaticEntity e) {
+    chunks.addStatic(e);
+  }
+
+  public void addDynamic(DynamicEntity e) {
+    chunks.addDynamic(e);
   }
 
   public void addItem(Item item) {
-    entityFactory.addItem(item);
+    chunks.addItem(item);
   }
 
   /**
@@ -131,13 +133,13 @@ public class GameEngine implements Runnable {
    */
   public void addAiPlayer(int id) {
     AiController controller = new AiController(Integer.toString(id), board);
-    entityFactory.addAi(controller.getPlayer());
+    chunks.addDynamic(controller.getPlayer());
   }
 
   /**
    * Initializes the Board representation of the GameMap for AI players to use.
    */
-  public void makeBoard() {
+  public void board() {
     board = new Board(chunks);
   }
 

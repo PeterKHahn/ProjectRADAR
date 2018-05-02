@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.entity;
 
-import edu.brown.cs.dreamteam.box.CollisionBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 
 /**
@@ -9,7 +8,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
  * @author peter
  *
  */
-public abstract class StaticEntity extends Entity implements CollisionBoxed {
+public abstract class StaticEntity extends Interactable {
 
   private Vector center;
   private double radius;

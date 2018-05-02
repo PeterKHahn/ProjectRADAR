@@ -9,7 +9,6 @@ import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.game.Chunk;
-import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
  * Strategy to avoid all enemy players to save health. If AI's health is below 2
@@ -55,7 +54,7 @@ public class DefensiveStrategy extends Strategy {
 
   private Vector getEscapeDir(Collection<Chunk> chunks) {
     // Get all enemies in visible range
-    Set<DynamicEntity> enemies = ChunkMap.dynamicFromChunks(chunks);
+    Set<DynamicEntity> enemies = board.chunks().dynamicFromChunks(chunks);
     enemies.remove(player);
 
     // Determine escape direction

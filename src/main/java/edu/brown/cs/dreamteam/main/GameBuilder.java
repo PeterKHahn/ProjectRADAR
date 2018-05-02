@@ -50,12 +50,13 @@ public class GameBuilder {
   public GameBuilder generateMap(GameMap map) {
     Collection<Obstacle> obs = map.getObstacles();
     for (Obstacle ob : obs) {
-      engine.addObstacle(ob);
+      engine.addStatic(ob);
     }
     Collection<Item> items = map.getItems();
     for (Item i : items) {
       engine.addItem(i);
     }
+    engine.board();
     return this;
   }
 
@@ -64,7 +65,6 @@ public class GameBuilder {
   }
 
   public GameEngine complete() {
-    engine.makeBoard();
     while (numHumanPlayers < NUM_PLAYERS) {
       engine.addAiPlayer(numHumanPlayers);
       numHumanPlayers++;

@@ -2,8 +2,10 @@ package edu.brown.cs.dreamteam.ai;
 
 import com.google.gson.Gson;
 
-import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.box.BoxSet;
+import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -19,15 +21,22 @@ public class AiPlayer extends DynamicEntity {
   }
 
   private static final Gson GSON = new Gson();
-  private AiController controller;
+  private transient AiController controller;
+
+  private BoxSet hurtBox;
 
   /**
    * Constructs an AI player.
    */
   public AiPlayer(String id, double x, double y, double size) {
     super(id, x, y, size);
+    init();
+  }
+
+  private void init() {
     this.setType("AI");
     isAlive = true;
+    hurtBox = new BoxSet(SIZE);
   }
 
   public void setController(AiController controller) {
@@ -49,12 +58,6 @@ public class AiPlayer extends DynamicEntity {
   }
 
   @Override
-  public Vector collisionBoxOffset() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public double reach() {
     // TODO Auto-generated method stub
     return 0;
@@ -64,6 +67,41 @@ public class AiPlayer extends DynamicEntity {
   public void tick(ChunkMap chunkMap) {
     controller.makeNextMove(chunkMap);
     updatePosition(chunkMap);
+  }
+
+  @Override
+  public BoxSet hitBox() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public double baseDamage() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public BoxSet hurtBox() {
+    return hurtBox;
+  }
+
+  @Override
+  public void getHit(HitBoxed hitBoxed) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void hit(Interactable e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public boolean hits(Interactable e) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }

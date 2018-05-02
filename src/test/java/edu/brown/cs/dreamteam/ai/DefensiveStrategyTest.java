@@ -2,10 +2,11 @@ package edu.brown.cs.dreamteam.ai;
 
 import static org.junit.Assert.assertNotNull;
 
-import edu.brown.cs.dreamteam.board.Board;
-import edu.brown.cs.dreamteam.game.ChunkMap;
 import org.junit.Before;
 import org.junit.Test;
+
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 
 public class DefensiveStrategyTest {
   private static Board emptyBoard;

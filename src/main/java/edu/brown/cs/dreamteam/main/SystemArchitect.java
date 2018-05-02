@@ -110,8 +110,8 @@ public class SystemArchitect extends Architect {
       Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
-          .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
-          .put("statics", chunks.staticFromChunks(chunksNeeded)).build();
+          .put("entities", chunks.interactableFromChunks(chunksNeeded))
+          .put("items", chunks.itemsFromChunks(chunksNeeded)).build();
       Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
   }
@@ -197,8 +197,6 @@ public class SystemArchitect extends Architect {
                 c.itemDropped(0);
                 break;
               default:
-                System.out
-                    .println("EWWOW: key sent that isn't an option...wtf");
                 break;
             }
             clientStates.put(Messenger.sessionUserMap.get(user), c);

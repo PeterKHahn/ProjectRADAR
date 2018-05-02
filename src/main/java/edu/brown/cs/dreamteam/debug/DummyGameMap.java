@@ -27,7 +27,7 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public Collection<Item> getItems() {
-    Item a = new Item("Item1", new Vector(3, 10), Type.WEAPON,
+    Item a = new Item("Item1", new Vector(3, 60), Type.WEAPON,
         new EnergyBlast());
     List<Item> z = new ArrayList<Item>();
     z.add(a);

@@ -5,8 +5,6 @@ import java.util.Queue;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.box.HurtBoxed;
-import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.utility.Logger;
 
 public class Attack implements HitBoxed {
@@ -46,7 +44,6 @@ public class Attack implements HitBoxed {
     if (attacking) {
       Logger.logDebug("Frame: " + frame);
       Logger.logDebug("Damage: " + currentAttackFrame.baseDamage());
-      Logger.logDebug("Active: " + currentAttackFrame.isHitboxActive());
 
       currentAttackFrame = next();
 
@@ -84,24 +81,8 @@ public class Attack implements HitBoxed {
   }
 
   @Override
-  public boolean isHitboxActive() {
-    return currentAttackFrame.isHitboxActive();
-
-  }
-
-  @Override
   public BoxSet hitBox() {
     return currentAttackFrame.hitBox();
-  }
-
-  @Override
-  public Vector hitBoxOffset() {
-    return currentAttackFrame.hitBoxOffset();
-  }
-
-  @Override
-  public void hit(HurtBoxed hurtBoxed) {
-    currentAttackFrame.hit(hurtBoxed);
   }
 
   @Override
@@ -128,8 +109,13 @@ public class Attack implements HitBoxed {
 
     public AttackBuilder addCircle(int duration, double damamge,
         double radius) {
-      attackFrameQueue.add(new ActiveAttackFrame(duration, damamge,
-          new BoxSet(radius), new Vector(0, 0)));
+      attackFrameQueue
+          .add(new ActiveAttackFrame(duration, damamge, new BoxSet(radius)));
+      return this;
+    }
+
+    public AttackBuilder addAttackFrame(AttackFrame attackFrame) {
+      attackFrameQueue.add(attackFrame);
       return this;
     }
 

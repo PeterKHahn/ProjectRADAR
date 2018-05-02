@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
-import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.graph.AStarSearch;
 import edu.brown.cs.dreamteam.graph.Path;
@@ -25,11 +26,15 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
 public class Board {
   private final int width;
   private final int height;
+  private final int chunkSize;
+  private final ChunkMap chunks;
+
+  private final Set<StaticEntity> obstacles;
+
   private AStarSearch<Position, Move> search;
   private KDTree<Position> tree;
   private List<Position> positions;
-  private Map<Obstacle, List<Position>> obstacleCorners;
-  private ChunkMap initialMap;
+  private Map<StaticEntity, List<Position>> obstacleCorners;
   private static double entitySize = DynamicEntity.SIZE;
 
   /**
@@ -40,9 +45,11 @@ public class Board {
    *          A ChunkMap containing all entities in the game.
    */
   public Board(ChunkMap chunks) {
-    initialMap = chunks;
-    width = chunks.getWidth();
-    height = chunks.getHeight();
+    this.chunks = chunks;
+    this.width = chunks.getWidth();
+    this.height = chunks.getHeight();
+    this.chunkSize = chunks.getChunkSize();
+    this.obstacles = chunks.getStaticEntities();
     search = new AStarSearch<>();
     constructGraph();
   }
@@ -63,14 +70,13 @@ public class Board {
     positions = new ArrayList<>();
 
     // Get all obstacles from chunks
-    Collection<Obstacle> obstacles = initialMap.getObstaclesInRange(
-        initialMap.chunksInRange(0, height - 1, 0, width - 1));
-    List<Obstacle> addedObstacles = new ArrayList<>();
+
+    List<StaticEntity> addedObstacles = new ArrayList<>();
 
     // Make positions at the edges of obstacles
-    Iterator<Obstacle> it = obstacles.iterator();
+    Iterator<StaticEntity> it = obstacles.iterator();
     while (it.hasNext()) {
-      Obstacle obstacle = it.next();
+      StaticEntity obstacle = it.next();
       positions.addAll(addObstacleCorners(addedObstacles, obstacle));
     }
 
@@ -81,7 +87,6 @@ public class Board {
   }
 
   private void makeMapEdgePositions() {
-    int chunkSize = initialMap.getChunkSize();
     List<Position> added = new ArrayList<>();
     // One new position at the border of every chunk on the edge of the map.
     for (int i = 0; i < width; i++) {
@@ -109,8 +114,8 @@ public class Board {
     }
   }
 
-  private Collection<Position> addObstacleCorners(List<Obstacle> addedObstacles,
-      Obstacle obstacle) {
+  private Collection<Position> addObstacleCorners(
+      List<StaticEntity> addedObstacles, StaticEntity obstacle) {
     // Get the reach and center of the obstacle. Adds the AiPlayer size to the
     // reach to ensure the player won't collide, because the available Positions
     // represent where the center of the AiPlayer can traverse to
@@ -141,7 +146,7 @@ public class Board {
     topRight.addEdge(bottomRight);
 
     // Add edges between new corners and previous obstacles' corners in toAdd.
-    for (Obstacle otherObstacle : addedObstacles) {
+    for (StaticEntity otherObstacle : addedObstacles) {
       // Add edges between each of the new corners and each of the corners of
       // this obstacle as appropriate
       addEdgeBetweenCorners(addedObstacles, otherObstacle, bottomLeft);
@@ -153,15 +158,15 @@ public class Board {
     return corners;
   }
 
-  private void addEdgeBetweenCorners(List<Obstacle> addedObstacles,
-      Obstacle obstacle, Position curr) {
+  private void addEdgeBetweenCorners(List<StaticEntity> addedObstacles,
+      StaticEntity obstacle, Position curr) {
     List<Position> corners = obstacleCorners.get(obstacle);
     // Add edges against each of the corners
     for (Position corner : corners) {
       Vector dir = curr.subtract(corner);
       boolean canAddEdge = true;
       // Check whether any other obstacle is in the way
-      for (Obstacle otherObstacle : addedObstacles) {
+      for (StaticEntity otherObstacle : addedObstacles) {
         if (obstacle != otherObstacle) {
           if (!obstacleNotInLine(otherObstacle, corner, dir)) {
             canAddEdge = false;
@@ -193,7 +198,7 @@ public class Board {
    * @return True if the obstacle does not block the line segment, false
    *         otherwise.
    */
-  private boolean obstacleNotInLine(Obstacle obstacle, Position start,
+  private boolean obstacleNotInLine(StaticEntity obstacle, Position start,
       Vector dir) {
     List<Position> checkCorners = obstacleCorners.get(obstacle);
     Position bottomLeft = checkCorners.get(0);
@@ -285,11 +290,10 @@ public class Board {
   public void addEdgesFor(Position pos, boolean reverse) {
     // Add edges to all other positions have an unobstructed straight line
     // distance from the given position
-    Collection<Obstacle> obstacles = initialMap.getObstaclesInRange(
-        initialMap.chunksInRange(0, height - 1, 0, width - 1));
+
     for (Position otherPos : positions) {
       boolean canAddEdge = true;
-      for (Obstacle obstacle : obstacles) {
+      for (StaticEntity obstacle : obstacles) {
         if (!obstacleNotInLine(obstacle, pos, otherPos.subtract(pos))) {
           canAddEdge = false;
           break;
@@ -345,6 +349,10 @@ public class Board {
 
     // Get the nearest neighbor to the center position
     return tree.kNearestNeighbors(1, center, false).get(0);
+  }
+
+  public ChunkMap chunks() {
+    return chunks;
   }
 
 }

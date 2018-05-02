@@ -26,15 +26,18 @@ public class BoardTest {
     Board.setEntitySize(1);
 
     emptyChunks = new ChunkMap(10, 10, 1);
+
     SystemArchitect architect = new SystemArchitect();
+
     oneObstacle = new GameEngine(architect, 10, 10, 1);
-    oneObstacle.addObstacle(new Obstacle("1", new Vector(5, 5), 0));
-    oneObstacle.makeBoard();
+    oneObstacle.addStatic(new Obstacle("1", new Vector(5, 5), 0));
+    oneObstacle.board();
 
     multObstacles = new GameEngine(architect, 10, 10, 1);
-    multObstacles.addObstacle(new Obstacle("1", new Vector(2, 2), 0));
-    multObstacles.addObstacle(new Obstacle("2", new Vector(7, 7), 1));
-    multObstacles.makeBoard();
+    multObstacles.addStatic(new Obstacle("1", new Vector(2, 2), 0));
+    multObstacles.addStatic(new Obstacle("2", new Vector(7, 7), 1));
+
+    multObstacles.board();
   }
 
   @Test

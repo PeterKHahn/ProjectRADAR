@@ -64,7 +64,7 @@ public class AiController {
   public void makeNextMove(ChunkMap chunks) {
     Collection<Chunk> visibleChunks = chunks.chunksInRange(player,
         DynamicEntity.VISIBLE_RANGE);
-    updateStrategy(visibleChunks);
+    updateStrategy(chunks, visibleChunks);
     strategies.get(strategy).makeNextMove(visibleChunks);
   }
 
@@ -74,9 +74,9 @@ public class AiController {
    * @param chunks
    *          A Collection of all visible chunks to the player right now.
    */
-  private void updateStrategy(Collection<Chunk> chunks) {
+  private void updateStrategy(ChunkMap chunkMap, Collection<Chunk> chunks) {
     // Get visible enemies and remove current AI as an enemy
-    Set<DynamicEntity> enemies = ChunkMap.dynamicFromChunks(chunks);
+    Set<DynamicEntity> enemies = chunkMap.dynamicFromChunks(chunks);
     enemies.remove(player);
 
     if (enemies.size() > 0) {

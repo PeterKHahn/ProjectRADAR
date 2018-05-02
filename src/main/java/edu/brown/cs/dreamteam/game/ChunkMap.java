@@ -1,6 +1,7 @@
 package edu.brown.cs.dreamteam.game;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,17 +9,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import edu.brown.cs.dreamteam.box.CollisionBoxed;
-import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.box.HurtBoxed;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
-import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * Chunk Map is the primary location of our storage of entity information,
@@ -40,6 +38,8 @@ public class ChunkMap {
 
   private Map<String, GamePlayer> players;
   private Map<String, Entity> entities;
+
+  private Set<StaticEntity> staticEntities;
 
   private int tickCount;
 
@@ -82,6 +82,7 @@ public class ChunkMap {
     chunks = new Chunk[height][width];
     entities = new HashMap<String, Entity>();
     players = new HashMap<String, GamePlayer>();
+    staticEntities = new HashSet<StaticEntity>();
     initChunks();
 
   }
@@ -146,73 +147,33 @@ public class ChunkMap {
    * @param player
    *          the game player to be added
    */
-  public void addPlayer(GamePlayer player, Collection<Chunk> chunks) {
+  public void addPlayer(GamePlayer player) {
     players.put(player.getId(), player);
-    addDynamic(player, chunks);
-    addHitboxed(player, chunks);
-    addHurtboxed(player, chunks);
+    entities.put(player.getId(), player);
 
   }
 
-  /**
-   * Adds a Dynamic to the game.
-   * 
-   * @param dynamic
-   *          The dynamic to be added
-   */
-  public void addDynamic(DynamicEntity dynamic, Collection<Chunk> chunks) {
+  public void addDynamic(DynamicEntity e) {
+    Collection<Chunk> chunks = chunksInRange(e);
     for (Chunk c : chunks) {
-      c.addDynamic(dynamic);
+      c.addDynamic(e);
     }
-    entities.put(dynamic.getId(), dynamic);
   }
 
-  /**
-   * Adds a staticEntity to the chunk map.
-   * 
-   * @param staticEntity
-   *          the staticEntity we are adding
-   */
-  public void addStatic(StaticEntity staticEntity, Collection<Chunk> chunks) {
-
-    Logger.logMessage(
-        "Adding static entities to map across " + chunks.size() + " chunks.");
-    Logger.logMessage(staticEntity.toString());
-
+  public void addStatic(StaticEntity e) {
+    Collection<Chunk> chunks = chunksInRange(e);
     for (Chunk c : chunks) {
-      c.addStatic(staticEntity);
-      c.addCollisionBoxedEntities(staticEntity);
-
+      c.addStatic(e);
     }
-    entities.put(staticEntity.getId(), staticEntity);
-
+    staticEntities.add(e);
   }
 
-  public void addItem(Item item, Collection<Chunk> chunkInRange) {
-    for (Chunk c : chunkInRange) {
-      c.addItem(item);
-    }
+  public void addItem(Item item) {
+    Chunk c = chunkFromPosition(item.center());
+    c.addItem(item);
   }
 
-  public void addCollisioned(CollisionBoxed entity, Collection<Chunk> chunks) {
-    for (Chunk c : chunks) {
-      c.addCollisionBoxedEntities(entity);
-    }
-  }
-
-  public void addHitboxed(HitBoxed entity, Collection<Chunk> chunks) {
-    for (Chunk c : chunks) {
-      c.addHitBoxed(entity);
-    }
-  }
-
-  public void addHurtboxed(HurtBoxed entity, Collection<Chunk> chunks) {
-    for (Chunk c : chunks) {
-      c.addHurtBoxed(entity);
-    }
-  }
-
-  public Collection<Chunk> chunksInRange(Entity e) {
+  public Collection<Chunk> chunksInRange(Interactable e) {
     return chunksInRange(e, e.reach());
 
   }
@@ -257,61 +218,37 @@ public class ChunkMap {
 
   }
 
-  /**
-   * Returns the set of staticEntities within the chunks.
-   * 
-   * @param chunks
-   *          the Collection of chunks to retrieve static entities from
-   * @return A Set of Static Entities contined in chunks
-   */
+  public Chunk chunkFromPosition(Vector position) {
+    int row = getChunkRow(position.y);
+    int col = getChunkCol(position.x);
+
+    return chunks[row][col];
+  }
+
+  public Set<Interactable> interactableFromChunks(Collection<Chunk> chunks) {
+    Set<Interactable> res = new HashSet<Interactable>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getInteractable());
+    }
+
+    return res;
+  }
+
+  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+    Set<DynamicEntity> res = new HashSet<DynamicEntity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getDynamic());
+    }
+
+    return res;
+  }
+
   public Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
     Set<StaticEntity> res = new HashSet<StaticEntity>();
     for (Chunk c : chunks) {
-      res.addAll(c.getStaticEntities());
-    }
-    return res;
-  }
-
-  public Collection<CollisionBoxed> getCollisionedFromChunks(
-      Collection<Chunk> chunks) {
-    Set<CollisionBoxed> res = new HashSet<CollisionBoxed>();
-    for (Chunk c : chunks) {
-      res.addAll(c.getCollisionBoxedEntities());
+      res.addAll(c.getStatic());
     }
 
-    return res;
-  }
-
-  /**
-   * Gets all obstacles (CollisionBoxed objects that return true on call to
-   * isSolid) in the given collection of chunks.
-   *
-   * @return A Collection of Obstacles.
-   */
-  public Collection<Obstacle> getObstaclesInRange(Collection<Chunk> chunks) {
-    Collection<CollisionBoxed> collision = getCollisionedFromChunks(chunks);
-    Set<Obstacle> res = new HashSet<>();
-    for (CollisionBoxed entity : collision) {
-      if (entity.isSolid()) {
-        res.add((Obstacle) entity);
-      }
-    }
-
-    return res;
-  }
-
-  /**
-   * Returns the set of dynamicEntities within the chunks.
-   * 
-   * @param chunks
-   *          the Collection of chunks to retrieve static entities from
-   * @return A Set of Static Entities contined in chunks
-   */
-  public static Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
-    Set<DynamicEntity> res = new HashSet<DynamicEntity>();
-    for (Chunk c : chunks) {
-      res.addAll(c.getDynamicEntities());
-    }
     return res;
   }
 
@@ -325,6 +262,10 @@ public class ChunkMap {
 
   public Collection<GamePlayer> getPlayers() {
     return players.values();
+  }
+
+  public Set<StaticEntity> getStaticEntities() {
+    return Collections.unmodifiableSet(staticEntities);
   }
 
   public int tickCount() {
