@@ -51,12 +51,14 @@ $(document).ready(() => {
     	} else {
     		if (gameStart) {
     			player = data.player;
-    			staticEntities = data.statics;
+    			entities = data.entities;
     			items = data.items;
+
 	    		clearCanvas();
-	    		determineOffset();
-	    		drawStatic();  
-				drawPlayer();  		
+	            determineOffset();
+	            drawEntities();
+	            drawPlayer();
+	            ctx.globalAlpha = "1.0";	
 	    	}
 
     	}
@@ -79,6 +81,7 @@ $(document).ready(() => {
 			switch(event.key){
 				case "a": // a for wasd
 				case "ArrowLeft":
+					console.log("HITT")
 					websocketSend(webSocket, "key", "left", true);
 					break;
 				case "d": // d in wasd

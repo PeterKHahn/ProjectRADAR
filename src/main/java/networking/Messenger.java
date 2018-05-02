@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jetty.websocket.api.Session;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
@@ -35,23 +33,6 @@ public class Messenger {
       }
     });
 
-  }
-
-  public static void broadcastIndividualMessage(String sender, String message,
-      Room r) {
-    Session relevant = null;
-    for (PlayerSession player : r.getPlayers()) {
-      if (player.getId().equals(sender)) {
-        relevant = player.getSession();
-      }
-    }
-    if (relevant != null) {
-      try {
-        relevant.getRemote().sendString(message);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
   }
 
 }

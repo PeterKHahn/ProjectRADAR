@@ -52,7 +52,6 @@ public class SystemArchitect extends Architect {
   private GameEngine game;
   private Rooms rooms = new Rooms();
   private Map<String, ClientState> clientStates;
-  private Map<Long, Room> threadIDToRoomMap = new HashMap<Long, Room>();
   private AtomicInteger userID = new AtomicInteger(1);
 
   public SystemArchitect() {
@@ -109,19 +108,31 @@ public class SystemArchitect extends Architect {
   public void onGameChange(ChunkMap chunks, int id) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
-    Room r = threadIDToRoomMap.get(Thread.currentThread().getId());
-    if (r != null) {
-      for (GamePlayer p : movingThings) {
-        Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
-        Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-            .put("type", "individual").put("player", p)
-            .put("dynamics", chunks.dynamicFromChunks(chunksNeeded))
-            .put("statics", chunks.staticFromChunks(chunksNeeded))
-            .put("items", chunks.itemsFromChunks(chunksNeeded)).build();
-        Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables),
-            r);
-      }
+    for (GamePlayer p : movingThings) {
+      Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("type", "individual").put("player", p)
+          .put("entities", chunks.interactableFromChunks(chunksNeeded))
+          .put("items", ChunkMap.itemsFromChunks(chunksNeeded)).build();
+      broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
+    }
 
+  }
+
+  public void broadcastIndividualMessage(String sender, String message) {
+    Session relevant = null;
+    for (PlayerSession player : rooms.getPlayers()) {
+      if (player.getId().equals(sender)) {
+        relevant = player.getSession();
+      }
+    }
+
+    if (relevant != null) {
+      try {
+        relevant.getRemote().sendString(message);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -151,8 +162,10 @@ public class SystemArchitect extends Architect {
         if (roomID != null) {
           Room r = rooms.getNotPlayingRoom(roomID);
           if (r != null) {
-            r.addPlayer(new PlayerSession(
-                new AtomicInteger(userID.getAndIncrement()).toString(), user));
+            PlayerSession p = new PlayerSession(
+                new AtomicInteger(userID.getAndIncrement()).toString(), user);
+            r.addPlayer(p);
+            rooms.addPlayers(p);
             Messenger.broadcastMessage("Someone has joined!", r);
           }
         }
@@ -169,6 +182,7 @@ public class SystemArchitect extends Architect {
         String roomID = params.get("roomID").get(0);
         Room r = rooms.getPlayingRoom(roomID);
         r.removePlayer(user);
+        rooms.removePlayer(user);
         if (r != null) {
           if (r.getPlayers().isEmpty()) {
             rooms.stopPlaying(roomID);
@@ -205,10 +219,11 @@ public class SystemArchitect extends Architect {
                   .addHumanPlayer(GamePlayer.player(player.getId(), 0.0, 0.0));
             }
             GameEngine engine = builder.complete();
+
             Thread x = new Thread(engine);
-            threadIDToRoomMap.put(x.currentThread().getId(), r);
             x.start();
             for (PlayerSession person : r.getPlayers()) {
+              System.out.println("ITERATION: " + person.getId());
               putClientState(person.getId(), new ClientState(person.getId()));
             }
             Messenger.broadcastMessage("start", r);
@@ -244,7 +259,7 @@ public class SystemArchitect extends Architect {
                       .println("EWWOW: key sent that isn't an option...wtf");
                   break;
               }
-              putClient(r, user, c);
+              putClient(user, c);
             }
 
             break;
@@ -255,10 +270,11 @@ public class SystemArchitect extends Architect {
       }
     }
 
-    private void putClient(Room r, Session user, ClientState c) {
-      for (PlayerSession player : r.getPlayers()) {
-        if (user.equals(player.getSession())) {
+    private void putClient(Session user, ClientState c) {
+      for (PlayerSession player : rooms.getPlayers()) {
+        if (user.getRemote().equals(player.getSession().getRemote())) {
           clientStates.put(player.getId(), c);
+          System.out.println(player.getId());
         }
       }
     }
@@ -286,7 +302,6 @@ public class SystemArchitect extends Architect {
 
       // if there's already a game going on, don't let this guy in.
       if (rooms.alreadyPlaying(roomID)) {
-        System.out.println("ITS IN ALREADY PLAYIN");
 
         Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
             .put("title", "Game R.A.D.A.R.").build();
@@ -296,7 +311,6 @@ public class SystemArchitect extends Architect {
       if (rooms.isNotPlaying(roomID)) {
         Room r = rooms.getNotPlayingRoom(roomID);
         if (r.numPlayers() == 4) {
-          System.out.println("TOO MANY PLAYERS");
           Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
               .put("title", "Game R.A.D.A.R.").build();
           return new ModelAndView(variables, "error.ftl");
