@@ -39,11 +39,6 @@ public class EnergyBlast extends Weapon {
   }
 
   @Override
-  public boolean isHitboxActive() {
-    return attack.isHitboxActive();
-  }
-
-  @Override
   public BoxSet hitBox() {
     return attack.hitBox();
   }

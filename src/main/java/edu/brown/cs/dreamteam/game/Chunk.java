@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.brown.cs.dreamteam.box.CollisionBoxed;
-import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.box.HurtBoxed;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.item.Item;
@@ -22,10 +19,6 @@ public class Chunk {
   private Set<Interactable> interactable;
 
   private Set<Item> items;
-
-  private Set<CollisionBoxed> collisionBoxed;
-  private Set<HitBoxed> hitBoxed;
-  private Set<HurtBoxed> hurtBoxed;
 
   private int row;
   private int col;
@@ -48,9 +41,6 @@ public class Chunk {
   private void init() {
     interactable = new HashSet<Interactable>();
 
-    collisionBoxed = new HashSet<>();
-    hitBoxed = new HashSet<>();
-    hurtBoxed = new HashSet<>();
     items = new HashSet<Item>();
 
   }
@@ -71,7 +61,7 @@ public class Chunk {
     return interactable;
   }
 
-  public void removeEntity(Entity e) {
+  public void removeInteractable(Entity e) {
     interactable.remove(e);
   }
 

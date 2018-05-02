@@ -1,7 +1,6 @@
 package edu.brown.cs.dreamteam.weapon;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
-import edu.brown.cs.dreamteam.datastructures.Vector;
 
 /**
  * 
@@ -11,7 +10,6 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 public class DefaultWeapon extends Weapon {
 
   private BoxSet hitBox;
-  private Vector hitBoxOffset;
 
   private double radius;
 
@@ -24,7 +22,6 @@ public class DefaultWeapon extends Weapon {
   private void init() {
     radius = 0;
     hitBox = new BoxSet(radius);
-    hitBoxOffset = new Vector(0, 0);
   }
 
   @Override
@@ -40,11 +37,6 @@ public class DefaultWeapon extends Weapon {
   @Override
   public void tick() {
 
-  }
-
-  @Override
-  public boolean isHitboxActive() {
-    return false;
   }
 
   @Override

@@ -57,11 +57,6 @@ public class Obstacle extends StaticEntity {
   }
 
   @Override
-  public boolean isHitboxActive() {
-    return false;
-  }
-
-  @Override
   public BoxSet hitBox() {
     return BoxSet.NullBoxSet();
 

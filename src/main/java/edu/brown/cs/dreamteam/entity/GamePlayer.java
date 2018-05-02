@@ -115,16 +115,16 @@ public class GamePlayer extends DynamicEntity {
 
     Collection<Chunk> chunksInRange = chunkMap.chunksInRange(this);
     for (Chunk c : chunksInRange) {
-      c.removeEntity(this);
+      c.removeInteractable(this);
     }
 
     updatePosition(chunkMap); // Calls movement in dynamic entity
     inventory.tick();
 
-    if (primaryActionFlag) {
+    if (primaryActionFlag) { // starts attack
       inventory.getActiveWeapon().fire();
     }
-    if (itemPickedFlag) {
+    if (itemPickedFlag) { // picks up items
       Collection<Item> items = chunkMap.itemsFromChunks(chunksInRange);
       Item closest = null;
       for (Item i : items) {
@@ -140,16 +140,13 @@ public class GamePlayer extends DynamicEntity {
       }
     }
 
-    // check collision here
-    if (isHitboxActive()) { // only iterate if it is active
-      Set<Interactable> interactables = chunkMap
-          .entitiesFromChunks(chunksInRange);
-      for (Interactable e : interactables) {
-        if (hits(e)) {
-
-        }
+    // checks collision and hits them
+    Set<Interactable> interactables = chunkMap
+        .entitiesFromChunks(chunksInRange);
+    for (Interactable e : interactables) {
+      if (hits(e)) {
+        this.hit(e);
       }
-
     }
 
     if (health < 0) {
@@ -161,11 +158,6 @@ public class GamePlayer extends DynamicEntity {
         c.addInteractable(this);
       }
     }
-  }
-
-  @Override
-  public boolean isHitboxActive() {
-    return inventory.getActiveWeapon().isHitboxActive();
   }
 
   @Override
@@ -198,9 +190,7 @@ public class GamePlayer extends DynamicEntity {
 
   @Override
   public boolean hits(Interactable hurtBoxed) {
-    if (!isHitboxActive()) {
-      return false;
-    }
+
     for (Box b : hitBox().boxes()) {
       for (Box hb : hurtBoxed.hurtBox().boxes()) {
         Vector center = center().add(b.offset());
@@ -222,7 +212,8 @@ public class GamePlayer extends DynamicEntity {
 
   @Override
   public void hit(Interactable e) {
-    // TODO LATER
+
+    e.getHit(this);
   }
 
 }
