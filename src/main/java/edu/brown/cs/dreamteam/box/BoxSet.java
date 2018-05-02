@@ -14,10 +14,15 @@ public class BoxSet implements Reach {
     this.boxes = boxes;
     double reach = 0;
     for (Box box : boxes) {
-      double tmp = box.offset().magnitude() + box.reach();
+      double tmp = box.offset().magnitude() + box.radius();
       reach = Math.max(reach, tmp);
     }
     this.reach = reach;
+  }
+
+  public BoxSet(Box box) {
+    this.boxes = ImmutableList.of(box);
+    reach = box.offset().magnitude() + box.radius();
   }
 
   public BoxSet(double radius) {

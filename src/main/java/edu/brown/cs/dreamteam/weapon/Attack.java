@@ -5,7 +5,6 @@ import java.util.List;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
-import edu.brown.cs.dreamteam.utility.Logger;
 
 public class Attack implements HitBoxed {
 
@@ -43,9 +42,6 @@ public class Attack implements HitBoxed {
 
   public void tick() {
     if (attacking) {
-      Logger.logDebug("Frame: " + frame);
-      Logger.logDebug("Damage: " + currentAttackFrame.baseDamage());
-
       currentAttackFrame = next();
 
       frame++;

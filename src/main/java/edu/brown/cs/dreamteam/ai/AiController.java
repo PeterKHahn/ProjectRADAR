@@ -7,6 +7,7 @@ import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import edu.brown.cs.dreamteam.entity.Playable;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
@@ -36,7 +37,7 @@ public class AiController {
    */
   public AiController(String id, Board board) {
     // TODO update starting position
-    player = new AiPlayer(id, 0, 0, DynamicEntity.SIZE);
+    player = new AiPlayer(id, 0, 0, Playable.SIZE);
     player.setController(this);
 
     // Initialize strategies
@@ -63,7 +64,7 @@ public class AiController {
    */
   public void makeNextMove(ChunkMap chunks) {
     Collection<Chunk> visibleChunks = chunks.chunksInRange(player,
-        DynamicEntity.VISIBLE_RANGE);
+        Playable.VISIBLE_RANGE);
     // TODO uncomment
     // updateStrategy(chunks, visibleChunks);
     strategies.get(strategy).makeNextMove(visibleChunks);

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.datastructures.Vector;
-import edu.brown.cs.dreamteam.entity.DynamicEntity;
+import edu.brown.cs.dreamteam.entity.Playable;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.graph.AStarSearch;
@@ -37,7 +37,7 @@ public class Board {
   private KDTree<Position> tree;
   private List<Position> positions;
   private Map<StaticEntity, List<Position>> obstacleCorners;
-  private static double entitySize = DynamicEntity.SIZE;
+  private static double entitySize = Playable.SIZE;
 
   /**
    * Constructs the graph using the given entity information at the beginning of
