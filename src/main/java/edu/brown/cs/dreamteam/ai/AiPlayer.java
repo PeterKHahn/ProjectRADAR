@@ -23,13 +23,20 @@ public class AiPlayer extends DynamicEntity {
   private static final Gson GSON = new Gson();
   private transient AiController controller;
 
+  private BoxSet hurtBox;
+
   /**
    * Constructs an AI player.
    */
   public AiPlayer(String id, double x, double y, double size) {
     super(id, x, y, size);
+    init();
+  }
+
+  private void init() {
     this.setType("AI");
     isAlive = true;
+    hurtBox = new BoxSet(SIZE);
   }
 
   public void setController(AiController controller) {
@@ -76,8 +83,7 @@ public class AiPlayer extends DynamicEntity {
 
   @Override
   public BoxSet hurtBox() {
-    // TODO Auto-generated method stub
-    return null;
+    return hurtBox;
   }
 
   @Override

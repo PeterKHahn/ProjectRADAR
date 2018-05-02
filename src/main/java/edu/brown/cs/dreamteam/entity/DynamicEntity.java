@@ -114,14 +114,12 @@ public abstract class DynamicEntity extends Interactable {
    */
   private double handleDynamicCollision(Interactable collisionBoxed) {
     BoxSet staticBoxSet = collisionBoxed.collisionBox();
-    Logger.logDebug("STATIC LOCATION: " + collisionBoxed.center());
     double minT = 1;
     for (Box dynamicBox : collisionBox().boxes()) {
       for (Box staticBox : staticBoxSet.boxes()) {
 
         Vector dynamicCenter = dynamicBox.offset().add(center);
         Vector staticCenter = staticBox.offset().add(collisionBoxed.center());
-        Logger.logDebug("Static Center: " + staticCenter);
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
 
@@ -135,7 +133,6 @@ public abstract class DynamicEntity extends Interactable {
         boolean collides = distanceSquared <= (dynamicBox.radius()
             + staticBox.radius()) * (dynamicBox.radius() + staticBox.radius());
         if (collides) {
-          Logger.logDebug("COLLIDES");
           // calculate the maximum time before collision
           double sumRadiusSquared = (dynamicBox.radius() + staticBox.radius())
               * (dynamicBox.radius() + staticBox.radius());

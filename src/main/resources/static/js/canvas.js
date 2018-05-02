@@ -1,7 +1,7 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, entities, data, player, name;
+let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
 let gameStart = false;
 
 $(document).ready(() => {
@@ -45,6 +45,7 @@ $(document).ready(() => {
     	console.log(data);
     	player = data.player;
     	entities = data.entities;
+      items = data.items;
     	if (gameStart) {
     		clearCanvas();
     		determineOffset();
@@ -66,11 +67,10 @@ $(document).ready(() => {
 	$(document).keydown(event => {
 
 		if (gameStart) {
-
+      console.log(event.key)
 			switch(event.key){
 				case "a": // a for wasd
 				case "ArrowLeft":
-					console.log("hewwooo")
 					websocketSend(webSocket, "key", "left", true);
 					//movePlayer("left");
 					break;
@@ -89,6 +89,8 @@ $(document).ready(() => {
 					websocketSend(webSocket, "key", "down", true);
 					//movePlayer("down");
 					break;
+        case " ":
+          websocketSend(webSocket, "key", "space", true);
 			}
 		}
 	})
@@ -113,6 +115,7 @@ $(document).ready(() => {
 				case "ArrowDown":
 					websocketSend(webSocket, "key", "down", false);
 					break;
+
 			}
 		}
 	})
@@ -152,18 +155,7 @@ function init() {
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-	// staticEntities = [
-	// 	{x:20, y:60, type:"weapon"},
-	// 	{x:420, y:390, type: "item"},
-	// 	{x: 333, y:270, type:"deco"},
-	// 	{x: 700, y:270, type:"item"},
-	// 	{x: 1000, y:270, type:"weapon"}
-	// ];
-	// //TESTING DUMMY PLAYER
-	// player = {
-	// 	x: 100,
-	// 	y: 200
-	// }
+
 	drawPlayer();
 };
 
@@ -175,19 +167,7 @@ function drawPlayer() {
 	ctx.stroke();
 }
 
-function movePlayer(direction) {
-	switch(direction) {
-		case "left":
-			console.log("made it to move left"); break;
-		case "right":
-			console.log("made it to move left"); break;
-		case "up":
-			console.log("made it to move up"); break;
-		case "down":
-			console.log("made it to move down"); break;
-	}
-	console.log()
-}
+
 
 // clears canvas to redraw items.
 function clearCanvas() {
@@ -250,6 +230,9 @@ function drawEntities() {
 		console.log(entities[i].radius)
 		drawCircle(entities[i].center.x+offsetX, convertToCoord(entities[i].center.y)+offsetY, entities[i].radius, "none");
 	}
+  for(let i = 0 ; i < items.length; i++) {
+    drawCircle(items[i].center.x + offsetX, convertToCoord(items[i].center.y) + offsetY, 3, "item");
+  }
 }
 
 // TODO FIGURE THIS OUT
