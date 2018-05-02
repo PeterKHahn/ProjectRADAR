@@ -67,6 +67,8 @@ public class AiController {
         Playable.VISIBLE_RANGE);
     // TODO uncomment
     // updateStrategy(chunks, visibleChunks);
+    player.setItemPickedFlag(false);
+    player.setPrimaryActionFlag(false);
     strategies.get(strategy).makeNextMove(visibleChunks);
   }
 
