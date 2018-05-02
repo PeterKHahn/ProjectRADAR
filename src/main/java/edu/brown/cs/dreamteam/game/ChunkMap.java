@@ -270,7 +270,7 @@ public class ChunkMap {
     return res;
   }
 
-  public Set<Item> itemsFromChunks(Collection<Chunk> chunks) {
+  public static Set<Item> itemsFromChunks(Collection<Chunk> chunks) {
     Set<Item> res = new HashSet<>();
     for (Chunk c : chunks) {
       res.addAll(c.getItems());

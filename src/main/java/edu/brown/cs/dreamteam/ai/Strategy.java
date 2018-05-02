@@ -41,8 +41,6 @@ public abstract class Strategy {
     Position curr = getCurrentPosition();
     board.addEdgesFor(curr, false);
     Position next = board.getMoveTo(curr, goal);
-    System.out
-        .println("Curr is " + curr.toString() + "Next is " + next.toString());
 
     // Update player to go in direction of next
     player.updateDynamic(next.subtract(curr));

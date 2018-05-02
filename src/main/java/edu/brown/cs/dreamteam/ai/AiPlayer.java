@@ -41,7 +41,7 @@ public class AiPlayer extends Playable {
   @Override
   public void tick(ChunkMap chunkMap) {
     controller.makeNextMove(chunkMap);
-    updatePosition(chunkMap);
+    super.tick(chunkMap);
   }
 
 }

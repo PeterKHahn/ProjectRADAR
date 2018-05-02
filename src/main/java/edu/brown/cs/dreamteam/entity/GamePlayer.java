@@ -1,11 +1,6 @@
 package edu.brown.cs.dreamteam.entity;
 
-import java.util.Collection;
-import java.util.Set;
-
 import edu.brown.cs.dreamteam.event.ClientState;
-import edu.brown.cs.dreamteam.game.Chunk;
-import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
  * The internal representation of a player in the Game.
@@ -58,45 +53,6 @@ public class GamePlayer extends Playable {
   private void updatePlayer(ClientState state) {
     itemPickedFlag = state.retrieveItemPicked();
     primaryActionFlag = state.retrievePrimaryAction();
-  }
-
-  @Override
-  public void tick(ChunkMap chunkMap) {
-
-    Collection<Chunk> chunksInRange = chunkMap.chunksInRange(this);
-    for (Chunk c : chunksInRange) {
-      c.removeDynamic(this);
-    }
-
-    updatePosition(chunkMap); // Calls movement in dynamic entity
-    inventory.tick();
-
-    if (primaryActionFlag) { // starts attack
-      inventory.getActiveWeapon().fire();
-    }
-    if (itemPickedFlag) {
-      pickUpItem(chunkMap, chunksInRange);
-
-    }
-
-    // checks collision and hits them
-    Set<Interactable> interactables = chunkMap
-        .interactableFromChunks(chunksInRange);
-    for (Interactable e : interactables) {
-      if (hits(e)) {
-        this.hit(e);
-      }
-    }
-
-    if (health < 0) {
-      this.kill();
-
-    } else {
-      Collection<Chunk> newChunks = chunkMap.chunksInRange(this);
-      for (Chunk c : newChunks) {
-        c.addDynamic(this);
-      }
-    }
   }
 
 }

@@ -1,6 +1,7 @@
 package edu.brown.cs.dreamteam.entity;
 
 import java.util.Collection;
+import java.util.Set;
 
 import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
@@ -127,6 +128,44 @@ public abstract class Playable extends DynamicEntity {
       inventory.addItem(closest);
       chunkMap.removeItem(closest);
 
+    }
+  }
+
+  @Override
+  public void tick(ChunkMap chunkMap) {
+    Collection<Chunk> chunksInRange = chunkMap.chunksInRange(this);
+    for (Chunk c : chunksInRange) {
+      c.removeDynamic(this);
+    }
+
+    updatePosition(chunkMap); // Calls movement in dynamic entity
+    inventory.tick();
+
+    if (primaryActionFlag) { // starts attack
+      inventory.getActiveWeapon().fire();
+    }
+    if (itemPickedFlag) {
+      pickUpItem(chunkMap, chunksInRange);
+
+    }
+
+    // checks collision and hits them
+    Set<Interactable> interactables = chunkMap
+        .interactableFromChunks(chunksInRange);
+    for (Interactable e : interactables) {
+      if (hits(e)) {
+        this.hit(e);
+      }
+    }
+
+    if (health < 0) {
+      this.kill();
+
+    } else {
+      Collection<Chunk> newChunks = chunkMap.chunksInRange(this);
+      for (Chunk c : newChunks) {
+        c.addDynamic(this);
+      }
     }
   }
 

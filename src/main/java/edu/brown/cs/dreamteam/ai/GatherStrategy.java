@@ -7,7 +7,9 @@ import java.util.Set;
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.entity.Playable;
 import edu.brown.cs.dreamteam.game.Chunk;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.item.Item;
 
 /**
@@ -44,7 +46,7 @@ public class GatherStrategy extends Strategy {
       goal = placeRadar(chunks);
     } else {
       // Reached goal
-      if (goal.equals(new Position(player.center().x, player.center().y))) {
+      if (goal != null && canPickItem(chunks)) {
         player.setItemPickedFlag(true);
       }
       // AI player doesn't have enough material to make a radar
@@ -65,6 +67,24 @@ public class GatherStrategy extends Strategy {
       }
     }
     moveTo(goal);
+  }
+
+  private boolean canPickItem(Collection<Chunk> chunks) {
+    Collection<Item> items = ChunkMap.itemsFromChunks(chunks);
+    Item closest = null;
+    for (Item i : items) {
+      if (closest == null) {
+        closest = i;
+      } else {
+        closest = i.center().distance(player.center()) < closest.center()
+            .distance(player.center()) ? i : closest;
+      }
+    }
+    if (closest != null && closest.center()
+        .distance(player.center()) < Playable.ITEM_PICK_RANGE) {
+      return true;
+    }
+    return false;
   }
 
   /**
