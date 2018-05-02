@@ -2,6 +2,7 @@
 /*** Define global variables ***/
 
 let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
+let scale = 5;
 let gameStart = false;
 
 $(document).ready(() => {
@@ -49,9 +50,7 @@ $(document).ready(() => {
     		clearCanvas();
     		determineOffset();
     		drawEntities();
-			  drawPlayer();
-        drawPlayerHitbox();
-
+			drawPlayer();
     	}
     };
 
@@ -72,22 +71,18 @@ $(document).ready(() => {
 				case "a": // a for wasd
 				case "ArrowLeft":
 					websocketSend(webSocket, "key", "left", true);
-					//movePlayer("left");
 					break;
 				case "d": // d in wasd
 				case "ArrowDown":
 					websocketSend(webSocket, "key", "right", true);
-					//movePlayer("right");
 					break;
 				case "w": // w in wasd
 				case "ArrowUp":
 					websocketSend(webSocket, "key", "up", true);
-					//movePlayer("up");
 					break;
 				case "s": // s in wasd
 				case "ArrowRight":
 					websocketSend(webSocket, "key", "down", true);
-					//movePlayer("down");
 					break;
         case " ":
           websocketSend(webSocket, "key", "space", true);
@@ -127,8 +122,8 @@ $(document).ready(() => {
 	$(document).keypress(event => {
 		if (gameStart) {
 			switch(event.keyCode){
-				case "Space": // space bar for attack
-					websocketSend(webSocket, "key", "space", false); break;
+				// case " ": // space bar for attack
+				// 	websocketSend(webSocket, "key", "space", false); break;
 				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
 				case "r": // r for radar
@@ -168,9 +163,11 @@ function drawPlayer() {
 	ctx.strokeStyle = "#b8dbd9";
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
-
-
 	ctx.stroke();
+
+	drawHP();
+    drawPlayerHitbox();
+    drawName();
 }
 
 function drawPlayerHitbox() {
@@ -182,16 +179,8 @@ function drawPlayerHitbox() {
     let x = xOff + player.center.x;
     let y = yOff + player.center.y;
 
-
     drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
   }
-}
-
-
-
-// clears canvas to redraw items.
-function clearCanvas() {
-	ctx.clearRect(0, 0, c.width, c.height);
 }
 
 function drawCircle(x, y, radius, type) {
@@ -228,6 +217,9 @@ function drawCircle(x, y, radius, type) {
 	ctx.fill();
 }
 
+function clearCanvas() {
+	ctx.clearRect(0, 0, c.width, c.height);
+}
 
 
 /*** MISCELLANEOUS FUNCTIONS ***/
@@ -238,16 +230,18 @@ function drawHP() {
 	ctx.strokeText(achepee,30,30);
 }
 
+function drawName() {
+	ctx.font = "10px Arial";
+	ctx.textAlign = "center"
+	ctx.fillText(name, c.width/2, c.height/2 - 10);
+}
+
 function determineOffset() {
 	 offsetX = convertToCoord(player.center.x) + c.width/2;
 	 offsetY = player.center.y + c.height/2;
 	// how much we have to offset from (0,0) to keep player at center
 	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
-
-// function validMovement() {
-// 	// is the player movement going to go out of bounds?
-// }
 
 function drawEntities() {
 	for (let i = 0; i < entities.length; i++) {
@@ -258,7 +252,6 @@ function drawEntities() {
   }
 }
 
-// TODO FIGURE THIS OUT
 function convertToCoord(y) {
 	return -1*y;
 }
