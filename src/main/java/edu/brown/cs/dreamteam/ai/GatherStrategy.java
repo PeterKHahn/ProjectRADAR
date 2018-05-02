@@ -1,11 +1,15 @@
 package edu.brown.cs.dreamteam.ai;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.Chunk;
+import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.item.Item;
 
 /**
  * Strategy to gather as many items as possible. No other players are in the
@@ -41,32 +45,52 @@ public class GatherStrategy extends Strategy {
       goal = placeRadar(chunks);
     } else {
       // AI player doesn't have enough material to make a radar
-      // Get position of closest item
-      // TODO Check # of visible items
-      if (itemsInRange(chunks)) {
-        goal = getGoalItemPosition(chunks);
+      Set<Item> items = ChunkMap.itemsFromChunks(chunks);
+      if (items.size() > 0) {
+        System.out.println("AI " + player.getId() + " sees items!");
+        // Get position of closest item
+        goal = getGoalItemPosition(items);
+        System.out.println(
+            "AI " + player.getId() + " set goal to " + goal.toString());
       } else {
         // No items in visible range
 
         // Choose a random direction to go in if the goal is not already set
-        if (goal == null) {
+        // or if the goal position is reached
+        if (goal == null || player.center().equals(goal)) {
           Vector dir = new Vector(10 * (Math.random() - 0.5),
               10 * (Math.random() - 0.5));
           goal = board.getEdgePosition(getCurrentPosition(), dir);
+          System.out.println("AI " + player.getId() + " set goal to "
+              + goal.toString() + " with direction " + dir.toString());
         }
+        System.out
+            .println("AI " + player.getId() + " moving to " + goal.toString());
       }
     }
     moveTo(goal);
   }
 
-  private boolean itemsInRange(Collection<Chunk> chunks) {
-    // TODO
-    return false;
-  }
-
-  private Position getGoalItemPosition(Collection<Chunk> chunks) {
-    // TODO
-    return new Position(0, 0);
+  /**
+   * Gets the closest item's position. Assumes that there are items in the given
+   * set.
+   * 
+   * @return The closest item's position.
+   */
+  private Position getGoalItemPosition(Set<Item> items) {
+    Vector closest = new Vector(0, 0);
+    double distance = Double.MAX_VALUE;
+    Iterator<Item> it = items.iterator();
+    while (it.hasNext()) {
+      Item item = it.next();
+      Vector center = item.center();
+      double currDistance = center.distance(player.center());
+      if (currDistance < distance) {
+        distance = currDistance;
+        closest = center;
+      }
+    }
+    return new Position(closest.x, closest.y);
   }
 
   private Position placeRadar(Collection<Chunk> chunks) {

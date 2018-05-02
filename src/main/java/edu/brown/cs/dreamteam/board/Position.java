@@ -47,6 +47,16 @@ public class Position extends Vector
     edges.add(edge);
   }
 
+  /**
+   * Removes the edge to the other position if it exists.
+   * 
+   * @param other
+   *          The Position to remove the edge to.
+   */
+  public void removeEdge(Position other) {
+    edges.remove(new Move(this, other));
+  }
+
   @Override
   public List<Move> getEdges() {
     return edges;

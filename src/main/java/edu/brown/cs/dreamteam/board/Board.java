@@ -14,6 +14,7 @@ import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.graph.AStarSearch;
 import edu.brown.cs.dreamteam.graph.Path;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.kdtree.KDTree;
 import edu.brown.cs.dreamteam.utility.DreamMath;
 
@@ -30,6 +31,7 @@ public class Board {
   private final ChunkMap chunks;
 
   private final Set<StaticEntity> obstacles;
+  private Map<Item, Position> itemPositions;
 
   private AStarSearch<Position, Move> search;
   private KDTree<Position> tree;
@@ -51,7 +53,7 @@ public class Board {
     this.chunkSize = chunks.getChunkSize();
     this.obstacles = chunks.getStaticEntities();
     search = new AStarSearch<>();
-    constructGraph();
+    constructGraph(chunks);
   }
 
   /**
@@ -65,12 +67,12 @@ public class Board {
     return positions;
   }
 
-  private void constructGraph() {
+  private void constructGraph(ChunkMap chunks) {
     obstacleCorners = new HashMap<>();
     positions = new ArrayList<>();
+    itemPositions = new HashMap<>();
 
     // Get all obstacles from chunks
-
     List<StaticEntity> addedObstacles = new ArrayList<>();
 
     // Make positions at the edges of obstacles
@@ -83,7 +85,42 @@ public class Board {
     // Make positions at every chunk edge along the edges of the map
     makeMapEdgePositions();
 
+    // Make positions at item positions
+    makeItemPositions(chunks);
+
     tree = new KDTree<>(new ArrayList<>(positions), 2);
+  }
+
+  private void makeItemPositions(ChunkMap chunks) {
+    List<Position> added = new ArrayList<>();
+    Set<Item> items = chunks
+        .itemsFromChunks(chunks.chunksInRange(0, height - 1, 0, width - 1));
+    for (Item item : items) {
+      Position itemPos = new Position(item.center().x, item.center().y);
+      itemPositions.put(item, itemPos);
+      added.add(itemPos);
+    }
+
+    positions.addAll(added);
+    for (Position pos : added) {
+      addEdgesFor(pos, true);
+    }
+  }
+
+  public void removeItem(Item item) {
+    removePosition(itemPositions.get(item));
+    itemPositions.remove(item);
+  }
+
+  public void removePosition(Position position) {
+    List<Move> moves = position.getEdges();
+    for (Move move : moves) {
+      Position dest = move.getDest();
+      dest.removeEdge(position);
+    }
+    positions.remove(position);
+    // TODO add removeChild method to KDTree?
+    // tree.removeChild(position);
   }
 
   private void makeMapEdgePositions() {

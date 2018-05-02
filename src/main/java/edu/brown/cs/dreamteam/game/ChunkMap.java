@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
@@ -35,9 +37,10 @@ public class ChunkMap {
   private final int totalHeight;
 
   private Chunk[][] chunks;
+  private Board board; // Graph representation of the completed ChunkMap
 
   private Map<String, GamePlayer> players;
-  private Map<String, Entity> entities;
+  private Map<String, DynamicEntity> dynamic;
 
   private Set<StaticEntity> staticEntities;
 
@@ -62,6 +65,14 @@ public class ChunkMap {
     init();
   }
 
+  public void makeBoard() {
+    board = new Board(this);
+  }
+
+  public Board getBoard() {
+    return board;
+  }
+
   public int getWidth() {
     return width;
   }
@@ -80,7 +91,7 @@ public class ChunkMap {
 
   private void init() {
     chunks = new Chunk[height][width];
-    entities = new HashMap<String, Entity>();
+    dynamic = new HashMap<String, DynamicEntity>();
     players = new HashMap<String, GamePlayer>();
     staticEntities = new HashSet<StaticEntity>();
     initChunks();
@@ -125,7 +136,7 @@ public class ChunkMap {
    * Ticks all entities in the Chunk Map.
    */
   public void tick() {
-    for (Entity e : entities.values()) {
+    for (Entity e : dynamic.values()) {
       e.tick(this);
     }
     tickCount++;
@@ -149,7 +160,7 @@ public class ChunkMap {
    */
   public void addPlayer(GamePlayer player) {
     players.put(player.getId(), player);
-    entities.put(player.getId(), player);
+    dynamic.put(player.getId(), player);
 
   }
 
@@ -158,6 +169,7 @@ public class ChunkMap {
     for (Chunk c : chunks) {
       c.addDynamic(e);
     }
+    dynamic.put(e.getId(), e);
   }
 
   public void addStatic(StaticEntity e) {
@@ -176,6 +188,7 @@ public class ChunkMap {
   public void removeItem(Item item) {
     Chunk c = chunkFromPosition(item.center());
     c.removeItem(item);
+    board.removePosition(new Position(item.center().x, item.center().y));
   }
 
   public Collection<Chunk> chunksInRange(Interactable e) {
@@ -257,7 +270,7 @@ public class ChunkMap {
     return res;
   }
 
-  public Set<Item> itemsFromChunks(Collection<Chunk> chunks) {
+  public static Set<Item> itemsFromChunks(Collection<Chunk> chunks) {
     Set<Item> res = new HashSet<>();
     for (Chunk c : chunks) {
       res.addAll(c.getItems());
