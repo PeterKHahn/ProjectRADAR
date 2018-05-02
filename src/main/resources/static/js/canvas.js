@@ -21,7 +21,6 @@ $(document).ready(() => {
 
     // Send message if enter is pressed in the input field
     $("#codename").keypress(event => {
-    	console.log("KEY: " + event.keyCode);
         if (event.keyCode === 13) {
         	websocketSend(webSocket, "name", event.target.value, false);
         	name = event.target.value;
