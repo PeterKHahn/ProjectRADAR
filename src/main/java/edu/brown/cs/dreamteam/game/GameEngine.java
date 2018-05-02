@@ -2,27 +2,28 @@ package edu.brown.cs.dreamteam.game;
 
 import java.util.Map;
 
+import edu.brown.cs.dreamteam.ai.AiController;
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Obstacle;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.main.Architect;
-import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 5;
+  private static final int FPS = 30;
   private static final int PRINT_RATE = 3;
 
-  private static final int HEIGHT = 5;
-  private static final int WIDTH = 5;
-  private static final int CHUNK_SIZE = 100;
+  private static final int HEIGHT = 1;
+  private static final int WIDTH = 1;
+  private static final int CHUNK_SIZE = 1000;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;
-  private EntityFactory entityFactory;
 
   private ChunkMap chunks;
 
@@ -37,16 +38,22 @@ public class GameEngine implements Runnable {
    */
   public GameEngine(Architect architect) {
     this.architect = architect;
-    init();
-
+    init(WIDTH, HEIGHT, CHUNK_SIZE);
   }
 
-  private void init() {
-    chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
-    eventEmitter = new GameEventEmitter();
-    entityFactory = new EntityFactory(chunks);
-    this.addGameEventListener(architect);
+  /**
+   * Constructor that allows specification of the ChunkMap's width, height, and
+   * chunkSize.
+   */
+  public GameEngine(Architect architect, int width, int height, int chunkSize) {
+    this.architect = architect;
+    init(width, height, chunkSize);
+  }
 
+  private void init(int width, int height, int chunkSize) {
+    chunks = new ChunkMap(width, height, chunkSize);
+    eventEmitter = new GameEventEmitter();
+    this.addGameEventListener(architect);
   }
 
   @Override
@@ -100,21 +107,45 @@ public class GameEngine implements Runnable {
    *          the player to add
    */
   public void addPlayer(GamePlayer p) {
-    Logger.logMessage("Added game player: " + p.getId());
-    entityFactory.addPlayer(p);
+    chunks.addPlayer(p);
 
   }
 
-  public void addObstacle(Obstacle ob) {
-    entityFactory.addObstacle(ob);
+  public void addStatic(StaticEntity e) {
+    chunks.addStatic(e);
+  }
+
+  public void addDynamic(DynamicEntity e) {
+    chunks.addDynamic(e);
   }
 
   public void addItem(Item item) {
-    entityFactory.addItem(item);
+    chunks.addItem(item);
   }
 
-  public void addAiPlayer() {
+  /**
+   * Adds an AI player to the game, assuming that the game board has already
+   * been initialized by calling makeBoard().
+   *
+   * @param id
+   *          The ID of the AI player.
+   */
+  public void addAiPlayer(int id) {
+    AiController controller = new AiController(Integer.toString(id),
+        chunks.getBoard());
+    chunks.addDynamic(controller.getPlayer());
+  }
 
+  /**
+   * Initializes the Board representation of the GameMap for AI players to use.
+   */
+  public void board() {
+    chunks.makeBoard();
+    ;
+  }
+
+  public Board getBoard() {
+    return chunks.getBoard();
   }
 
   private void log() {

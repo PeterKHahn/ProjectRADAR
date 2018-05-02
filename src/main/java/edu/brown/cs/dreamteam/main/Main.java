@@ -1,6 +1,5 @@
 package edu.brown.cs.dreamteam.main;
 
-import edu.brown.cs.dreamteam.ai.AiPlayer;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.Spark;
@@ -10,7 +9,6 @@ public class Main {
   private static final int DEFAULT_PORT = 4567;
   private String[] args;
   private Architect a;
-  private AiPlayer ai = new AiPlayer(null);
 
   private DebugMode debugMode;
 
@@ -37,10 +35,8 @@ public class Main {
         .defaultsTo(DEFAULT_PORT);
     OptionSet options = parser.parse(args);
 
-    if (options.has("gui")) {
-      runSparkServer((int) options.valueOf("port"));
-      a.initSpark();
-    }
+    runSparkServer((int) options.valueOf("port"));
+    a.initSpark();
     new Thread(debugMode.architect()).run();
   }
 

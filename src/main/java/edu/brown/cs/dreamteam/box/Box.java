@@ -4,7 +4,8 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 
 public class Box implements Reach {
 
-  private final double radius;
+  private double radius;
+  private Vector offset;
 
   /**
    * Constructor for a box that takes a point and a radius.
@@ -14,19 +15,25 @@ public class Box implements Reach {
    */
   public Box(double radius) {
     this.radius = radius;
+    this.offset = new Vector(0, 0);
+  }
+
+  public Box(double radius, Vector offset) {
+    this.offset = offset;
+    this.radius = radius;
   }
 
   public double radius() {
     return radius;
   }
 
-  public boolean collides(Vector center1, Vector center2, Box box) {
-    return center1.subtract(center2).magnitude() <= this.radius + box.radius;
-  }
-
   @Override
   public double reach() {
     return radius;
+  }
+
+  public Vector offset() {
+    return offset;
   }
 
 }

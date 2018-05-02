@@ -3,7 +3,7 @@ package edu.brown.cs.dreamteam.game;
 import edu.brown.cs.dreamteam.item.InventoryItem;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.Type;
-import edu.brown.cs.dreamteam.weapon.EnergyBlast;
+import edu.brown.cs.dreamteam.weapon.DefaultWeapon;
 import edu.brown.cs.dreamteam.weapon.Weapon;
 
 public class Inventory {
@@ -15,7 +15,7 @@ public class Inventory {
   }
 
   private void init() {
-    weapon = new EnergyBlast();
+    weapon = new DefaultWeapon();
   }
 
   public Weapon getActiveWeapon() {

@@ -107,7 +107,6 @@ public class SystemArchitect extends Architect {
 
   @Override
   public void onGameChange(ChunkMap chunks, int id) {
-    System.out.println("trying to run thread " + id);
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
     Room r = threadIDToRoomMap.get(Thread.currentThread().getId());
@@ -122,6 +121,7 @@ public class SystemArchitect extends Architect {
         Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables),
             r);
       }
+
     }
   }
 

@@ -18,8 +18,8 @@ public interface Vertex<V extends Vertex<V, E>, E extends Edge<V, E>> {
    * @return edge list
    */
   List<E> getEdges();
-  
-  double distanceTo(V other);
+
+  Double distanceTo(V other);
 
   @Override
   int hashCode();

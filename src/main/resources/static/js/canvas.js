@@ -1,7 +1,8 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, staticEntities, data, player, name;
+let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
+let scale = 5;
 let gameStart = false;
 
 $(document).ready(() => {
@@ -9,7 +10,7 @@ $(document).ready(() => {
 	/*** Establish the WebSocket connection and set up event handlers ***/
 	pathname = location.pathname.substring(6, location.pathname.length);
     var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websocket?roomID=" + pathname);
-   	console.log("Pathname:  " + location.pathname)
+
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 	};
@@ -18,11 +19,10 @@ $(document).ready(() => {
 	$("#waitingRoom").hide();
 	$("#getName").show();
 
-	
+
     // Send message if enter is pressed in the input field
     $("#codename").keypress(event => {
-    	console.log("KEY: " + event.keyCode);
-        if (event.keyCode === 13) { 
+        if (event.keyCode === 13) {
         	websocketSend(webSocket, "name", event.target.value, false);
         	name = event.target.value;
         	$("#getName").fadeOut();
@@ -37,8 +37,8 @@ $(document).ready(() => {
 
 
     webSocket.onmessage = function (msg) {
-    	// console.log(JSON.parse(msg.data)); 
     	data = JSON.parse(msg.data);
+
     	console.log(data);
     	if (data.type === "gameMessage") {
     		if (data.message === "start") {
@@ -52,19 +52,21 @@ $(document).ready(() => {
     		if (gameStart) {
     			player = data.player;
     			staticEntities = data.statics;
+    			items = data.items;
 	    		clearCanvas();
 	    		determineOffset();
 	    		drawStatic();  
 				drawPlayer();  		
 	    	}
+
     	}
     	
     };
 
-    webSocket.onclose = function () { 
+    webSocket.onclose = function () {
     	console.log("websocket connection closed.")
     };
-	
+
 	webSocket.onerror = function(error) {
 	  console.log(error);
 	  console.log('WebSocket Error: ' + error);
@@ -74,29 +76,29 @@ $(document).ready(() => {
 	$(document).keydown(event => {
 
 		if (gameStart) {
-
 			switch(event.key){
 				case "a": // a for wasd
 				case "ArrowLeft":
-					console.log("hewwooo")
-					websocketSend(webSocket, "key", "left", true); 
-					//movePlayer("left"); 
+					websocketSend(webSocket, "key", "left", true);
 					break;
 				case "d": // d in wasd
 				case "ArrowDown":
-					websocketSend(webSocket, "key", "right", true); 
-					//movePlayer("right"); 
+					websocketSend(webSocket, "key", "right", true);
 					break;
 				case "w": // w in wasd
 				case "ArrowUp":
-					websocketSend(webSocket, "key", "up", true); 
-					//movePlayer("up"); 
+					websocketSend(webSocket, "key", "up", true);
 					break;
 				case "s": // s in wasd
 				case "ArrowRight":
-					websocketSend(webSocket, "key", "down", true); 
-					//movePlayer("down"); 
+					websocketSend(webSocket, "key", "down", true);
 					break;
+        case " ":
+          websocketSend(webSocket, "key", "space", true);
+          break;
+        case "f":
+          websocketSend(webSocket, "key", "f", true);
+          break;
 			}
 		}
 	})
@@ -120,6 +122,7 @@ $(document).ready(() => {
 				case "ArrowDown":
 					websocketSend(webSocket, "key", "down", false);
 					break;
+
 			}
 		}
 	})
@@ -127,8 +130,8 @@ $(document).ready(() => {
 	$(document).keypress(event => {
 		if (gameStart) {
 			switch(event.keyCode){
-				case "space": // space bar for attack
-					websocketSend(webSocket, "key", "space", false); break;
+				// case " ": // space bar for attack
+				// 	websocketSend(webSocket, "key", "space", false); break;
 				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
 				case "r": // r for radar
@@ -138,10 +141,10 @@ $(document).ready(() => {
 	});
 });
 
- 
+
 function websocketSend(webSocket, type, status, held) {
 	let x = {
-		type: type, 
+		type: type,
 		status: status,
 		held: held
 	}
@@ -159,20 +162,8 @@ function init() {
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-	// staticEntities = [
-	// 	{x:20, y:60, type:"weapon"},
-	// 	{x:420, y:390, type: "item"},
-	// 	{x: 333, y:270, type:"deco"},
-	// 	{x: 700, y:270, type:"item"},
-	// 	{x: 1000, y:270, type:"weapon"}
-	// ];
-	// //TESTING DUMMY PLAYER
-	// player = {
-	// 	x: 100,
-	// 	y: 200
-	// }
-	drawPlayer();
-	// drawStatic();
+
+	//drawPlayer();
 };
 
 function drawPlayer() {
@@ -181,35 +172,37 @@ function drawPlayer() {
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
 	ctx.stroke();
+
+	drawHP();
+    drawPlayerHitbox();
+    drawName();
 }
 
-function movePlayer(direction) {
-	switch(direction) {
-		case "left":
-			console.log("made it to move left"); break;
-		case "right":
-			console.log("made it to move left"); break;
-		case "up":
-			console.log("made it to move up"); break;
-		case "down":
-			console.log("made it to move down"); break;
-	}
-	console.log()
-}
+function drawPlayerHitbox() {
 
-// clears canvas to redraw items.
-function clearCanvas() {
-	ctx.clearRect(0, 0, c.width, c.height);
+  let boxes = player.inventory.weapon.attack.currentAttackFrame.hitbox.boxes;
+  for(let i = 0; i < boxes.length; i++) {
+    let xOff = boxes[i].offset.x;
+    let yOff = boxes[i].offset.y;
+    let x = xOff + player.center.x;
+    let y = yOff + player.center.y;
+
+    drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
+  }
 }
 
 function drawCircle(x, y, radius, type) {
 	ctx.beginPath();
-		switch(type) {
+	switch(type) {
 		case "weapon":
 			ctx.strokeStyle = "red";
 			ctx.fillStyle = "red";
 			// maybe change color?? can pick up
 			break;
+    case "hitbox":
+      ctx.strokeStyle = "red";
+      ctx.fillStyle = "red";
+      break;
 		case "item":
 			ctx.strokeStyle = "white";
 			ctx.fillStyle = "white";
@@ -232,12 +225,23 @@ function drawCircle(x, y, radius, type) {
 	ctx.fill();
 }
 
+function clearCanvas() {
+	ctx.clearRect(0, 0, c.width, c.height);
+}
 
 
 /*** MISCELLANEOUS FUNCTIONS ***/
 
 function drawHP() {
-	player.center.hp;
+	achepee = player.health;
+	ctx.font = "25px Lucida Sans Unicode";
+	ctx.strokeText(achepee,30,30);
+}
+
+function drawName() {
+	ctx.font = "10px Arial";
+	ctx.textAlign = "center"
+	ctx.fillText(name, c.width/2, c.height/2 - 10);
 }
 
 function determineOffset() {
@@ -247,22 +251,15 @@ function determineOffset() {
 	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
 
-// function validMovement() {
-// 	// is the player movement going to go out of bounds?
-// }
-
-function drawStatic() {
-	for (let i = 0; i < staticEntities.length; i++) {
-		console.log(staticEntities[i].radius)
-		drawCircle(staticEntities[i].center.x+offsetX, convertToCoord(staticEntities[i].center.y)+offsetY, staticEntities[i].radius, "none");		
+function drawEntities() {
+	for (let i = 0; i < entities.length; i++) {
+		drawCircle(entities[i].center.x+offsetX, convertToCoord(entities[i].center.y)+offsetY, entities[i].radius, "none");
 	}
+  for(let i = 0 ; i < items.length; i++) {
+    drawCircle(items[i].center.x + offsetX, convertToCoord(items[i].center.y) + offsetY, 3, "item");
+  }
 }
 
-// TODO FIGURE THIS OUT
 function convertToCoord(y) {
 	return -1*y;
 }
-
-
-
-
