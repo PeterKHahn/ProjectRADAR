@@ -30,6 +30,14 @@ public class AiPlayer extends Playable {
     this.controller = controller;
   }
 
+  public void setItemPickedFlag(boolean val) {
+    itemPickedFlag = val;
+  }
+
+  public void setPrimaryActionFlag(boolean val) {
+    primaryActionFlag = val;
+  }
+
   @Override
   public void tick(ChunkMap chunkMap) {
     controller.makeNextMove(chunkMap);

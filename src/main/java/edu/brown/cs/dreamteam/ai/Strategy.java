@@ -45,13 +45,7 @@ public abstract class Strategy {
         .println("Curr is " + curr.toString() + "Next is " + next.toString());
 
     // Update player to go in direction of next
-    double x = next.x - curr.x;
-    int horzCoeff = x < 0 ? -1 : (x > 0 ? 1 : 0);
-    double y = next.y - curr.y;
-    int vertCoeff = y < 0 ? -1 : (y > 0 ? 1 : 0);
-    System.out.println("AI " + player.getId() + " moving with x = "
-        + Integer.toString(horzCoeff) + ", y = " + Integer.toString(vertCoeff));
-    player.updateDynamic(vertCoeff, horzCoeff);
+    player.updateDynamic(next.subtract(curr));
   }
 
   protected Position getCurrentPosition() {

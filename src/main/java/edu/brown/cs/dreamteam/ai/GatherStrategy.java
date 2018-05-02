@@ -43,14 +43,15 @@ public class GatherStrategy extends Strategy {
       // AI player has enough material to make a radar
       goal = placeRadar(chunks);
     } else {
+      // Reached goal
+      if (goal.equals(new Position(player.center().x, player.center().y))) {
+        player.setItemPickedFlag(true);
+      }
       // AI player doesn't have enough material to make a radar
       Set<Item> items = board.chunks().itemsFromChunks(chunks);
       if (items.size() > 0) {
-        System.out.println("AI " + player.getId() + " sees items!");
         // Get position of closest item
         goal = getGoalItemPosition(items);
-        System.out.println(
-            "AI " + player.getId() + " set goal to " + goal.toString());
       } else {
         // No items in visible range
 
@@ -60,11 +61,7 @@ public class GatherStrategy extends Strategy {
           Vector dir = new Vector(10 * (Math.random() - 0.5),
               10 * (Math.random() - 0.5));
           goal = board.getEdgePosition(getCurrentPosition(), dir);
-          System.out.println("AI " + player.getId() + " set goal to "
-              + goal.toString() + " with direction " + dir.toString());
         }
-        System.out
-            .println("AI " + player.getId() + " moving to " + goal.toString());
       }
     }
     moveTo(goal);

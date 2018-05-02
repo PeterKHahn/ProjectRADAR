@@ -145,7 +145,18 @@ public abstract class DynamicEntity extends Interactable {
    */
   public void updateDynamic(int vertCoeff, int horzCoeff) {
     velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
+  }
 
+  /**
+   * Allows AiPlayers to move in a given direction.
+   *
+   * @param dir
+   *          The direction to move in.
+   */
+  public void updateDynamic(Vector dir) {
+    // Normalize vector and make its magnitude speed
+    double magnitude = dir.magnitude();
+    velocityVector = dir.scalarMultiply(speed / magnitude);
   }
 
   /**
