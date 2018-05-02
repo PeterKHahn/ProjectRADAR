@@ -112,7 +112,7 @@ public abstract class Playable extends DynamicEntity {
   }
 
   public void pickUpItem(ChunkMap chunkMap, Collection<Chunk> chunksInRange) {
-    Collection<Item> items = chunkMap.itemsFromChunks(chunksInRange);
+    Collection<Item> items = ChunkMap.itemsFromChunks(chunksInRange);
     Item closest = null;
     for (Item i : items) {
       if (closest == null) {
@@ -154,6 +154,7 @@ public abstract class Playable extends DynamicEntity {
         .interactableFromChunks(chunksInRange);
     for (Interactable e : interactables) {
       if (hits(e)) {
+        Logger.logDebug("GOT A HIT: " + e);
         this.hit(e);
       }
     }
