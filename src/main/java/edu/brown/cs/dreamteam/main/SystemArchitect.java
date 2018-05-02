@@ -52,7 +52,7 @@ public class SystemArchitect extends Architect {
   private GameEngine game;
   private Rooms rooms = new Rooms();
   private Map<String, ClientState> clientStates;
-  private AtomicInteger userID = new AtomicInteger(1);
+  private AtomicInteger userID = new AtomicInteger(6);
 
   public SystemArchitect() {
     init();
@@ -272,7 +272,8 @@ public class SystemArchitect extends Architect {
 
     private void putClient(Session user, ClientState c) {
       for (PlayerSession player : rooms.getPlayers()) {
-        if (user.getRemote().equals(player.getSession().getRemote())) {
+        if (user.getRemote().equals(player.getSession().getRemote())
+            && c != null) {
           clientStates.put(player.getId(), c);
           System.out.println(player.getId());
         }

@@ -130,10 +130,13 @@ public class GameEngine implements Runnable {
    * @param id
    *          The ID of the AI player.
    */
-  public void addAiPlayer(int id) {
-    AiController controller = new AiController(Integer.toString(id),
-        chunks.getBoard());
-    chunks.addDynamic(controller.getPlayer());
+  public void addAiPlayers(int numHumans) {
+    for (int i = 1; i < 5 - numHumans; i++) {
+      AiController controller = new AiController(Integer.toString(i),
+          chunks.getBoard());
+      chunks.addDynamic(controller.getPlayer());
+    }
+
   }
 
   /**

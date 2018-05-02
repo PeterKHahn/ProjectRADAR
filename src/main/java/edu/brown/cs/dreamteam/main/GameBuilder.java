@@ -66,7 +66,7 @@ public class GameBuilder {
 
   public GameEngine complete() {
     while (numHumanPlayers < NUM_PLAYERS) {
-      engine.addAiPlayer(numHumanPlayers);
+      engine.addAiPlayers(numHumanPlayers);
       numHumanPlayers++;
     }
 

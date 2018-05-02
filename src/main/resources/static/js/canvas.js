@@ -2,7 +2,6 @@
 /*** Define global variables ***/
 
 let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
-let scale = 5;
 let gameStart = false;
 
 $(document).ready(() => {
@@ -38,7 +37,6 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
-
     	console.log(data);
     	if (data.type === "gameMessage") {
     		if (data.message === "start") {
@@ -81,7 +79,6 @@ $(document).ready(() => {
 			switch(event.key){
 				case "a": // a for wasd
 				case "ArrowLeft":
-					console.log("HITT")
 					websocketSend(webSocket, "key", "left", true);
 					break;
 				case "d": // d in wasd
@@ -160,7 +157,7 @@ function websocketSend(webSocket, type, status, held) {
 //initializes canvas with context
 function init() {
 	c = document.getElementById("gameCanvas");
-	ctx = c.getContext("2d");
+	ctx = c.getContext("2d", {alpha: false});
 	c.width = 500;
 	c.height = 500;
 	offsetX = 0;
@@ -177,8 +174,8 @@ function drawPlayer() {
 	ctx.stroke();
 
 	drawHP();
-    drawPlayerHitbox();
     drawName();
+    drawPlayerHitbox();
 }
 
 function drawPlayerHitbox() {
@@ -202,10 +199,11 @@ function drawCircle(x, y, radius, type) {
 			ctx.fillStyle = "red";
 			// maybe change color?? can pick up
 			break;
-    case "hitbox":
-      ctx.strokeStyle = "red";
-      ctx.fillStyle = "red";
-      break;
+	    case "hitbox":
+	      ctx.strokeStyle = "red";
+	      ctx.globalAlpha = "0.5";
+	      ctx.fillStyle = "red";
+      	  break;
 		case "item":
 			ctx.strokeStyle = "white";
 			ctx.fillStyle = "white";
@@ -237,14 +235,15 @@ function clearCanvas() {
 
 function drawHP() {
 	achepee = player.health;
-	ctx.font = "25px Lucida Sans Unicode";
+	ctx.font = "25px Arial";
 	ctx.strokeText(achepee,30,30);
 }
 
 function drawName() {
-	ctx.font = "10px Arial";
+	ctx.strokeStyle = "#b8dbd9";
+	ctx.font = "13px Arial";
 	ctx.textAlign = "center"
-	ctx.fillText(name, c.width/2, c.height/2 - 10);
+	ctx.fillText(name, c.width/2, c.height/2 - 15);
 }
 
 function determineOffset() {
