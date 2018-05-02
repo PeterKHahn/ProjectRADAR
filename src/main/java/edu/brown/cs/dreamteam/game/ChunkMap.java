@@ -252,7 +252,7 @@ public class ChunkMap {
     return res;
   }
 
-  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+  public static Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
     Set<DynamicEntity> res = new HashSet<DynamicEntity>();
     for (Chunk c : chunks) {
       res.addAll(c.getDynamic());
