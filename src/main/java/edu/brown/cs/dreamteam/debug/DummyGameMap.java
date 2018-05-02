@@ -10,6 +10,7 @@ import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.Type;
 import edu.brown.cs.dreamteam.weapon.ClapWeapon;
+import edu.brown.cs.dreamteam.weapon.DrStrangeWeapon;
 import edu.brown.cs.dreamteam.weapon.EnergyBlast;
 
 // note: radius of obstacles hs to be at least 15 to be valid,
@@ -36,9 +37,12 @@ public class DummyGameMap implements GameMap {
         new EnergyBlast());
     Item b = new Item("Item2", new Vector(3, 90), Type.WEAPON,
         new ClapWeapon());
+    Item c = new Item("Item3", new Vector(33, 60), Type.WEAPON,
+        new DrStrangeWeapon());
     List<Item> z = new ArrayList<Item>();
     z.add(a);
     z.add(b);
+    z.add(c);
 
     return z;
   }
