@@ -1,6 +1,7 @@
 package edu.brown.cs.dreamteam.main;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Rooms {
@@ -13,8 +14,21 @@ public class Rooms {
     playingRoomIDs = new ConcurrentHashMap<>();
   }
 
-  public Map<String, Room> getNotPlayingYetRoomIDs() {
-    return notPlayingYetRoomIDs;
+  public Set<String> getNotPlayingYetRoomIDs() {
+    return notPlayingYetRoomIDs.keySet();
+  }
+
+  public Boolean alreadyPlaying(String roomID) {
+    return playingRoomIDs.containsKey(roomID);
+  }
+
+  public Boolean isNotPlaying(String roomID) {
+    return notPlayingYetRoomIDs.containsKey(roomID);
+  }
+
+  public Boolean isRoom(String roomID) {
+    return (notPlayingYetRoomIDs.containsKey(roomID)
+        || playingRoomIDs.containsKey(roomID));
   }
 
   public Map<String, Room> getAllRoomIDs() {
@@ -33,26 +47,33 @@ public class Rooms {
       }
 
     }
-    while (notPlayingYetRoomIDs.keySet().contains(result)
-        || playingRoomIDs.keySet().contains(result)) {
+    while (isRoom(result)) {
       result = generateNewRoom();
     }
-    notPlayingYetRoomIDs.put(result, new Room(result));
     return result;
   }
 
-  public void startRoom(String id) {
-    if (notPlayingYetRoomIDs.keySet().contains(id)) {
-      Room temp = notPlayingYetRoomIDs.get(id);
-      notPlayingYetRoomIDs.remove(id);
-      playingRoomIDs.put(id, temp);
-    } else if (playingRoomIDs.keySet().contains(id)) {
-      System.out
-          .println("TIME TO DEAL WITH THE DISCONNECT RECONNECT ISSUE BINCH.");
-    } else {
-      throw new IllegalArgumentException(
-          "This room was never initialized, or it has already started.");
-    }
+  public void startRoom(String id, Room r) {
+    notPlayingYetRoomIDs.remove(id);
+    System.out.println("id" + id);
+    System.out.println("room" + r);
+    playingRoomIDs.put(id, r);
+  }
+
+  public Room getNotPlayingRoom(String id) {
+    return notPlayingYetRoomIDs.get(id);
+  }
+
+  public Room getPlayingRoom(String id) {
+    return playingRoomIDs.get(id);
+  }
+
+  public void addNotPlayingRoom(String newRoomId, Room r) {
+    notPlayingYetRoomIDs.put(newRoomId, r);
+  }
+
+  public void stopPlaying(String roomID) {
+    playingRoomIDs.remove(roomID);
   }
 
 }

@@ -7,8 +7,9 @@ let gameStart = false;
 $(document).ready(() => {
 
 	/*** Establish the WebSocket connection and set up event handlers ***/
-    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/xx/websocket");
-   	
+	pathname = location.pathname.substring(6, location.pathname.length);
+    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websocket?roomID=" + pathname);
+   	console.log("Pathname:  " + location.pathname)
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 	};
@@ -32,10 +33,6 @@ $(document).ready(() => {
     //starts game when start button clicked.
     $("#start").click(event => {
     	websocketSend(webSocket, "game", "start", false);
-    	$("#waitingRoom").fadeOut();
-    	$("#game").fadeIn();
-    	gameStart = true;
-    	init();
     })
 
 
@@ -43,14 +40,25 @@ $(document).ready(() => {
     	// console.log(JSON.parse(msg.data)); 
     	data = JSON.parse(msg.data);
     	console.log(data);
-    	player = data.player;
-    	staticEntities = data.statics;
-    	if (gameStart) {
-    		clearCanvas();
-    		determineOffset();
-    		drawStatic();  
-			drawPlayer();  		
+    	if (data.type === "gameMessage") {
+    		if (data.message === "start") {
+    			$("#waitingRoom").fadeOut();
+		    	$("#game").fadeIn();
+		    	gameStart = true;
+		    	init();
+
+    		}
+    	} else {
+    		if (gameStart) {
+    			player = data.player;
+    			staticEntities = data.statics;
+	    		clearCanvas();
+	    		determineOffset();
+	    		drawStatic();  
+				drawPlayer();  		
+	    	}
     	}
+    	
     };
 
     webSocket.onclose = function () { 

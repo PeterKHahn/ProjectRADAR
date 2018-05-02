@@ -1,10 +1,5 @@
 package edu.brown.cs.dreamteam.main;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.eclipse.jetty.websocket.api.Session;
-
 import edu.brown.cs.dreamteam.ai.AiPlayer;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -16,11 +11,6 @@ public class Main {
   private String[] args;
   private Architect a;
   private AiPlayer ai = new AiPlayer(null);
-
-  // EXPERIMENTAL
-  static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
-  static int nextUserNumber = 1; // Used for creating the next username
-  // EXPERIMENTAL
 
   private DebugMode debugMode;
 
