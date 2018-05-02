@@ -27,6 +27,8 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
 public class Board {
   private final int width;
   private final int height;
+  private final int totalWidth;
+  private final int totalHeight;
   private final int chunkSize;
   private final ChunkMap chunks;
 
@@ -50,6 +52,8 @@ public class Board {
     this.chunks = chunks;
     this.width = chunks.getWidth();
     this.height = chunks.getHeight();
+    this.totalWidth = chunks.getTotalWidth();
+    this.totalHeight = chunks.getTotalHeight();
     this.chunkSize = chunks.getChunkSize();
     this.obstacles = chunks.getStaticEntities();
     search = new AStarSearch<>();
@@ -108,7 +112,7 @@ public class Board {
   }
 
   public void removeItem(Item item) {
-    removePosition(itemPositions.get(item));
+    // removePosition(itemPositions.get(item));
     itemPositions.remove(item);
   }
 
@@ -348,7 +352,7 @@ public class Board {
   /**
    * Does A* Search between the given start and end position and gives the next
    * position that the player should go to to reach the end in the shortest
-   * path.
+   * path. Assumes that the edges between the positions are all set up.
    *
    * @param start
    *          The starting position.
@@ -375,8 +379,8 @@ public class Board {
    *         defined by pos and dir.
    */
   public Position getEdgePosition(Position pos, Vector dir) {
-    double xFactor = (width - pos.x) / Math.abs(dir.x);
-    double yFactor = (height - pos.y) / Math.abs(dir.y);
+    double xFactor = (totalWidth - pos.x) / Math.abs(dir.x);
+    double yFactor = (totalHeight - pos.y) / Math.abs(dir.y);
     double factor = xFactor > yFactor ? yFactor : xFactor;
 
     // Use the Position that is as close to either border as the center of
@@ -386,8 +390,6 @@ public class Board {
 
     // Get the nearest neighbor to the center position
     Position edgePos = tree.kNearestNeighbors(1, center, false).get(0);
-    System.out.println("Position closest to " + pos.toString()
-        + " going in dir " + dir.toString() + " is " + edgePos.toString());
     return edgePos;
   }
 
