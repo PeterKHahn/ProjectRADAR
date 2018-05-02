@@ -50,7 +50,7 @@ public class GatherStrategy extends Strategy {
         player.setItemPickedFlag(true);
       }
       // AI player doesn't have enough material to make a radar
-      Set<Item> items = board.chunks().itemsFromChunks(chunks);
+      Set<Item> items = ChunkMap.itemsFromChunks(chunks);
       if (items.size() > 0) {
         // Get position of closest item
         goal = getGoalItemPosition(items);
@@ -59,14 +59,23 @@ public class GatherStrategy extends Strategy {
 
         // Choose a random direction to go in if the goal is not already set
         // or if the goal position is reached
-        if (goal == null || player.center().equals(goal)) {
+        if (goal == null || reachedGoal()) {
           Vector dir = new Vector(10 * (Math.random() - 0.5),
               10 * (Math.random() - 0.5));
           goal = board.getEdgePosition(getCurrentPosition(), dir);
+          System.out
+              .println("AI " + player.getId() + " new goal " + goal.toString());
         }
       }
     }
     moveTo(goal);
+  }
+
+  private boolean reachedGoal() {
+    if (goal.distance(player.center()) < 1) {
+      return true;
+    }
+    return false;
   }
 
   private boolean canPickItem(Collection<Chunk> chunks) {

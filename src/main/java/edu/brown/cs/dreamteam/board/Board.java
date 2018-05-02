@@ -385,11 +385,10 @@ public class Board {
         pos.y + factor * dir.y);
 
     // Get the nearest neighbor to the center position
-    return tree.kNearestNeighbors(1, center, false).get(0);
-  }
-
-  public ChunkMap chunks() {
-    return chunks;
+    Position edgePos = tree.kNearestNeighbors(1, center, false).get(0);
+    System.out.println("Position closest to " + pos.toString()
+        + " going in dir " + dir.toString() + " is " + edgePos.toString());
+    return edgePos;
   }
 
 }
