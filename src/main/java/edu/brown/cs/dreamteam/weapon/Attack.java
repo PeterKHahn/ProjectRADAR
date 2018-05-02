@@ -114,6 +114,11 @@ public class Attack implements HitBoxed {
       return this;
     }
 
+    public AttackBuilder addAttackFrame(AttackFrame attackFrame) {
+      attackFrameQueue.add(attackFrame);
+      return this;
+    }
+
     public Attack build() {
       return new Attack(attackFrameQueue);
     }

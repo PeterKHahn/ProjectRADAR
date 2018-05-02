@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
-import edu.brown.cs.dreamteam.box.CollisionBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
@@ -66,10 +65,6 @@ public abstract class DynamicEntity extends Interactable {
     Logger.logDebug(center.toString());
     Collection<Chunk> chunksNear = chunks.chunksInRange(this);
 
-    /*
-     * for (Chunk chunk : chunksNear) { chunk.removeDynamic(this); }
-     */
-
     Collection<Interactable> collidables = chunks
         .entitiesFromChunks(chunksNear);
     double minT = 1;
@@ -83,8 +78,6 @@ public abstract class DynamicEntity extends Interactable {
     }
 
     changePosition(velocityVector.scalarMultiply(minT));
-
-    Collection<Chunk> newChunks = chunks.chunksInRange(this);
 
     // chunks.addDynamic(this, newChunks);
   }
@@ -101,14 +94,15 @@ public abstract class DynamicEntity extends Interactable {
    *          The Set of Static BoxSets that we are colliding against
    * @return
    */
-  private double handleDynamicCollision(CollisionBoxed collisionBoxed) {
+  private double handleDynamicCollision(Interactable collisionBoxed) {
     BoxSet staticBoxSet = collisionBoxed.collisionBox();
+    Logger.logDebug("STATIC LOCATION: " + collisionBoxed.center());
     double minT = 1;
     for (Box dynamicBox : collisionBox().boxes()) {
       for (Box staticBox : staticBoxSet.boxes()) {
 
         Vector dynamicCenter = dynamicBox.offset().add(center);
-        Vector staticCenter = staticBox.offset().add(center);
+        Vector staticCenter = staticBox.offset().add(collisionBoxed.center());
 
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
@@ -123,6 +117,7 @@ public abstract class DynamicEntity extends Interactable {
         boolean collides = distanceSquared <= (dynamicBox.radius()
             + staticBox.radius()) * (dynamicBox.radius() + staticBox.radius());
         if (collides) {
+          Logger.logDebug("COLLIDES");
           // calculate the maximum time before collision
           double sumRadiusSquared = (dynamicBox.radius() + staticBox.radius())
               * (dynamicBox.radius() + staticBox.radius());
@@ -136,6 +131,7 @@ public abstract class DynamicEntity extends Interactable {
             tPrime -= 0.0001; // Janky fix for now
           }
           minT = Math.min(tPrime, minT);
+          Logger.logDebug("MINT: " + minT);
 
         }
       }
@@ -153,6 +149,7 @@ public abstract class DynamicEntity extends Interactable {
    */
   protected void updateDynamic(int vertCoeff, int horzCoeff) {
     velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
+    Logger.logDebug("VELOCITY: " + velocityVector);
 
   }
 

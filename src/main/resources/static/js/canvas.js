@@ -1,14 +1,14 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, staticEntities, data, player, name;
+let c, ctx, offsetX, offsetY, mapHeight, entities, data, player, name;
 let gameStart = false;
 
 $(document).ready(() => {
 
 	/*** Establish the WebSocket connection and set up event handlers ***/
     var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/xx/websocket");
-   	
+
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 	};
@@ -17,11 +17,11 @@ $(document).ready(() => {
 	$("#waitingRoom").hide();
 	$("#getName").show();
 
-	
+
     // Send message if enter is pressed in the input field
     $("#codename").keypress(event => {
     	console.log("KEY: " + event.keyCode);
-        if (event.keyCode === 13) { 
+        if (event.keyCode === 13) {
         	websocketSend(webSocket, "name", event.target.value, false);
         	name = event.target.value;
         	$("#getName").fadeOut();
@@ -40,23 +40,23 @@ $(document).ready(() => {
 
 
     webSocket.onmessage = function (msg) {
-    	// console.log(JSON.parse(msg.data)); 
+    	// console.log(JSON.parse(msg.data));
     	data = JSON.parse(msg.data);
     	console.log(data);
     	player = data.player;
-    	staticEntities = data.statics;
+    	entities = data.entities;
     	if (gameStart) {
     		clearCanvas();
     		determineOffset();
-    		drawStatic();  
-			drawPlayer();  		
+    		drawEntities();
+			drawPlayer();
     	}
     };
 
-    webSocket.onclose = function () { 
+    webSocket.onclose = function () {
     	console.log("websocket connection closed.")
     };
-	
+
 	webSocket.onerror = function(error) {
 	  console.log(error);
 	  console.log('WebSocket Error: ' + error);
@@ -71,23 +71,23 @@ $(document).ready(() => {
 				case "a": // a for wasd
 				case "ArrowLeft":
 					console.log("hewwooo")
-					websocketSend(webSocket, "key", "left", true); 
-					//movePlayer("left"); 
+					websocketSend(webSocket, "key", "left", true);
+					//movePlayer("left");
 					break;
 				case "d": // d in wasd
 				case "ArrowDown":
-					websocketSend(webSocket, "key", "right", true); 
-					//movePlayer("right"); 
+					websocketSend(webSocket, "key", "right", true);
+					//movePlayer("right");
 					break;
 				case "w": // w in wasd
 				case "ArrowUp":
-					websocketSend(webSocket, "key", "up", true); 
-					//movePlayer("up"); 
+					websocketSend(webSocket, "key", "up", true);
+					//movePlayer("up");
 					break;
 				case "s": // s in wasd
 				case "ArrowRight":
-					websocketSend(webSocket, "key", "down", true); 
-					//movePlayer("down"); 
+					websocketSend(webSocket, "key", "down", true);
+					//movePlayer("down");
 					break;
 			}
 		}
@@ -131,10 +131,10 @@ $(document).ready(() => {
 	});
 });
 
- 
+
 function websocketSend(webSocket, type, status, held) {
 	let x = {
-		type: type, 
+		type: type,
 		status: status,
 		held: held
 	}
@@ -165,7 +165,6 @@ function init() {
 	// 	y: 200
 	// }
 	drawPlayer();
-	// drawStatic();
 };
 
 function drawPlayer() {
@@ -244,10 +243,10 @@ function determineOffset() {
 // 	// is the player movement going to go out of bounds?
 // }
 
-function drawStatic() {
-	for (let i = 0; i < staticEntities.length; i++) {
-		console.log(staticEntities[i].radius)
-		drawCircle(staticEntities[i].center.x+offsetX, convertToCoord(staticEntities[i].center.y)+offsetY, staticEntities[i].radius, "none");		
+function drawEntities() {
+	for (let i = 0; i < entities.length; i++) {
+		console.log(entities[i].radius)
+		drawCircle(entities[i].center.x+offsetX, convertToCoord(entities[i].center.y)+offsetY, entities[i].radius, "none");
 	}
 }
 
@@ -255,7 +254,3 @@ function drawStatic() {
 function convertToCoord(y) {
 	return -1*y;
 }
-
-
-
-

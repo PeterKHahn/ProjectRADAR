@@ -123,6 +123,7 @@ public class ChunkMap {
    */
   public void addPlayer(GamePlayer player) {
     players.put(player.getId(), player);
+    entities.put(player.getId(), player);
 
   }
 
@@ -136,7 +137,6 @@ public class ChunkMap {
   public void addItem(Item item) {
     Chunk c = chunkFromPosition(item.center());
     c.addItem(item);
-
   }
 
   public Collection<Chunk> chunksInRange(Interactable e) {

@@ -15,7 +15,7 @@ public class EnergyBlast extends Weapon {
 
   private void init() {
     attack = Attack.create().addCircle(6, BASE_DAMAGE, 5).addInactive(5)
-        .build();
+        .addCircle(6, BASE_DAMAGE * 1.5, 7).addInactive(5).build();
   }
 
   @Override

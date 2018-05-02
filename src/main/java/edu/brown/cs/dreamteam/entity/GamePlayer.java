@@ -1,7 +1,6 @@
 package edu.brown.cs.dreamteam.entity;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.box.Box;
@@ -29,15 +28,12 @@ public class GamePlayer extends DynamicEntity {
   private static final int ITEM_PICK_RANGE = 3;
 
   private boolean itemPickedFlag;
-  private Set<Integer> itemsDropped;
   private boolean primaryActionFlag; // whether or not we should fire
 
   private boolean isAlive;
   private double health;
 
   private Inventory inventory;
-
-  private Vector collisionBoxOffset;
 
   public static GamePlayer player(String sessionId, double xpos, double ypos) {
     return new GamePlayer(sessionId, xpos, ypos);
@@ -62,11 +58,9 @@ public class GamePlayer extends DynamicEntity {
 
   private void init() {
     itemPickedFlag = false;
-    itemsDropped = new HashSet<Integer>();
     primaryActionFlag = false;
     isAlive = true;
     inventory = new Inventory();
-    collisionBoxOffset = new Vector(0, 0);
     health = MAX_HEALTH;
   }
 
@@ -93,7 +87,6 @@ public class GamePlayer extends DynamicEntity {
   private void updatePlayer(ClientState state) {
     itemPickedFlag = state.retrieveItemPicked();
     primaryActionFlag = state.retrievePrimaryAction();
-    itemsDropped = state.retrieveItemsDropped();
   }
 
   /**
@@ -135,7 +128,8 @@ public class GamePlayer extends DynamicEntity {
               .distance(center()) ? i : closest;
         }
       }
-      if (closest != null) {
+      if (closest != null
+          && closest.center().distance(center()) < ITEM_PICK_RANGE) {
         inventory.addItem(closest);
       }
     }
