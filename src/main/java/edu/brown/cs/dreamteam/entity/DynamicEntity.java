@@ -20,6 +20,7 @@ import edu.brown.cs.dreamteam.utility.DreamMath;
 public abstract class DynamicEntity extends Interactable {
 
   private Vector velocityVector;
+  protected boolean isAlive;
 
   private double speed = 1;
   private double radius;
@@ -52,6 +53,7 @@ public abstract class DynamicEntity extends Interactable {
 
   private void init() {
     timeClamp = new Clamp(0, 1);
+    isAlive = true;
   }
 
   public double speedCap() {
@@ -181,7 +183,13 @@ public abstract class DynamicEntity extends Interactable {
    * Given an entity that should no longer exist, this method sets its internal
    * state to no longer be active.
    */
-  public abstract void kill();
+  public void kill() {
+    isAlive = false;
+  }
+
+  public boolean alive() {
+    return isAlive;
+  }
 
   /**
    * Returns the radius of this entity.

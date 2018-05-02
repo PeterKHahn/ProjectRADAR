@@ -63,8 +63,8 @@ public class GatherStrategy extends Strategy {
           Vector dir = new Vector(10 * (Math.random() - 0.5),
               10 * (Math.random() - 0.5));
           goal = board.getEdgePosition(getCurrentPosition(), dir);
-          System.out
-              .println("AI " + player.getId() + " new goal " + goal.toString());
+          // System.out
+          // .println("AI " + player.getId() + " new goal " + goal.toString());
         }
       }
     }

@@ -1,7 +1,7 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
+let c, ctx, offsetX, offsetY, mapHeight, entities, markers, items, data, player, name;
 let scale = 5;
 let gameStart = false;
 
@@ -45,11 +45,12 @@ $(document).ready(() => {
     	player = data.player;
     	entities = data.entities;
       items = data.items;
+      markers = data.markers;
     	if (gameStart) {
     		clearCanvas();
     		determineOffset();
     		drawEntities();
-			drawPlayer();
+			  drawPlayer();
     	}
     };
 
@@ -248,6 +249,10 @@ function drawEntities() {
 	}
   for(let i = 0 ; i < items.length; i++) {
     drawCircle(items[i].center.x + offsetX, convertToCoord(items[i].center.y) + offsetY, 3, "item");
+  }
+  for(let i = 0; i < markers.length; i++){
+    drawCircle(markers[i].center.x + offsetX, convertToCoord(markers[i].center.y) + offsetY, 3, "none");
+
   }
 }
 

@@ -26,7 +26,7 @@ public class DummyGameMap implements GameMap {
 
     List<Obstacle> ls = new ArrayList<>();
     ls.add(x);
-    ls.add(y);
+    // ls.add(y);
     ls.add(z);
     return ls;
   }

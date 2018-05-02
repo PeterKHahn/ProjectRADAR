@@ -110,7 +110,8 @@ public class SystemArchitect extends Architect {
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
           .put("entities", chunks.interactableFromChunks(chunksNeeded))
-          .put("items", chunks.itemsFromChunks(chunksNeeded)).build();
+          .put("markers", chunks.markers())
+          .put("items", ChunkMap.itemsFromChunks(chunksNeeded)).build();
       Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
   }
@@ -149,7 +150,6 @@ public class SystemArchitect extends Architect {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-      // System.out.println(Messenger.sessionUserMap.get(user));
       JsonObject received = GSON.fromJson(message, JsonObject.class);
       ClientState c = null;
 
@@ -159,8 +159,7 @@ public class SystemArchitect extends Architect {
         case "game":
           Logger.logMessage("Creating a new Game");
           GameEngine engine = GameBuilder.create(a)
-              .addHumanPlayer(GamePlayer
-                  .player(Messenger.sessionUserMap.get(user), 0.0, 0.0))
+              .addHumanPlayer(Messenger.sessionUserMap.get(user))
               .generateMap(new DummyGameMap()).complete();
           new Thread(engine).start();
           if (Messenger.sessionUserMap.get(user) == null) {
@@ -187,7 +186,6 @@ public class SystemArchitect extends Architect {
                 break;
               case "space":
                 c.primaryAction(true);
-                Logger.logDebug("Primary ACtion set to true");
                 break;
               case "f":
                 c.itemPicked(true);
