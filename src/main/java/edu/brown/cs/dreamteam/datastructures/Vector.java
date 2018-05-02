@@ -1,5 +1,7 @@
 package edu.brown.cs.dreamteam.datastructures;
 
+import java.util.Objects;
+
 import edu.brown.cs.dreamteam.box.Point;
 
 /**
@@ -61,9 +63,37 @@ public class Vector {
     return this.subtract(v).magnitude();
   }
 
+  // 2D cross product
+  public double cross(Vector v) {
+    return this.x * v.y - this.y * v.x;
+  }
+
   @Override
   public String toString() {
     return "<" + x + ", " + y + ">";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+
+    if (!(o instanceof Vector)) {
+      return false;
+    }
+
+    Vector other = (Vector) o;
+    if (Double.compare(other.x, x) == 0 && Double.compare(other.y, y) == 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y);
   }
 
 }

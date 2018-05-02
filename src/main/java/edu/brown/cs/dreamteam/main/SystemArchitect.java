@@ -110,7 +110,7 @@ public class SystemArchitect extends Architect {
       Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("player", p)
-          .put("entities", chunks.entitiesFromChunks(chunksNeeded)).build();
+          .put("entities", chunks.interactableFromChunks(chunksNeeded)).build();
       Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
   }

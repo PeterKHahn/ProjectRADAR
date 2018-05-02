@@ -2,8 +2,11 @@ package edu.brown.cs.dreamteam.game;
 
 import java.util.Map;
 
+import edu.brown.cs.dreamteam.ai.AiController;
+import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Interactable;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
@@ -23,6 +26,7 @@ public class GameEngine implements Runnable {
   private Architect architect;
 
   private ChunkMap chunks;
+  private Board board; // Graph representation of the completed ChunkMap
 
   private boolean running = false;
   private int ticks = 0;
@@ -35,15 +39,22 @@ public class GameEngine implements Runnable {
    */
   public GameEngine(Architect architect) {
     this.architect = architect;
-    init();
-
+    init(WIDTH, HEIGHT, CHUNK_SIZE);
   }
 
-  private void init() {
-    chunks = new ChunkMap(WIDTH, HEIGHT, CHUNK_SIZE);
+  /**
+   * Constructor that allows specification of the ChunkMap's width, height, and
+   * chunkSize.
+   */
+  public GameEngine(Architect architect, int width, int height, int chunkSize) {
+    this.architect = architect;
+    init(width, height, chunkSize);
+  }
+
+  private void init(int width, int height, int chunkSize) {
+    chunks = new ChunkMap(width, height, chunkSize);
     eventEmitter = new GameEventEmitter();
     this.addGameEventListener(architect);
-
   }
 
   @Override
@@ -97,21 +108,43 @@ public class GameEngine implements Runnable {
    *          the player to add
    */
   public void addPlayer(GamePlayer p) {
-    chunks.addInteractable(p);
     chunks.addPlayer(p);
 
   }
 
-  public void addInteractable(Interactable e) {
-    chunks.addInteractable(e);
+  public void addStatic(StaticEntity e) {
+    chunks.addStatic(e);
+  }
+
+  public void addDynamic(DynamicEntity e) {
+    chunks.addDynamic(e);
   }
 
   public void addItem(Item item) {
     chunks.addItem(item);
   }
 
-  public void addAiPlayer() {
+  /**
+   * Adds an AI player to the game, assuming that the game board has already
+   * been initialized by calling makeBoard().
+   *
+   * @param id
+   *          The ID of the AI player.
+   */
+  public void addAiPlayer(int id) {
+    AiController controller = new AiController(Integer.toString(id), board);
+    chunks.addDynamic(controller.getPlayer());
+  }
 
+  /**
+   * Initializes the Board representation of the GameMap for AI players to use.
+   */
+  public void board() {
+    board = new Board(chunks);
+  }
+
+  public Board getBoard() {
+    return board;
   }
 
   private void log() {

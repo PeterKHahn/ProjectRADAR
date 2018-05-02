@@ -20,29 +20,22 @@ import java.util.Set;
  */
 public class AStarSearch<V extends Vertex<V, E>, E extends Edge<V, E>> {
 
-  private V src;
-  private V dst;
-
   /**
    * Constructor.
-   *
-   * @param src
-   *          vertex
-   * @param dst
-   *          vertex
-   *
    */
-  public AStarSearch(V src, V dst) {
-    this.src = src;
-    this.dst = dst;
+  public AStarSearch() {
   }
 
   /**
    * Shortest path algorithm.
    *
+   * @param src
+   *          vertex
+   * @param dst
+   *          vertex
    * @return best path.
    */
-  public Path<V, E> getShortestPath() {
+  public Path<V, E> getShortestPath(V src, V dst) {
 
     Comparator comp = new WeightComparator(dst);
     PriorityQueue<Path<V, E>> contestants = new PriorityQueue<Path<V, E>>(comp);

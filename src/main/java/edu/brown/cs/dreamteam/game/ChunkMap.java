@@ -1,6 +1,7 @@
 package edu.brown.cs.dreamteam.game;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,9 +10,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Interactable;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
 
@@ -36,6 +39,8 @@ public class ChunkMap {
   private Map<String, GamePlayer> players;
   private Map<String, Entity> entities;
 
+  private Set<StaticEntity> staticEntities;
+
   private int tickCount;
 
   /**
@@ -57,10 +62,27 @@ public class ChunkMap {
     init();
   }
 
+  public int getWidth() {
+    return width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public int getTotalWidth() {
+    return totalWidth;
+  }
+
+  public int getTotalHeight() {
+    return totalHeight;
+  }
+
   private void init() {
     chunks = new Chunk[height][width];
     entities = new HashMap<String, Entity>();
     players = new HashMap<String, GamePlayer>();
+    staticEntities = new HashSet<StaticEntity>();
     initChunks();
 
   }
@@ -76,6 +98,10 @@ public class ChunkMap {
 
       }
     }
+  }
+
+  public int getChunkSize() {
+    return chunkSize;
   }
 
   /**
@@ -127,11 +153,19 @@ public class ChunkMap {
 
   }
 
-  public void addInteractable(Interactable e) {
+  public void addDynamic(DynamicEntity e) {
     Collection<Chunk> chunks = chunksInRange(e);
     for (Chunk c : chunks) {
-      c.addInteractable(e);
+      c.addDynamic(e);
     }
+  }
+
+  public void addStatic(StaticEntity e) {
+    Collection<Chunk> chunks = chunksInRange(e);
+    for (Chunk c : chunks) {
+      c.addStatic(e);
+    }
+    staticEntities.add(e);
   }
 
   public void addItem(Item item) {
@@ -191,10 +225,28 @@ public class ChunkMap {
     return chunks[row][col];
   }
 
-  public Set<Interactable> entitiesFromChunks(Collection<Chunk> chunks) {
+  public Set<Interactable> interactableFromChunks(Collection<Chunk> chunks) {
     Set<Interactable> res = new HashSet<Interactable>();
     for (Chunk c : chunks) {
       res.addAll(c.getInteractable());
+    }
+
+    return res;
+  }
+
+  public Set<DynamicEntity> dynamicFromChunks(Collection<Chunk> chunks) {
+    Set<DynamicEntity> res = new HashSet<DynamicEntity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getDynamic());
+    }
+
+    return res;
+  }
+
+  public Set<StaticEntity> staticFromChunks(Collection<Chunk> chunks) {
+    Set<StaticEntity> res = new HashSet<StaticEntity>();
+    for (Chunk c : chunks) {
+      res.addAll(c.getStatic());
     }
 
     return res;
@@ -210,6 +262,10 @@ public class ChunkMap {
 
   public Collection<GamePlayer> getPlayers() {
     return players.values();
+  }
+
+  public Set<StaticEntity> getStaticEntities() {
+    return Collections.unmodifiableSet(staticEntities);
   }
 
   public int tickCount() {

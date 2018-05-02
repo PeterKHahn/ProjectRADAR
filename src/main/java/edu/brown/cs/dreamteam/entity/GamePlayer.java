@@ -50,10 +50,11 @@ public class GamePlayer extends DynamicEntity {
    * @param yPos
    *          the y position to start
    */
-  private GamePlayer(String id, double xpos, double ypos) {
-    super(id, xpos, ypos, SIZE);
-    init();
+  public GamePlayer(String id, double xPos, double yPos) {
+    super(id, xPos, yPos, DynamicEntity.SIZE);
+    this.setType("HUMAN");
 
+    init();
   }
 
   private void init() {
@@ -136,7 +137,7 @@ public class GamePlayer extends DynamicEntity {
 
     // checks collision and hits them
     Set<Interactable> interactables = chunkMap
-        .entitiesFromChunks(chunksInRange);
+        .interactableFromChunks(chunksInRange);
     for (Interactable e : interactables) {
       if (hits(e)) {
         this.hit(e);
@@ -164,6 +165,7 @@ public class GamePlayer extends DynamicEntity {
   public double reach() {
     double tmp = DreamMath.max(this.collisionBox().reach(),
         this.hitBox().reach(), SIZE);
+
     return tmp + speedCap();
   }
 

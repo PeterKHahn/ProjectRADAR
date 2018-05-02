@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.brown.cs.dreamteam.entity.Entity;
+import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Interactable;
+import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.item.Item;
 
 /**
@@ -17,6 +18,8 @@ import edu.brown.cs.dreamteam.item.Item;
 public class Chunk {
 
   private Set<Interactable> interactable;
+  private Set<StaticEntity> statics;
+  private Set<DynamicEntity> dynamics;
 
   private Set<Item> items;
 
@@ -40,7 +43,8 @@ public class Chunk {
 
   private void init() {
     interactable = new HashSet<Interactable>();
-
+    statics = new HashSet<StaticEntity>();
+    dynamics = new HashSet<DynamicEntity>();
     items = new HashSet<Item>();
 
   }
@@ -61,8 +65,30 @@ public class Chunk {
     return interactable;
   }
 
-  public void removeInteractable(Entity e) {
+  public void removeInteractable(Interactable e) {
     interactable.remove(e);
+  }
+
+  public void addDynamic(DynamicEntity e) {
+    dynamics.add(e);
+    addInteractable(e);
+  }
+
+  public Set<DynamicEntity> getDynamic() {
+    return dynamics;
+  }
+
+  public void removeDynamic(DynamicEntity e) {
+    dynamics.remove(e);
+    removeInteractable(e);
+  }
+
+  public void addStatic(StaticEntity e) {
+    statics.add(e);
+  }
+
+  public Set<StaticEntity> getStatic() {
+    return statics;
   }
 
   public Collection<Item> getItems() {
