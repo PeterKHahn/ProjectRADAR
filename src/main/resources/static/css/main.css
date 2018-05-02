@@ -50,3 +50,6 @@ a:hover {
 	position: absolute;
 }
 
+#gameCanvas {
+    border: 1px solid #b8dbd9;
+}
