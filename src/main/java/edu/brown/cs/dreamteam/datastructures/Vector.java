@@ -68,6 +68,12 @@ public class Vector {
     return this.x * v.y - this.y * v.x;
   }
 
+  public Vector rotate(double theta) {
+    double x1 = this.x * Math.cos(theta) - this.y * Math.sin(theta);
+    double y1 = this.x * Math.sin(theta) + this.y * Math.cos(theta);
+    return new Vector(x1, y1);
+  }
+
   @Override
   public String toString() {
     return "<" + x + ", " + y + ">";

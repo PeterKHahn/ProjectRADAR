@@ -15,7 +15,7 @@ import edu.brown.cs.dreamteam.main.Architect;
 
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 20;
+  private static final int FPS = 30;
   private static final int PRINT_RATE = 3;
 
   private static final int HEIGHT = 1;

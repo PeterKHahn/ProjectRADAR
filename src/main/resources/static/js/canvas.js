@@ -68,7 +68,6 @@ $(document).ready(() => {
 	$(document).keydown(event => {
 
 		if (gameStart) {
-      console.log(event.key)
 			switch(event.key){
 				case "a": // a for wasd
 				case "ArrowLeft":
@@ -92,8 +91,10 @@ $(document).ready(() => {
 					break;
         case " ":
           websocketSend(webSocket, "key", "space", true);
+          break;
         case "f":
           websocketSend(webSocket, "key", "f", true);
+          break;
 			}
 		}
 	})
@@ -181,9 +182,6 @@ function drawPlayerHitbox() {
     let x = xOff + player.center.x;
     let y = yOff + player.center.y;
 
-    console.log("x: " + x)
-    console.log("y: " + y)
-    console.log(boxes[i].radius)
 
     drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
   }
@@ -205,7 +203,6 @@ function drawCircle(x, y, radius, type) {
 			// maybe change color?? can pick up
 			break;
     case "hitbox":
-      console.log("HITBOX RENDER")
       ctx.strokeStyle = "red";
       ctx.fillStyle = "red";
       break;

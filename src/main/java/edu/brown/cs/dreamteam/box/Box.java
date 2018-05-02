@@ -20,6 +20,7 @@ public class Box implements Reach {
 
   public Box(double radius, Vector offset) {
     this.offset = offset;
+    this.radius = radius;
   }
 
   public double radius() {

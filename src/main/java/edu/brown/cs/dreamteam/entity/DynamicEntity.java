@@ -9,7 +9,6 @@ import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.utility.Clamp;
 import edu.brown.cs.dreamteam.utility.DreamMath;
-import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * A dynamic entity is an entity that has a dynamic position and angle.
@@ -145,7 +144,6 @@ public abstract class DynamicEntity extends Interactable {
             tPrime -= 0.0001; // Janky fix for now
           }
           minT = Math.min(tPrime, minT);
-          Logger.logDebug("MINT: " + minT);
 
         }
       }
