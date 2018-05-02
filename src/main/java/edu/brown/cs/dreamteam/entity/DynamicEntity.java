@@ -80,7 +80,6 @@ public abstract class DynamicEntity extends Interactable {
    * Updates the position given the dynamic entity's velocity.
    */
   public void updatePosition(ChunkMap chunks) {
-    Logger.logDebug(center.toString());
     Collection<Chunk> chunksNear = chunks.chunksInRange(this);
 
     Collection<Interactable> collidables = chunks

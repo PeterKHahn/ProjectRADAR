@@ -40,9 +40,8 @@ $(document).ready(() => {
 
 
     webSocket.onmessage = function (msg) {
-    	// console.log(JSON.parse(msg.data));
     	data = JSON.parse(msg.data);
-    	console.log(data);
+    	//console.log(data);
     	player = data.player;
     	entities = data.entities;
       items = data.items;
@@ -51,6 +50,8 @@ $(document).ready(() => {
     		determineOffset();
     		drawEntities();
 			  drawPlayer();
+        drawPlayerHitbox();
+
     	}
     };
 
@@ -91,6 +92,8 @@ $(document).ready(() => {
 					break;
         case " ":
           websocketSend(webSocket, "key", "space", true);
+        case "f":
+          websocketSend(webSocket, "key", "f", true);
 			}
 		}
 	})
@@ -164,7 +167,26 @@ function drawPlayer() {
 	ctx.strokeStyle = "#b8dbd9";
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
+
+
 	ctx.stroke();
+}
+
+function drawPlayerHitbox() {
+
+  let boxes = player.inventory.weapon.attack.currentAttackFrame.hitbox.boxes;
+  for(let i = 0; i < boxes.length; i++) {
+    let xOff = boxes[i].offset.x;
+    let yOff = boxes[i].offset.y;
+    let x = xOff + player.center.x;
+    let y = yOff + player.center.y;
+
+    console.log("x: " + x)
+    console.log("y: " + y)
+    console.log(boxes[i].radius)
+
+    drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
+  }
 }
 
 
@@ -176,12 +198,17 @@ function clearCanvas() {
 
 function drawCircle(x, y, radius, type) {
 	ctx.beginPath();
-		switch(type) {
+	switch(type) {
 		case "weapon":
 			ctx.strokeStyle = "red";
 			ctx.fillStyle = "red";
 			// maybe change color?? can pick up
 			break;
+    case "hitbox":
+      console.log("HITBOX RENDER")
+      ctx.strokeStyle = "red";
+      ctx.fillStyle = "red";
+      break;
 		case "item":
 			ctx.strokeStyle = "white";
 			ctx.fillStyle = "white";
@@ -227,7 +254,6 @@ function determineOffset() {
 
 function drawEntities() {
 	for (let i = 0; i < entities.length; i++) {
-		console.log(entities[i].radius)
 		drawCircle(entities[i].center.x+offsetX, convertToCoord(entities[i].center.y)+offsetY, entities[i].radius, "none");
 	}
   for(let i = 0 ; i < items.length; i++) {

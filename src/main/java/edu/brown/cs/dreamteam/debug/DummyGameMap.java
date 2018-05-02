@@ -29,8 +29,11 @@ public class DummyGameMap implements GameMap {
   public Collection<Item> getItems() {
     Item a = new Item("Item1", new Vector(3, 60), Type.WEAPON,
         new EnergyBlast());
+    Item b = new Item("Item2", new Vector(3, 90), Type.WEAPON,
+        new EnergyBlast());
     List<Item> z = new ArrayList<Item>();
     z.add(a);
+    z.add(b);
 
     return z;
   }

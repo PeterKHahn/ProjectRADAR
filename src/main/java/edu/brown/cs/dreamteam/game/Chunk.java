@@ -65,7 +65,7 @@ public class Chunk {
     return interactable;
   }
 
-  public void removeInteractable(Interactable e) {
+  private void removeInteractable(Interactable e) {
     interactable.remove(e);
   }
 
@@ -98,6 +98,10 @@ public class Chunk {
 
   public void addItem(Item item) {
     items.add(item);
+  }
+
+  public void removeItem(Item item) {
+    items.remove(item);
   }
 
   public void tick() {

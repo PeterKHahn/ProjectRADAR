@@ -1,7 +1,7 @@
 package edu.brown.cs.dreamteam.weapon;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
@@ -10,8 +10,9 @@ import edu.brown.cs.dreamteam.utility.Logger;
 public class Attack implements HitBoxed {
 
   private final int duration;
-  private Queue<AttackFrame> frames;
+  private List<AttackFrame> frames;
 
+  private int index = 0;
   private int frame; // the frame of the move
 
   private AttackFrame currentAttackFrame;
@@ -19,7 +20,7 @@ public class Attack implements HitBoxed {
 
   private boolean attacking;
 
-  public Attack(Queue<AttackFrame> frames) {
+  public Attack(List<AttackFrame> frames) {
     int duration = 0;
     for (AttackFrame frame : frames) {
       duration += frame.duration();
@@ -32,8 +33,8 @@ public class Attack implements HitBoxed {
   private void init() {
     attacking = false;
     currentAttackFrame = new InactiveAttackFrame();
-    frame = 0; // attack Frames start at 1
-    currentFrame = 0;
+    frame = 1; // attack Frames start at 1
+    currentFrame = 1;
   }
 
   public int duration() {
@@ -66,14 +67,16 @@ public class Attack implements HitBoxed {
   private AttackFrame next() {
     if (currentAttackFrame == null
         || currentFrame >= currentAttackFrame.duration()) {
-      if (frames.isEmpty()) {
+      if (index >= frames.size()) {
         attacking = false;
         frame = 0;
         currentFrame = 0;
+        index = 0;
         return new InactiveAttackFrame();
       }
-      currentAttackFrame = frames.poll();
+      currentAttackFrame = frames.get(index);
       currentFrame = 0;
+      index++;
 
     }
 
@@ -96,10 +99,10 @@ public class Attack implements HitBoxed {
 
   public static class AttackBuilder {
 
-    private Queue<AttackFrame> attackFrameQueue;
+    private List<AttackFrame> attackFrameQueue;
 
     public AttackBuilder() {
-      attackFrameQueue = new LinkedList<AttackFrame>();
+      attackFrameQueue = new ArrayList<AttackFrame>();
     }
 
     public AttackBuilder addInactive(int numFrames) {

@@ -101,7 +101,6 @@ public class SystemArchitect extends Architect {
 
   @Override
   public void onGameChange(ChunkMap chunks, int id) {
-    System.out.println("trying to run thread " + id);
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
     int once = 0;

@@ -173,6 +173,11 @@ public class ChunkMap {
     c.addItem(item);
   }
 
+  public void removeItem(Item item) {
+    Chunk c = chunkFromPosition(item.center());
+    c.removeItem(item);
+  }
+
   public Collection<Chunk> chunksInRange(Interactable e) {
     return chunksInRange(e, e.reach());
 

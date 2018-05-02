@@ -13,6 +13,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.utility.DreamMath;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * The internal representation of a player in the Game.
@@ -109,7 +110,7 @@ public class GamePlayer extends DynamicEntity {
 
     Collection<Chunk> chunksInRange = chunkMap.chunksInRange(this);
     for (Chunk c : chunksInRange) {
-      c.removeInteractable(this);
+      c.removeDynamic(this);
     }
 
     updatePosition(chunkMap); // Calls movement in dynamic entity
@@ -131,7 +132,10 @@ public class GamePlayer extends DynamicEntity {
       }
       if (closest != null
           && closest.center().distance(center()) < ITEM_PICK_RANGE) {
+        Logger.logDebug("Picked up an item");
         inventory.addItem(closest);
+        chunkMap.removeItem(closest);
+
       }
     }
 
