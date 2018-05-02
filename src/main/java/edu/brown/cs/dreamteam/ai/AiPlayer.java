@@ -21,7 +21,7 @@ public class AiPlayer extends DynamicEntity {
   }
 
   private static final Gson GSON = new Gson();
-  private AiController controller;
+  private transient AiController controller;
 
   /**
    * Constructs an AI player.

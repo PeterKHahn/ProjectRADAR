@@ -150,7 +150,7 @@ public class GamePlayer extends DynamicEntity {
     } else {
       Collection<Chunk> newChunks = chunkMap.chunksInRange(this);
       for (Chunk c : newChunks) {
-        c.addInteractable(this);
+        c.addDynamic(this);
       }
     }
   }

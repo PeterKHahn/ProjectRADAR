@@ -57,7 +57,7 @@ public class Chunk {
     return col;
   }
 
-  public void addInteractable(Interactable e) {
+  private void addInteractable(Interactable e) {
     interactable.add(e);
   }
 
@@ -85,6 +85,7 @@ public class Chunk {
 
   public void addStatic(StaticEntity e) {
     statics.add(e);
+    addInteractable(e);
   }
 
   public Set<StaticEntity> getStatic() {

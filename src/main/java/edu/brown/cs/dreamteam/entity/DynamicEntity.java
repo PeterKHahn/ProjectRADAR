@@ -121,7 +121,7 @@ public abstract class DynamicEntity extends Interactable {
 
         Vector dynamicCenter = dynamicBox.offset().add(center);
         Vector staticCenter = staticBox.offset().add(collisionBoxed.center());
-
+        Logger.logDebug("Static Center: " + staticCenter);
         Vector u1 = dynamicCenter;
         Vector u2 = staticCenter;
 
