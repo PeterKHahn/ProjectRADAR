@@ -26,7 +26,6 @@ public class GameEngine implements Runnable {
   private Architect architect;
 
   private ChunkMap chunks;
-  private Board board; // Graph representation of the completed ChunkMap
 
   private boolean running = false;
   private int ticks = 0;
@@ -132,7 +131,8 @@ public class GameEngine implements Runnable {
    *          The ID of the AI player.
    */
   public void addAiPlayer(int id) {
-    AiController controller = new AiController(Integer.toString(id), board);
+    AiController controller = new AiController(Integer.toString(id),
+        chunks.getBoard());
     chunks.addDynamic(controller.getPlayer());
   }
 
@@ -140,11 +140,12 @@ public class GameEngine implements Runnable {
    * Initializes the Board representation of the GameMap for AI players to use.
    */
   public void board() {
-    board = new Board(chunks);
+    chunks.makeBoard();
+    ;
   }
 
   public Board getBoard() {
-    return board;
+    return chunks.getBoard();
   }
 
   private void log() {

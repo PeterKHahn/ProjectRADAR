@@ -149,4 +149,13 @@ public class BoardTest {
     assertEquals(36, edges.size());
   }
 
+  @Test
+  public void testGetMoveTo() {
+    Board b = oneObstacle.getBoard();
+    Position test = new Position(2, 2);
+    b.addEdgesFor(test, false);
+    Position next = b.getMoveTo(test, new Position(10, 10));
+    assertEquals(new Position(4, 6), next);
+  }
+
 }

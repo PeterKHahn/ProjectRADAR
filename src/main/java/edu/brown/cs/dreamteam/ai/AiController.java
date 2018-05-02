@@ -65,7 +65,8 @@ public class AiController {
   public void makeNextMove(ChunkMap chunks) {
     Collection<Chunk> visibleChunks = chunks.chunksInRange(player,
         Playable.VISIBLE_RANGE);
-    updateStrategy(chunks, visibleChunks);
+    // TODO uncomment
+    // updateStrategy(chunks, visibleChunks);
     strategies.get(strategy).makeNextMove(visibleChunks);
   }
 
