@@ -8,7 +8,6 @@ import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.game.Chunk;
-import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.item.Item;
 
 /**
@@ -45,7 +44,7 @@ public class GatherStrategy extends Strategy {
       goal = placeRadar(chunks);
     } else {
       // AI player doesn't have enough material to make a radar
-      Set<Item> items = ChunkMap.itemsFromChunks(chunks);
+      Set<Item> items = board.chunks().itemsFromChunks(chunks);
       if (items.size() > 0) {
         System.out.println("AI " + player.getId() + " sees items!");
         // Get position of closest item
