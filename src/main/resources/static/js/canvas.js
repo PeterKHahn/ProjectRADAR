@@ -42,7 +42,7 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
-    	//console.log(data);
+    	// console.log(data);
     	player = data.player;
     	entities = data.entities;
       items = data.items;
@@ -155,7 +155,7 @@ function init() {
 	offsetX = 0;
 	offsetY = 0;
 
-	drawPlayer();
+	//drawPlayer();
 };
 
 function drawPlayer() {
