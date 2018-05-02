@@ -45,10 +45,8 @@ public class Main {
         .defaultsTo(DEFAULT_PORT);
     OptionSet options = parser.parse(args);
 
-    if (options.has("gui")) {
-      runSparkServer((int) options.valueOf("port"));
-      a.initSpark();
-    }
+    runSparkServer((int) options.valueOf("port"));
+    a.initSpark();
     new Thread(debugMode.architect()).run();
   }
 
