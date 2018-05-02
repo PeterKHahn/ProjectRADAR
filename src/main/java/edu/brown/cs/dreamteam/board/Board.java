@@ -390,6 +390,9 @@ public class Board {
 
     // Get the nearest neighbor to the center position
     Position edgePos = tree.kNearestNeighbors(1, center, false).get(0);
+
+    // System.out.println("Position closest to " + pos.toString()
+    // + " going in dir " + dir.toString() + " is " + edgePos.toString());
     return edgePos;
   }
 

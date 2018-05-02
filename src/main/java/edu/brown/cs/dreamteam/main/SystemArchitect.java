@@ -113,6 +113,7 @@ public class SystemArchitect extends Architect {
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("type", "individual").put("player", p)
           .put("entities", chunks.interactableFromChunks(chunksNeeded))
+          .put("markers", chunks.markers())
           .put("items", ChunkMap.itemsFromChunks(chunksNeeded)).build();
       broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
@@ -133,6 +134,7 @@ public class SystemArchitect extends Architect {
       } catch (Exception e) {
         e.printStackTrace();
       }
+
     }
   }
 
@@ -215,8 +217,7 @@ public class SystemArchitect extends Architect {
                 .generateMap(new DummyGameMap());
             List<PlayerSession> hewwo = r.getPlayers();
             for (PlayerSession player : hewwo) {
-              builder
-                  .addHumanPlayer(GamePlayer.player(player.getId(), 0.0, 0.0));
+              builder.addHumanPlayer(player.getId());
             }
             GameEngine engine = builder.complete();
 
@@ -225,6 +226,7 @@ public class SystemArchitect extends Architect {
             for (PlayerSession person : r.getPlayers()) {
               System.out.println("ITERATION: " + person.getId());
               putClientState(person.getId(), new ClientState(person.getId()));
+
             }
             Messenger.broadcastMessage("start", r);
             break;
