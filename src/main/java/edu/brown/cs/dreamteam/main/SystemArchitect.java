@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,18 +16,12 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import edu.brown.cs.dreamteam.debug.DummyGameMap;
-import edu.brown.cs.dreamteam.entity.GamePlayer;
-import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.event.ClientState;
-import edu.brown.cs.dreamteam.game.Chunk;
-import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
-import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.utility.Logger;
 import freemarker.template.Configuration;
 import networking.Messenger;
@@ -53,16 +45,12 @@ public class SystemArchitect extends Architect {
   private static final Gson GSON = new Gson();
 
   private GameEngine game;
-  private Rooms rooms = new Rooms();
-  private Map<String, ClientState> clientStates;
-  private AtomicInteger userID = new AtomicInteger(6);
+  private Rooms rooms;
+  private AtomicInteger userID;
 
   public SystemArchitect() {
-    init();
-  }
-
-  private void init() {
-    clientStates = Maps.newConcurrentMap();
+    rooms = new Rooms();
+    userID = new AtomicInteger(6);
   }
 
   public void initSpark() {
@@ -73,7 +61,7 @@ public class SystemArchitect extends Architect {
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
     Spark.get("/game/:roomID", new GameHandler(), freeMarker);
-    Spark.post("/giveStatus", new SendStatusHandler(this));
+    // Spark.post("/giveStatus", new SendStatusHandler(this));
     Spark.exception(Exception.class, (e, r, er) -> {
       e.printStackTrace();
     });
@@ -90,87 +78,11 @@ public class SystemArchitect extends Architect {
 
   }
 
-  /**
-   * Returns a thread safe set of ClientStates.
-   *
-   * @return
-   */
-  public Map<String, ClientState> retrieveClientStates() {
-
-    return clientStates;
-  }
-
   private Map<String, Thread> threads() {
     Map<String, Thread> threads = new HashMap<>();
     threads.put("game", new Thread(game, "game"));
 
     return threads;
-  }
-
-  @Override
-  public void onGameChange(ChunkMap chunks) {
-    Collection<GamePlayer> movingThings = chunks.getPlayers();
-    Double radius = 5.0;
-    for (GamePlayer p : movingThings) {
-      Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
-      Map<String, Object> variables;
-      List<Map<String, Object>> interactables = new ArrayList<>();
-      List<Map<String, Object>> items = new ArrayList<>();
-
-      // parse out interactables
-      for (Interactable x : chunks.interactableFromChunks(chunksNeeded)) {
-
-        variables = new ImmutableMap.Builder<String, Object>()
-            .put("x", x.center().x).put("y", x.center().y)
-            .put("collisionBox", x.collisionBox()).put("hurtBox", x.hurtBox())
-            .put("hitBox", x.hitBox()).build();
-        interactables.add(variables);
-      }
-      // parse out items
-      for (Item i : ChunkMap.itemsFromChunks(chunksNeeded)) {
-        variables = new ImmutableMap.Builder<String, Object>()
-            .put("x", i.center().x).put("y", i.center().y)
-            .put("type", i.getType()).put("id", i.getId()).build();
-        items.add(variables);
-      }
-
-      // parse out player
-      variables = new ImmutableMap.Builder<String, Object>()
-          .put("x", p.center().x).put("y", p.center().y)
-          .put("health", p.getHealth()).put("radius", p.getRadius()).build();
-
-      variables = new ImmutableMap.Builder<String, Object>()
-          .put("type", "individual").put("player", p)
-          .put("interactables", interactables).put("markers", chunks.markers())
-          .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
-          .build();
-      System.out.println("hi");
-      broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
-    }
-
-  }
-
-  public void broadcastIndividualMessage(String sender, String message) {
-    Session relevant = null;
-    for (PlayerSession player : rooms.getPlayers()) {
-      if (player.getId().equals(sender)) {
-        relevant = player.getSession();
-      }
-    }
-
-    if (relevant != null && relevant.getRemote() != null && relevant.isOpen()) {
-      try {
-        relevant.getRemote().sendString(message);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-    }
-  }
-
-  @Override
-  public void putClientState(String name, ClientState state) {
-    clientStates.put(name, state);
   }
 
   @WebSocket
@@ -241,27 +153,31 @@ public class SystemArchitect extends Architect {
             break;
           case "game":
             r = rooms.getNotPlayingRoom(roomID);
-            rooms.startRoom(roomID, r);
-            Logger.logMessage("Creating a new Game");
-            GameBuilder builder = GameBuilder.create(a)
-                .generateMap(new DummyGameMap());
-            List<PlayerSession> hewwo = r.getPlayers();
-            for (PlayerSession player : hewwo) {
-              builder.addHumanPlayer(player.getId());
-            }
-            GameEngine engine = builder.complete();
+            if (r != null) {
+              rooms.startRoom(roomID, r);
+              Logger.logMessage("Creating a new Game");
+              GameBuilder builder = GameBuilder.create(a, r)
+                  .generateMap(new DummyGameMap());
+              List<PlayerSession> hewwo = r.getPlayers();
+              for (PlayerSession player : hewwo) {
+                builder.addHumanPlayer(player.getId());
+              }
+              GameEngine engine = builder.complete();
 
-            Thread x = new Thread(engine);
-            x.start();
-            for (PlayerSession person : r.getPlayers()) {
-              System.out.println("ITERATION: " + person.getId());
-              putClientState(person.getId(), new ClientState(person.getId()));
+              Thread x = new Thread(engine);
+              x.start();
+              for (PlayerSession person : r.getPlayers()) {
+                System.out.println("ITERATION: " + person.getId());
+                r.putNewClient(person.getId(), user);
 
+              }
+              Messenger.broadcastMessage("start", r);
+            } else {
+              throw new IllegalArgumentException("BAD ROOM??");
             }
-            Messenger.broadcastMessage("start", r);
             break;
           case "key":
-            c = getClient(r, user);
+            c = r.getClient(user);
             if (c != null) {
               switch (received.get("status").getAsString()) {
                 case "left":
@@ -291,7 +207,7 @@ public class SystemArchitect extends Architect {
                       .println("EWWOW: key sent that isn't an option...wtf");
                   break;
               }
-              putClient(user, c);
+              r.putOldClient(user, c);
             }
 
             break;
@@ -302,24 +218,6 @@ public class SystemArchitect extends Architect {
       }
     }
 
-    private void putClient(Session user, ClientState c) {
-      for (PlayerSession player : rooms.getPlayers()) {
-        if (user.getRemote().equals(player.getSession().getRemote())
-            && c != null) {
-          clientStates.put(player.getId(), c);
-          System.out.println(player.getId());
-        }
-      }
-    }
-
-    private ClientState getClient(Room r, Session user) {
-      for (PlayerSession player : r.getPlayers()) {
-        if (user.equals(player.getSession())) {
-          return clientStates.get(player.getId());
-        }
-      }
-      return null;
-    }
   }
 
   /**

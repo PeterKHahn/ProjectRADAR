@@ -49,7 +49,6 @@ public class DummySyncArchitect extends Architect {
   //
   // }
 
-  @Override
   public Map<String, ClientState> retrieveClientStates() {
 
     ClientState tmp = clientStates.get("0");
@@ -68,7 +67,6 @@ public class DummySyncArchitect extends Architect {
     return res;
   }
 
-  @Override
   public void putClientState(String name, ClientState state) {
     // TODO Auto-generated method stub
 
@@ -80,7 +78,6 @@ public class DummySyncArchitect extends Architect {
 
   }
 
-  @Override
   public void onGameChange(ChunkMap chunks) {
     // TODO Auto-generated method stub
 
