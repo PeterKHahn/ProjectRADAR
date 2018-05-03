@@ -40,7 +40,7 @@ public class GameEngine implements Runnable {
    * @param architect
    *          The Architecture that the GameEngine is a part of
    */
-  public GameEngine(int height, int width, int chunkSize, Architect room) {
+  public GameEngine(int height, int width, int chunkSize, Architect architect) {
     this.HEIGHT = height;
     this.WIDTH = width;
     this.CHUNK_SIZE = chunkSize;
@@ -95,6 +95,7 @@ public class GameEngine implements Runnable {
   private void tick() {
     Map<String, ClientState> updatedClientStates = architect
         .retrieveClientStates();
+
     chunks.updateClients(updatedClientStates);
     chunks.tick();
   }
