@@ -20,6 +20,7 @@ import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.item.Item;
 import networking.PlayerSession;
 
@@ -131,6 +132,9 @@ public class Room implements GameEventListener {
       List<Map<String, Object>> interactables = new ArrayList<>();
       List<Map<String, Object>> items = new ArrayList<>();
       List<Map<String, Object>> markers = new ArrayList<>();
+      List<Map<String, Object>> inventory = new ArrayList<>();
+
+      Inventory b = p.getInventory();
 
       // parse out interactables
       for (Interactable x : chunks.interactableFromChunks(chunksNeeded)) {
@@ -171,6 +175,7 @@ public class Room implements GameEventListener {
           .put("type", "individual").put("player", z)
           .put("playerList", idToNames).put("interactables", interactables)
           .put("markers", markers).put("items", items)
+          .put("inventory", inventory)
           .put("weapon", p.getInventory().getActiveWeapon()).build();
       broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
