@@ -23,11 +23,13 @@ public class Messenger {
 
     r.getPlayers().stream().forEach(session -> {
       try {
-        session.getSession().getRemote()
-            .sendString(String
-                .valueOf(GSON.toJson(new ImmutableMap.Builder<String, Object>()
-                    .put("message", message).put("type", "gameMessage")
-                    .put("userlist", playerNames).build())));
+        if (session.getSession().isOpen()) {
+          session.getSession().getRemote()
+              .sendString(String.valueOf(
+                  GSON.toJson(new ImmutableMap.Builder<String, Object>()
+                      .put("message", message).put("type", "gameMessage")
+                      .put("userlist", playerNames).build())));
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }

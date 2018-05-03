@@ -16,6 +16,7 @@ $(document).ready(() => {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 	};
 
+	$("#gameOver").hide();
 	$("#game").hide();
 	$("#waitingRoom").hide();
 	$("#getName").show();
@@ -47,6 +48,13 @@ $(document).ready(() => {
 		    	gameStart = true;
 		    	init();
 
+    		} 
+    		if (data.message === "Someone has left!" && data.userlist.length === 1) {
+    			console.log(data.userlist);
+    			gameStart = false;
+    			$("#game").fadeOut();
+		    	$("#winner").text(data.userlist[0]);
+		    	$("#gameOver").fadeIn();
     		}
     	} else {
     		if (gameStart) {
@@ -67,6 +75,11 @@ $(document).ready(() => {
 
     webSocket.onclose = function () {
     	console.log("websocket connection closed.")
+    	gameStart = false;
+    	$("#game").fadeOut();
+    	$("#winner").text("not you!");
+    	$("#gameOver").fadeIn();
+
     };
 
 	webSocket.onerror = function(error) {

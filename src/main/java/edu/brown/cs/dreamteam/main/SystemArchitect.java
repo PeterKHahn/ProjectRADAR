@@ -128,7 +128,7 @@ public class SystemArchitect extends Architect {
       }
     }
 
-    if (relevant != null) {
+    if (relevant != null && relevant.getRemote() != null && relevant.isOpen()) {
       try {
         relevant.getRemote().sendString(message);
       } catch (Exception e) {

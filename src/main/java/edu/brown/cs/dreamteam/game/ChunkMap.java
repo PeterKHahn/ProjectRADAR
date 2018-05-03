@@ -131,9 +131,6 @@ public class ChunkMap {
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
       String clientId = entry.getKey();
       GamePlayer player = players.get(clientId);
-      System.out.println(entry);
-      System.out.println("entry value: " + entry.getValue());
-      System.out.println(players.get("7"));
       player.update(entry.getValue());
 
     }

@@ -48,29 +48,19 @@ public class GatherStrategy extends Strategy {
     } else {
       // AI player doesn't have enough material to make a radar
 
-<<<<<<< HEAD
       if (goal != null) {
         // Reached goal, close enough to pick item, or item got picked
         if (removeGoalItem(chunks) || reachedGoal()) {
           player.setItemPickedFlag(true);
           goalItem = null;
           setNewGoal(chunks);
-=======
-        // Choose a random direction to go in if the goal is not already set
-        // or if the goal position is reached
-        if (goal == null || reachedGoal()) {
-          Vector dir = new Vector(10 * (Math.random() - 0.5),
-              10 * (Math.random() - 0.5));
-          goal = board.getEdgePosition(getCurrentPosition(), dir);
-          // System.out
-          // .println("AI " + player.getId() + " new goal " + goal.toString());
->>>>>>> ee47f43976c3e96e7e2c2117dfddb89aa436adbd
         }
       } else {
         // Goal is currently null
         setNewGoal(chunks);
       }
     }
+
     moveTo(goal);
   }
 
