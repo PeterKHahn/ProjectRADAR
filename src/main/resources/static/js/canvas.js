@@ -110,12 +110,6 @@ $(document).ready(() => {
 				case "ArrowRight":
 					websocketSend(webSocket, "key", "down", true);
 					break;
-        case " ":
-          websocketSend(webSocket, "key", "space", true);
-          break;
-        case "f":
-          websocketSend(webSocket, "key", "f", true);
-          break;
 			}
 		}
 	})
@@ -146,9 +140,9 @@ $(document).ready(() => {
 
 	$(document).keypress(event => {
 		if (gameStart) {
-			switch(event.keyCode){
-				// case " ": // space bar for attack
-				// 	websocketSend(webSocket, "key", "space", false); break;
+			switch(event.key) {
+		        case " ": // space for fighting
+		          	websocketSend(webSocket, "key", "space", true);	break;
 				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
 				case "r": // r for radar
