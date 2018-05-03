@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
-import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
@@ -222,7 +221,6 @@ public class ChunkMap {
   public void removeItem(Item item) {
     Chunk c = chunkFromPosition(item.center());
     c.removeItem(item);
-    board.removePosition(new Position(item.center().x, item.center().y));
   }
 
   public Collection<Chunk> chunksInRange(Interactable e) {
@@ -330,6 +328,22 @@ public class ChunkMap {
 
   public int tickCount() {
     return tickCount;
+  }
+
+  /**
+   * Returns all DynamicEntities that are not the given player.
+   *
+   * @param player
+   *          The player whose enemies we are checking for.
+   * @param chunks
+   *          The Chunks to check for enemies in.
+   * @return
+   */
+  public static Set<DynamicEntity> getEnemies(DynamicEntity player,
+      Collection<Chunk> chunks) {
+    Set<DynamicEntity> enemies = dynamicFromChunks(chunks);
+    enemies.remove(player);
+    return enemies;
   }
 
 }

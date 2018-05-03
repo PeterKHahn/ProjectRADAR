@@ -44,8 +44,16 @@ public abstract class Playable extends DynamicEntity {
     health = MAX_HEALTH;
   }
 
+  public double getHealth() {
+    return health;
+  }
+
   public String getType() {
     return type;
+  }
+
+  public boolean hasWeapon() {
+    return inventory.hasWeapon();
   }
 
   @Override
@@ -88,13 +96,11 @@ public abstract class Playable extends DynamicEntity {
     if (health < 0) {
       kill();
     }
-
   }
 
   @Override
   public BoxSet hitBox() {
     return inventory.getActiveWeapon().hitBox();
-
   }
 
   @Override
@@ -103,6 +109,16 @@ public abstract class Playable extends DynamicEntity {
         this.hitBox().reach(), SIZE);
 
     return tmp + speedCap();
+  }
+
+  public boolean isAlive() {
+    return isAlive;
+  }
+
+  @Override
+  public void kill() {
+    System.out.println(getId() + " killed");
+    isAlive = false;
   }
 
   public void pickUpItem(ChunkMap chunkMap, Collection<Chunk> chunksInRange) {

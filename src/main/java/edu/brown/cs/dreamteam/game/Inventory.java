@@ -25,6 +25,13 @@ public class Inventory {
     numRadars = 0;
   }
 
+  public boolean hasWeapon() {
+    if (!(weapon instanceof DefaultWeapon)) {
+      return true;
+    }
+    return false;
+  }
+
   public Weapon getActiveWeapon() {
     return weapon;
   }

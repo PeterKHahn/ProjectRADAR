@@ -8,6 +8,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.item.KeyItem;
 import edu.brown.cs.dreamteam.item.Type;
 import edu.brown.cs.dreamteam.weapon.ClapWeapon;
 import edu.brown.cs.dreamteam.weapon.DrStrangeWeapon;
@@ -45,6 +46,12 @@ public class DummyGameMap implements GameMap {
     z.add(c);
 
     return z;
+  }
+
+  @Override
+  public KeyItem getKeyItem() {
+    // TODO Auto-generated method stub
+    return new KeyItem("key", new Vector(75, 75));
   }
 
 }

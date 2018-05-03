@@ -2,7 +2,9 @@ package edu.brown.cs.dreamteam.ai;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
@@ -63,13 +65,14 @@ public class AiController {
    *          items/weapons at the current tick of the game.
    */
   public void makeNextMove(ChunkMap chunks) {
-    Collection<Chunk> visibleChunks = chunks.chunksInRange(player,
-        Playable.VISIBLE_RANGE);
-    // TODO uncomment
-    // updateStrategy(chunks, visibleChunks);
-    player.setItemPickedFlag(false);
-    player.setPrimaryActionFlag(false);
-    strategies.get(strategy).makeNextMove(visibleChunks);
+    if (player.isAlive()) {
+      Collection<Chunk> visibleChunks = chunks.chunksInRange(player,
+          Playable.VISIBLE_RANGE);
+      updateStrategy(chunks, visibleChunks);
+      player.setItemPickedFlag(false);
+      player.setPrimaryActionFlag(false);
+      strategies.get(strategy).makeNextMove(visibleChunks);
+    }
   }
 
   /**
@@ -79,19 +82,31 @@ public class AiController {
    *          A Collection of all visible chunks to the player right now.
    */
   private void updateStrategy(ChunkMap chunkMap, Collection<Chunk> chunks) {
-    // Get visible enemies and remove current AI as an enemy
-    Set<DynamicEntity> enemies = chunkMap.dynamicFromChunks(chunks);
-    enemies.remove(player);
+    // Get visible enemies
+    Set<DynamicEntity> enemies = ChunkMap.getEnemies(player, chunks);
 
-    if (enemies.size() > 0) {
-      // There is an enemy in the visible range
-      // TODO check player health
-      strategy = StrategyType.DEFENSE;
-
+    if (enemies.size() > 0 && player.hasWeapon()) {
+      // There is an enemy in the visible range and the player has a weapon
+      // already
+      if (player.getHealth() > OffensiveStrategy.BASELINE_HEALTH) {
+        // Player's health is above the baseline for it to attack
+        strategy = StrategyType.OFFENSE;
+      } else {
+        strategy = StrategyType.DEFENSE;
+      }
     } else {
-      // No enemy in visible range
+      // No enemy in visible range or the player doesn't have a weapon yet
       // TODO Check if the goal is revealed
       strategy = StrategyType.GATHER;
+    }
+
+    Iterator<Entry<StrategyType, Strategy>> it = strategies.entrySet()
+        .iterator();
+    while (it.hasNext()) {
+      Entry<StrategyType, Strategy> entry = it.next();
+      if (entry.getKey() != strategy) {
+        entry.getValue().reset();
+      }
     }
   }
 
