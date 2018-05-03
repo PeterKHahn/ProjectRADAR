@@ -147,12 +147,12 @@ public class Room implements GameEventListener {
       }
 
       // parse out player
-      Map<String, Object> x = new ImmutableMap.Builder<String, Object>()
+      Map<String, Object> z = new ImmutableMap.Builder<String, Object>()
           .put("x", p.center().x).put("y", p.center().y)
           .put("health", p.getHealth()).put("radius", p.getRadius()).build();
 
       variables = new ImmutableMap.Builder<String, Object>()
-          .put("type", "individual").put("player", p)
+          .put("type", "individual").put("player", z)
           .put("interactables", interactables).put("markers", chunks.markers())
           .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
           .build();
