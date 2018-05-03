@@ -17,7 +17,7 @@ public class ClientState {
   private boolean rightHeld;
   private boolean forwardHeld;
   private boolean backwardHeld;
-
+  private boolean radar;
   private boolean itemPicked;
   private boolean primaryAction;
 
@@ -44,6 +44,7 @@ public class ClientState {
     backwardHeld = false;
     itemPicked = false;
     primaryAction = false;
+    radar = false;
     dropped = new HashSet<Integer>();
   }
 
@@ -102,6 +103,10 @@ public class ClientState {
    */
   public synchronized void itemPicked(Boolean item) {
     itemPicked = item;
+  }
+
+  public synchronized void placeRadar(Boolean radar) {
+    this.radar = radar;
   }
 
   /**
