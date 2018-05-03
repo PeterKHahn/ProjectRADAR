@@ -289,14 +289,14 @@ function drawMarkers() {
 
 	for(let i = 0; i < markers.length; i++) {
 
-	    drawCircle(markers[i].center.x + offsetX, convertToCoord(markers[i].center.y) + offsetY, 3, "none");
+	    drawCircle(markers[i].x + offsetX, convertToCoord(markers[i].y) + offsetY, 3, "none");
 
-	    if (checkMarkers(markers[i].center.x, bigX)) {
-	    	bigX = markers[i].center.x;
+	    if (checkMarkers(markers[i].x, bigX)) {
+	    	bigX = markers[i].x;
 	    }
 
-	    if (checkMarkers(markers[i].center.y, bigY)) {
-	    	bigY = markers[i].center.y;
+	    if (checkMarkers(markers[i].y, bigY)) {
+	    	bigY = markers[i].y;
 	    }
 	}
 
