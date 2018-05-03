@@ -16,9 +16,9 @@ public class GameBuilder {
 
   private static final int NUM_PLAYERS = 4;
 
-  private static final int HEIGHT = 1;
-  private static final int WIDTH = 1;
-  private static final int CHUNK_SIZE = 200;
+  private static final int HEIGHT = 4;
+  private static final int WIDTH = 4;
+  private static final int CHUNK_SIZE = 50;
 
   private int numHumanPlayers = 0;
   private Collection<GamePlayer> players;

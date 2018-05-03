@@ -1,14 +1,19 @@
 package edu.brown.cs.dreamteam.game;
 
-import edu.brown.cs.dreamteam.item.InventoryItem;
-import edu.brown.cs.dreamteam.item.Item;
-import edu.brown.cs.dreamteam.item.Type;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.radar.Radar;
 import edu.brown.cs.dreamteam.weapon.DefaultWeapon;
 import edu.brown.cs.dreamteam.weapon.Weapon;
 
 public class Inventory {
 
   private Weapon weapon;
+  private int numRadars;
+
+  private Collection<Radar> radars;
 
   public Inventory() {
     init();
@@ -16,6 +21,8 @@ public class Inventory {
 
   private void init() {
     weapon = new DefaultWeapon();
+    radars = new LinkedList<Radar>();
+    numRadars = 0;
   }
 
   public Weapon getActiveWeapon() {
@@ -26,26 +33,19 @@ public class Inventory {
     weapon.tick();
   }
 
-  private void addWeapon(Weapon weapon) {
+  public void addWeapon(Weapon weapon) {
     this.weapon = weapon;
   }
 
-  private void addRadarPiece() {
-
+  public void addRadarPiece() {
+    numRadars++;
   }
 
-  public void addItem(Item item) {
-    Type type = item.getType();
-    InventoryItem toAdd = item.getItem();
-    switch (type) {
-      case WEAPON:
-        Weapon weapon = (Weapon) toAdd;
-        addWeapon(weapon);
-        break;
-      case RADAR_PIECE:
-        break;
-      default:
-        break;
+  public void dropRadar(Vector center) {
+    if (numRadars > 0) {
+      Radar res = new Radar(numRadars, center);
+      numRadars = 0;
+      radars.add(res);
     }
 
   }

@@ -80,7 +80,6 @@ public abstract class DynamicEntity extends Interactable {
 
     changePosition(velocityVector.scalarMultiply(minT));
 
-    // chunks.addDynamic(this, newChunks);
   }
 
   public void changePosition(Vector v) {

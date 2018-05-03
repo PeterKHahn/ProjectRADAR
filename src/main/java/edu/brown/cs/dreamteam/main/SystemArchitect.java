@@ -102,7 +102,7 @@ public class SystemArchitect extends Architect {
   @Override
   public void onGameChange(ChunkMap chunks, int id) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
-    Double radius = 5.0;
+    double radius = 50.0;
     int once = 0;
     for (GamePlayer p : movingThings) {
       once++;

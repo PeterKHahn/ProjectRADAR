@@ -119,7 +119,7 @@ public abstract class Playable extends DynamicEntity {
     if (closest != null
         && closest.center().distance(center()) < ITEM_PICK_RANGE) {
       Logger.logDebug("Picked up an item");
-      inventory.addItem(closest);
+      closest.getItem().add(inventory);
       chunkMap.removeItem(closest);
 
     }

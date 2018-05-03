@@ -20,9 +20,9 @@ public class DummyGameMap implements GameMap {
   @Override
   public Collection<Obstacle> getObstacles() {
 
-    Obstacle x = new Obstacle("x", new Vector(50, 15), 5);
+    Obstacle x = new Obstacle("x", new Vector(50, 15), 10);
     Obstacle y = new Obstacle("y", new Vector(50, 50), 10);
-    Obstacle z = new Obstacle("z", new Vector(50, 85), 5);
+    Obstacle z = new Obstacle("z", new Vector(50, 85), 10);
 
     List<Obstacle> ls = new ArrayList<>();
     ls.add(x);
@@ -33,11 +33,11 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public Collection<Item> getItems() {
-    Item a = new Item("Item1", new Vector(3, 60), Type.WEAPON,
+    Item a = new Item("Item1", new Vector(73, 60), Type.WEAPON,
         new EnergyBlast());
-    Item b = new Item("Item2", new Vector(3, 90), Type.WEAPON,
+    Item b = new Item("Item2", new Vector(73, 90), Type.WEAPON,
         new ClapWeapon());
-    Item c = new Item("Item3", new Vector(33, 60), Type.WEAPON,
+    Item c = new Item("Item3", new Vector(103, 60), Type.WEAPON,
         new DrStrangeWeapon());
     List<Item> z = new ArrayList<Item>();
     z.add(a);

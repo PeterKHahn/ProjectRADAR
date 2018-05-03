@@ -37,7 +37,7 @@ public class AiController {
    */
   public AiController(String id, Board board) {
     // TODO update starting position
-    player = new AiPlayer(id, 0, 0, Playable.SIZE);
+    player = new AiPlayer(id, 100, 100, Playable.SIZE);
     player.setController(this);
 
     // Initialize strategies

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +44,7 @@ public class ChunkMap {
   private Set<Marker> markers;
 
   private Map<String, GamePlayer> players;
-  private Map<String, DynamicEntity> dynamic;
+  private Set<DynamicEntity> dynamic;
 
   private Set<StaticEntity> staticEntities;
 
@@ -94,7 +95,7 @@ public class ChunkMap {
 
   private void init() {
     chunks = new Chunk[height][width];
-    dynamic = new HashMap<String, DynamicEntity>();
+    dynamic = new HashSet<DynamicEntity>();
     players = new HashMap<String, GamePlayer>();
     staticEntities = new HashSet<StaticEntity>();
     markers = new HashSet<Marker>();
@@ -140,14 +141,23 @@ public class ChunkMap {
    * Ticks all entities in the Chunk Map.
    */
   public void tick() {
-    for (DynamicEntity e : dynamic.values()) {
-      if (e.alive()) {
-        e.tick(this);
+    Iterator<DynamicEntity> iter = dynamic.iterator();
+    while (iter.hasNext()) {
+      DynamicEntity e = iter.next();
+      if (!e.alive()) {
+        Collection<Chunk> inRange = chunksInRange(e);
+        for (Chunk c : inRange) {
+          c.removeDynamic(e);
+        }
+        iter.remove();
       }
     }
-    for (DynamicEntity e : dynamic.values()) {
+
+    for (DynamicEntity e : dynamic) {
       if (!inBounds(e)) {
         e.kill();
+      } else {
+        e.tick(this);
       }
     }
     tickCount++;
@@ -178,7 +188,7 @@ public class ChunkMap {
    */
   public void addPlayer(GamePlayer player) {
     players.put(player.getId(), player);
-    dynamic.put(player.getId(), player);
+    dynamic.add(player);
 
   }
 
@@ -187,7 +197,7 @@ public class ChunkMap {
     for (Chunk c : chunks) {
       c.addDynamic(e);
     }
-    dynamic.put(e.getId(), e);
+    dynamic.add(e);
   }
 
   public void addStatic(StaticEntity e) {
