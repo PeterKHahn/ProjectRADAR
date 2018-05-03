@@ -18,6 +18,7 @@ public abstract class Playable extends DynamicEntity {
 
   protected boolean itemPickedFlag;
   protected boolean primaryActionFlag; // whether or not we should fire
+  protected boolean placeRadarFlag;
 
   protected double health;
 
@@ -54,6 +55,10 @@ public abstract class Playable extends DynamicEntity {
 
   public String getType() {
     return type;
+  }
+
+  public boolean hasWeapon() {
+    return inventory.hasWeapon();
   }
 
   @Override
@@ -96,13 +101,11 @@ public abstract class Playable extends DynamicEntity {
     if (health < 0) {
       kill();
     }
-
   }
 
   @Override
   public BoxSet hitBox() {
     return inventory.getActiveWeapon().hitBox();
-
   }
 
   @Override
@@ -111,6 +114,16 @@ public abstract class Playable extends DynamicEntity {
         this.hitBox().reach(), SIZE);
 
     return tmp + speedCap();
+  }
+
+  public boolean isAlive() {
+    return isAlive;
+  }
+
+  @Override
+  public void kill() {
+    System.out.println(getId() + " killed");
+    isAlive = false;
   }
 
   public void pickUpItem(ChunkMap chunkMap, Collection<Chunk> chunksInRange) {
@@ -127,7 +140,7 @@ public abstract class Playable extends DynamicEntity {
     if (closest != null
         && closest.center().distance(center()) < ITEM_PICK_RANGE) {
       Logger.logDebug("Picked up an item");
-      inventory.addItem(closest);
+      closest.getItem().add(inventory);
       chunkMap.removeItem(closest);
 
     }
@@ -149,6 +162,10 @@ public abstract class Playable extends DynamicEntity {
     if (itemPickedFlag) {
       pickUpItem(chunkMap, chunksInRange);
 
+    }
+
+    if (placeRadarFlag) {
+      inventory.dropRadar(center());
     }
 
     // checks collision and hits them

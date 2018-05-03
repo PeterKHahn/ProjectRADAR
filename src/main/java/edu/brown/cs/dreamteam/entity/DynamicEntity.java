@@ -76,10 +76,8 @@ public abstract class DynamicEntity extends Interactable {
       double res = handleDynamicCollision(c);
       minT = Math.min(res, minT);
     }
-    System.out.println(velocityVector.scalarMultiply(minT));
     changePosition(velocityVector.scalarMultiply(minT));
 
-    // chunks.addDynamic(this, newChunks);
   }
 
   public void changePosition(Vector v) {
@@ -146,7 +144,6 @@ public abstract class DynamicEntity extends Interactable {
    */
   public void updateDynamic(int vertCoeff, int horzCoeff) {
     velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
-    System.out.println(velocityVector);
   }
 
   /**
@@ -190,6 +187,8 @@ public abstract class DynamicEntity extends Interactable {
   public boolean alive() {
     return isAlive;
   }
+
+  public abstract boolean isAlive();
 
   /**
    * Returns the radius of this entity.

@@ -125,7 +125,7 @@ public class Room implements GameEventListener {
   @Override
   public void onGameChange(ChunkMap chunks) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
-    Double radius = 5.0;
+    double radius = 300.0;
     for (GamePlayer p : movingThings) {
       Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
       Map<String, Object> variables;

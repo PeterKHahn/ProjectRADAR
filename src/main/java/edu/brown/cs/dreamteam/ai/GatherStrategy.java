@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.ai;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
@@ -36,6 +37,7 @@ public class GatherStrategy extends Strategy {
     super(board, player);
   }
 
+  @Override
   public void reset() {
     goal = null;
   }
@@ -50,7 +52,7 @@ public class GatherStrategy extends Strategy {
 
       if (goal != null) {
         // Reached goal, close enough to pick item, or item got picked
-        if (removeGoalItem(chunks) || reachedGoal()) {
+        if (removeGoalItem(chunks) || reachedGoal(goal)) {
           player.setItemPickedFlag(true);
           goalItem = null;
           setNewGoal(chunks);
@@ -60,8 +62,8 @@ public class GatherStrategy extends Strategy {
         setNewGoal(chunks);
       }
     }
+    moveTo(goal, false);
 
-    moveTo(goal);
   }
 
   private void setNewGoal(Collection<Chunk> chunks) {
@@ -73,17 +75,10 @@ public class GatherStrategy extends Strategy {
       // No items in visible range
 
       // Choose a random direction to go in
-      Vector dir = new Vector(10 * (Math.random() - 0.5),
-          10 * (Math.random() - 0.5));
+      Vector dir = new Vector(10 * (new Random().nextDouble() - 0.5),
+          10 * (new Random().nextDouble() - 0.5));
       goal = board.getEdgePosition(getCurrentPosition(), dir);
     }
-  }
-
-  private boolean reachedGoal() {
-    if (goal.distance(player.center()) < 1) {
-      return true;
-    }
-    return false;
   }
 
   private boolean removeGoalItem(Collection<Chunk> chunks) {

@@ -184,6 +184,12 @@ public class ClientState {
 
   }
 
+  public synchronized boolean retrieveRadar() {
+    boolean res = radar;
+    radar = false;
+    return res;
+  }
+
   /**
    * Returns the client id.
    * 

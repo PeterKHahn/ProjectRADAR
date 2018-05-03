@@ -10,22 +10,23 @@ import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.item.KeyItem;
 import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameBuilder {
 
   private static final int NUM_PLAYERS = 4;
 
-  private static final int HEIGHT = 1;
-  private static final int WIDTH = 1;
-  private static final int CHUNK_SIZE = 200;
+  private static final int HEIGHT = 10;
+  private static final int WIDTH = 10;
+  private static final int CHUNK_SIZE = 50;
 
   private int numHumanPlayers = 0;
   private Collection<GamePlayer> players;
 
   private GameEngine engine;
 
-  private GameBuilder(Architect architect, Room r) {
+  private GameBuilder(Room r) {
     this.engine = new GameEngine(HEIGHT, WIDTH, CHUNK_SIZE, r);
 
     init();
@@ -59,12 +60,14 @@ public class GameBuilder {
     for (Item i : items) {
       engine.addItem(i);
     }
+    KeyItem key = map.getKeyItem();
+    engine.addKeyItem(key);
     engine.board();
     return this;
   }
 
-  public static GameBuilder create(Architect architect, Room r) {
-    return new GameBuilder(architect, r);
+  public static GameBuilder create(Room r) {
+    return new GameBuilder(r);
   }
 
   public GameEngine complete() {

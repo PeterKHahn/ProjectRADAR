@@ -13,6 +13,8 @@ import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.item.KeyItem;
+import edu.brown.cs.dreamteam.main.Architect;
 import edu.brown.cs.dreamteam.main.Room;
 
 public class GameEngine implements Runnable {
@@ -120,6 +122,11 @@ public class GameEngine implements Runnable {
 
   public void addItem(Item item) {
     chunks.addItem(item);
+  }
+
+  public void addKeyItem(KeyItem item) {
+    chunks.addKeyItem(item);
+
   }
 
   public void addMarker(Marker marker) {

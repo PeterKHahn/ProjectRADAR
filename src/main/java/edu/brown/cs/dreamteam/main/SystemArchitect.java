@@ -164,7 +164,7 @@ public class SystemArchitect extends Architect {
             if (r != null) {
               rooms.startRoom(roomID, r);
               Logger.logMessage("Creating a new Game");
-              GameBuilder builder = GameBuilder.create(a, r)
+              GameBuilder builder = GameBuilder.create(r)
                   .generateMap(new DummyGameMap());
               List<PlayerSession> hewwo = r.getPlayers();
               for (PlayerSession player : hewwo) {
@@ -202,7 +202,6 @@ public class SystemArchitect extends Architect {
                   break;
                 case "space":
                   c.primaryAction(true);
-                  Logger.logDebug("Primary ACtion set to true");
                   break;
                 case "f":
                   c.itemPicked(true);
