@@ -208,7 +208,7 @@ public class SystemArchitect extends Architect {
                   c.itemPicked(true);
                   break;
                 case "r":
-                  c.itemDropped(0);
+                  c.placeRadar(true);
                   break;
                 default:
                   System.out
