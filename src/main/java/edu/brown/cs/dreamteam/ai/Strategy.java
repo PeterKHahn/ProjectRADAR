@@ -30,13 +30,18 @@ public abstract class Strategy {
   }
 
   /**
+   * Resets any instance variables for setting goal.
+   */
+  public abstract void reset();
+
+  /**
    * Given the goal Position, updates the AiPlayer's movement coefficients to
    * move towards the goal.
    * 
    * @param goal
    *          The Position that the AI is aiming to move towards.
    */
-  protected void moveTo(Position goal) {
+  protected void moveTo(Position goal, boolean deleteGoal) {
     // Get the next node to run to for the shortest path to the goal
     Position curr = getCurrentPosition();
     board.addEdgesFor(curr, false);
@@ -44,11 +49,21 @@ public abstract class Strategy {
 
     // Update player to go in direction of next
     player.updateDynamic(next.subtract(curr));
+    if (deleteGoal) {
+      board.removePosition(goal);
+    }
   }
 
   protected Position getCurrentPosition() {
     Vector position = player.center();
     return new Position(position.x, position.y);
+  }
+
+  protected boolean reachedGoal(Position goal) {
+    if (goal.distance(player.center()) < 1) {
+      return true;
+    }
+    return false;
   }
 
   /**

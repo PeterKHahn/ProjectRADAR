@@ -183,6 +183,8 @@ public abstract class DynamicEntity extends Interactable {
    */
   public abstract void kill();
 
+  public abstract boolean isAlive();
+
   /**
    * Returns the radius of this entity.
    * 

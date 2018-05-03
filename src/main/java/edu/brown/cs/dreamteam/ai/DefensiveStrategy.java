@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.ai;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
@@ -28,6 +29,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  * @author efu2
  */
 public class DefensiveStrategy extends Strategy {
+  private Position goal;
 
   public DefensiveStrategy(Board board, AiPlayer player) {
     super(board, player);
@@ -35,22 +37,26 @@ public class DefensiveStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
+    System.out.println("AI " + player.getId() + " defense");
     // Get the goal node to run to
-    Position goal = getEscapeGoal(chunks);
-    moveTo(goal);
+    if (goal == null || reachedGoal(goal)) {
+      updateEscapeGoal(chunks);
+    }
+    moveTo(goal, false);
 
-    // TODO Attack while running away?
+    // Attack while running away to ward off enemies
+    player.setPrimaryActionFlag(true);
   }
 
-  private Position getEscapeGoal(Collection<Chunk> chunks) {
+  private void updateEscapeGoal(Collection<Chunk> chunks) {
     // Determine the direction to escape in
     Vector escape = getEscapeDir(chunks);
     Position curr = getCurrentPosition();
     board.addEdgesFor(curr, false);
 
-    // Get the next position in the shortest path to the furthest position in
+    // Get the next position in the shortest path to the farthest position in
     // the escape direction
-    return board.getEdgePosition(curr, escape);
+    goal = board.getEdgePosition(curr, escape);
   }
 
   private Vector getEscapeDir(Collection<Chunk> chunks) {
@@ -70,10 +76,16 @@ public class DefensiveStrategy extends Strategy {
 
     // The enemies' directions cancelled each other out
     if (Double.compare(escapeX, 0) == 0 && Double.compare(escapeY, 0) == 0) {
-      // TODO Pick a random map border node to go to
+      escapeX = new Random().nextDouble();
+      escapeY = new Random().nextDouble();
     }
 
     return new Vector(escapeX, escapeY);
+  }
+
+  @Override
+  public void reset() {
+    goal = null;
   }
 
 }

@@ -288,4 +288,20 @@ public class ChunkMap {
     return tickCount;
   }
 
+  /**
+   * Returns all DynamicEntities that are not the given player.
+   *
+   * @param player
+   *          The player whose enemies we are checking for.
+   * @param chunks
+   *          The Chunks to check for enemies in.
+   * @return
+   */
+  public static Set<DynamicEntity> getEnemies(DynamicEntity player,
+      Collection<Chunk> chunks) {
+    Set<DynamicEntity> enemies = dynamicFromChunks(chunks);
+    enemies.remove(player);
+    return enemies;
+  }
+
 }

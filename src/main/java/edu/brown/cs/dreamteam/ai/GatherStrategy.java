@@ -37,12 +37,14 @@ public class GatherStrategy extends Strategy {
     super(board, player);
   }
 
+  @Override
   public void reset() {
     goal = null;
   }
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
+    System.out.println("AI " + player.getId() + " gather");
     if (canMakeRadar()) {
       // AI player has enough material to make a radar
       goal = placeRadar(chunks);
@@ -51,7 +53,7 @@ public class GatherStrategy extends Strategy {
 
       if (goal != null) {
         // Reached goal, close enough to pick item, or item got picked
-        if (removeGoalItem(chunks) || reachedGoal()) {
+        if (removeGoalItem(chunks) || reachedGoal(goal)) {
           player.setItemPickedFlag(true);
           goalItem = null;
           setNewGoal(chunks);
@@ -61,8 +63,7 @@ public class GatherStrategy extends Strategy {
         setNewGoal(chunks);
       }
     }
-    System.out.println(player.getId());
-    moveTo(goal);
+    moveTo(goal, false);
   }
 
   private void setNewGoal(Collection<Chunk> chunks) {
@@ -78,13 +79,6 @@ public class GatherStrategy extends Strategy {
           10 * (new Random().nextDouble() - 0.5));
       goal = board.getEdgePosition(getCurrentPosition(), dir);
     }
-  }
-
-  private boolean reachedGoal() {
-    if (goal.distance(player.center()) < 1) {
-      return true;
-    }
-    return false;
   }
 
   private boolean removeGoalItem(Collection<Chunk> chunks) {

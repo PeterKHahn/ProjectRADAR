@@ -71,6 +71,10 @@ public class Board {
     return positions;
   }
 
+  public void addPosition(Position pos) {
+    positions.add(pos);
+  }
+
   private void constructGraph(ChunkMap chunks) {
     obstacleCorners = new HashMap<>();
     positions = new ArrayList<>();

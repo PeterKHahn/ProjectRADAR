@@ -18,6 +18,13 @@ public class Inventory {
     weapon = new DefaultWeapon();
   }
 
+  public boolean hasWeapon() {
+    if (!(weapon instanceof DefaultWeapon)) {
+      return true;
+    }
+    return false;
+  }
+
   public Weapon getActiveWeapon() {
     return weapon;
   }
