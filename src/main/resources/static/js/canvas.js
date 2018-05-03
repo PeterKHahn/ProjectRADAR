@@ -183,7 +183,7 @@ function init() {
 
 function drawPlayer() {
 	ctx.beginPath();
-	ctx.strokeStyle = "#b8dbd9";
+	ctx.strokeStyle = "#DDE392";
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
 	ctx.stroke();
@@ -211,10 +211,9 @@ function drawPlayerHitbox() {
 function drawCircle(x, y, radius, type) {
 	ctx.beginPath();
 	switch(type) {
-		case "weapon":
-			ctx.strokeStyle = "red";
-			ctx.fillStyle = "red";
-			// maybe change color?? can pick up
+		case "WEAPON":
+			ctx.strokeStyle = "#CF1259";
+			ctx.fillStyle = "#CF1259";
 			break;
 	    case "hitbox":
 	      ctx.strokeStyle = "red";
@@ -224,16 +223,22 @@ function drawCircle(x, y, radius, type) {
 		case "item":
 			ctx.strokeStyle = "white";
 			ctx.fillStyle = "white";
-			// change color ??? can pick up
 			break;
-		case "deco":
-			ctx.strokeStyle = "green";
-			ctx.fillStyle = "green";
-			// change color ??? can pick up
+		case "obstacle":
+			ctx.strokeStyle = "#657C73";
+			ctx.fillStyle = "#657C73";
 			break;
-		case "none":
-			ctx.strokeStyle = "orange";
-			ctx.fillStyle = "orange";
+		case "markers":
+			ctx.strokeStyle = "#b8dbd9";
+			ctx.fillStyle = "#b8dbd9";
+			break;
+		case "ai":
+			// ctx.strokeStyle = "#B2E6E8";
+			// ctx.fillStyle = "#B2E6E8";
+			// break;
+		case "human":
+			ctx.strokeStyle = "#DDE392";
+			ctx.fillStyle = "#DDE392";
 			break;
 	}
 	ctx.lineWidth = 2;
@@ -273,13 +278,13 @@ function determineOffset() {
 
 function drawInteractables() {
 	for (let i = 0; i < interactables.length; i++) {
-		drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, 5, "none");
+		drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, interactables[i].collisionBox.reach, interactables[i].drawType);
 	}
 }
 
 function drawItems() {
 	for(let i = 0 ; i < items.length; i++) {
-		drawCircle(items[i].x + offsetX, convertToCoord(items[i].y) + offsetY, 3, "item");
+		drawCircle(items[i].x + offsetX, convertToCoord(items[i].y) + offsetY, 3, items[i].type);
 	}
 }
 
@@ -289,7 +294,7 @@ function drawMarkers() {
 
 	for(let i = 0; i < markers.length; i++) {
 
-	    drawCircle(markers[i].x + offsetX, convertToCoord(markers[i].y) + offsetY, 3, "none");
+	    drawCircle(markers[i].x + offsetX, convertToCoord(markers[i].y) + offsetY, 3, "markers");
 
 	    if (checkMarkers(markers[i].x, bigX)) {
 	    	bigX = markers[i].x;
@@ -302,10 +307,14 @@ function drawMarkers() {
 
 
 	console.log("drawing borders until "+ bigX + " " + bigY);
-	makeMarkers(0, 0, bigX, 0);
-	makeMarkers(0, 0, 0, bigY);
-	makeMarkers(bigX, bigY, bigX, 0);
-	makeMarkers(bigX, bigY, 0, bigY);
+	// make a transparent square
+
+	ctx.strokeStyle = "#b8dbd9";
+	ctx.beginPath();
+	ctx.globalAlpha = "0.05";
+	ctx.rect(0 + offsetX, 0 + offsetY, bigX, convertToCoord(bigY));
+	ctx.fill();
+	ctx.stroke();
 
 }
 
@@ -316,14 +325,6 @@ function checkMarkers(z, bigZ) {
 		return false;
 	}
 
-}
-
-function makeMarkers(x1, y1, x2, y2) {
-	ctx.strokeStyle = "#b8dbd9";
-	ctx.beginPath();
-	ctx.moveTo(x1 + offsetX, convertToCoord(y1) + offsetY);
-	ctx.lineTo(x2 + offsetX, convertToCoord(y2) + offsetY);
-	ctx.stroke();
 }
 
 function convertToCoord(y) {
