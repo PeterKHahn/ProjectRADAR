@@ -43,8 +43,8 @@ public class Inventory {
 
   public void dropRadar(Vector center) {
     if (numRadars > 0) {
-      Radar res = new Radar(numRadars, center);
-      numRadars = 0;
+      Radar res = new Radar(center);
+      numRadars--;
       radars.add(res);
     }
 
