@@ -44,4 +44,9 @@ public class AiPlayer extends Playable {
     super.tick(chunkMap);
   }
 
+  @Override
+  public String getDrawType() {
+    return "ai";
+  }
+
 }

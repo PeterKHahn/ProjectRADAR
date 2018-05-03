@@ -55,4 +55,9 @@ public class GamePlayer extends Playable {
     primaryActionFlag = state.retrievePrimaryAction();
   }
 
+  @Override
+  public String getDrawType() {
+    return "human";
+  }
+
 }
