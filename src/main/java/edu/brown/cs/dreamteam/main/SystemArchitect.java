@@ -202,7 +202,6 @@ public class SystemArchitect extends Architect {
                   break;
                 case "space":
                   c.primaryAction(true);
-                  Logger.logDebug("Primary ACtion set to true");
                   break;
                 case "f":
                   c.itemPicked(true);

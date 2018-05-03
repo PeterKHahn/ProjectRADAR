@@ -44,7 +44,6 @@ public class GatherStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
-    System.out.println("AI " + player.getId() + " gather");
     if (canMakeRadar()) {
       // AI player has enough material to make a radar
       goal = placeRadar(chunks);

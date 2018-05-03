@@ -20,6 +20,7 @@ import edu.brown.cs.dreamteam.entity.Marker;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.item.KeyItem;
 
 /**
  * Chunk Map is the primary location of our storage of entity information,
@@ -46,6 +47,8 @@ public class ChunkMap {
   private Set<DynamicEntity> dynamic;
 
   private Set<StaticEntity> staticEntities;
+
+  private KeyItem keyItem;
 
   private int tickCount;
 
@@ -212,9 +215,10 @@ public class ChunkMap {
     c.addItem(item);
   }
 
-  public void addKeyItem(Item item) {
+  public void addKeyItem(KeyItem item) {
     Chunk c = chunkFromPosition(item.center());
     c.addItem(item);
+    this.keyItem = item;
 
   }
 

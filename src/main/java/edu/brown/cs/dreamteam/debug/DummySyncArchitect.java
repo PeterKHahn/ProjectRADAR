@@ -33,15 +33,7 @@ public class DummySyncArchitect extends Architect {
   @Override
   public void run() {
     Logger.logMessage("Dummy Architect is now running");
-    // GameEngine game = new GameEngine(this);
-    // Collection<GamePlayer> players = generatePlayers(1);
-    // for (GamePlayer player : players) {
-    // Logger.logDebug(player.getId());
-    // clientStates.put(player.getId(), new ClientState(player.getId()));
-    // game.addPlayer(player);
-    // }
 
-    // game.run();
   }
 
   // @Override
