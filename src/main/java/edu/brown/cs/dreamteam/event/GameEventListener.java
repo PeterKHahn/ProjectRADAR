@@ -18,6 +18,6 @@ public interface GameEventListener {
    *          The ChunkMap from the GameEventEmitter
    * @param id
    */
-  public void onGameChange(ChunkMap chunks, int id);
+  public void onGameChange(ChunkMap chunks);
 
 }

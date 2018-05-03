@@ -74,10 +74,9 @@ public abstract class DynamicEntity extends Interactable {
         continue;
       }
       double res = handleDynamicCollision(c);
-
       minT = Math.min(res, minT);
     }
-
+    System.out.println(velocityVector.scalarMultiply(minT));
     changePosition(velocityVector.scalarMultiply(minT));
 
   }
@@ -146,6 +145,7 @@ public abstract class DynamicEntity extends Interactable {
    */
   public void updateDynamic(int vertCoeff, int horzCoeff) {
     velocityVector = new Vector(horzCoeff * speed, vertCoeff * speed);
+    System.out.println(velocityVector);
   }
 
   /**

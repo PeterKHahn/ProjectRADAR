@@ -15,6 +15,7 @@ import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.KeyItem;
 import edu.brown.cs.dreamteam.main.Architect;
+import edu.brown.cs.dreamteam.main.Room;
 
 public class GameEngine implements Runnable {
 
@@ -28,8 +29,8 @@ public class GameEngine implements Runnable {
   public final Vector CENTER;
 
   private GameEventEmitter eventEmitter;
-  private Architect architect;
-
+  // private Architect architect;
+  private Room room;
   private ChunkMap chunks;
 
   private boolean running = false;
@@ -41,11 +42,11 @@ public class GameEngine implements Runnable {
    * @param architect
    *          The Architecture that the GameEngine is a part of
    */
-  public GameEngine(int height, int width, int chunkSize, Architect architect) {
+  public GameEngine(int height, int width, int chunkSize, Room r) {
     this.HEIGHT = height;
     this.WIDTH = width;
     this.CHUNK_SIZE = chunkSize;
-    this.architect = architect;
+    this.room = r;
     CENTER = new Vector(WIDTH * CHUNK_SIZE / 2, HEIGHT * CHUNK_SIZE / 2);
     init(WIDTH, HEIGHT, CHUNK_SIZE);
   }
@@ -53,7 +54,7 @@ public class GameEngine implements Runnable {
   private void init(int width, int height, int chunkSize) {
     chunks = new ChunkMap(width, height, chunkSize);
     eventEmitter = new GameEventEmitter();
-    this.addGameEventListener(architect);
+    this.addGameEventListener(room);
   }
 
   @Override
@@ -94,8 +95,8 @@ public class GameEngine implements Runnable {
    * Represents a change in game event, by updating internal states.
    */
   private void tick() {
-    Map<String, ClientState> updatedClientStates = architect
-        .retrieveClientStates();
+    Map<String, ClientState> updatedClientStates = room.retrieveClientStates();
+
     chunks.updateClients(updatedClientStates);
     chunks.tick();
   }
@@ -139,10 +140,13 @@ public class GameEngine implements Runnable {
    * @param id
    *          The ID of the AI player.
    */
-  public void addAiPlayer(int id) {
-    AiController controller = new AiController(Integer.toString(id),
-        chunks.getBoard());
-    chunks.addDynamic(controller.getPlayer());
+  public void addAiPlayers(int numHumans) {
+    for (int i = 1; i < 5 - numHumans; i++) {
+      AiController controller = new AiController(Integer.toString(i),
+          chunks.getBoard());
+      chunks.addDynamic(controller.getPlayer());
+    }
+
   }
 
   /**

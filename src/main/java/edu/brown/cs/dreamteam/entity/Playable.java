@@ -36,6 +36,10 @@ public abstract class Playable extends DynamicEntity {
     init();
   }
 
+  public Inventory getInventory() {
+    return inventory;
+  }
+
   private void init() {
     itemPickedFlag = false;
     primaryActionFlag = false;

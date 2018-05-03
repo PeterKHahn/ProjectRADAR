@@ -19,4 +19,8 @@ public class Marker {
     return center;
   }
 
+  public double getRadius() {
+    return radius;
+  }
+
 }

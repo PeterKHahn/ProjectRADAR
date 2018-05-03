@@ -51,7 +51,6 @@ public class GatherStrategy extends Strategy {
     } else {
       // AI player doesn't have enough material to make a radar
 
-
       if (goal != null) {
         // Reached goal, close enough to pick item, or item got picked
         if (removeGoalItem(chunks) || reachedGoal(goal)) {
@@ -65,6 +64,7 @@ public class GatherStrategy extends Strategy {
       }
     }
     moveTo(goal, false);
+
   }
 
   private void setNewGoal(Collection<Chunk> chunks) {
