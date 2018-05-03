@@ -144,6 +144,7 @@ public class SystemArchitect extends Architect {
           .put("interactables", interactables).put("markers", chunks.markers())
           .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
           .build();
+      System.out.println("hi");
       broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
 
