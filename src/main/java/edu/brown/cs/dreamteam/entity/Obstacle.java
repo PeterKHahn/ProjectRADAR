@@ -89,4 +89,9 @@ public class Obstacle extends StaticEntity {
     return 0;
   }
 
+  @Override
+  public String getDrawType() {
+    return "obstacle";
+  }
+
 }

@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -137,7 +138,8 @@ public class Room implements GameEventListener {
         variables = new ImmutableMap.Builder<String, Object>()
             .put("x", x.center().x).put("y", x.center().y)
             .put("collisionBox", x.collisionBox()).put("hurtBox", x.hurtBox())
-            .put("hitBox", x.hitBox()).build();
+            .put("drawType", x.getDrawType()).put("hitBox", x.hitBox())
+            .put("id", x.getId()).build();
         interactables.add(variables);
       }
       // parse out items
@@ -150,8 +152,9 @@ public class Room implements GameEventListener {
 
       // parse out player
       Map<String, Object> z = new ImmutableMap.Builder<String, Object>()
-          .put("x", p.center().x).put("y", p.center().y)
-          .put("health", p.getHealth()).put("radius", p.getRadius()).build();
+          .put("x", p.center().x).put("y", p.center().y).put("id", p.getId())
+          .put("type", "human").put("health", p.getHealth())
+          .put("radius", p.getRadius()).build();
 
       for (Marker m : chunks.markers()) {
         variables = new ImmutableMap.Builder<String, Object>()
@@ -159,12 +162,16 @@ public class Room implements GameEventListener {
             .put("radius", m.getRadius()).build();
         markers.add(variables);
       }
+      Map<String, String> idToNames = new HashMap<>();
+      for (PlayerSession a : players) {
+        idToNames.put(a.getId(), a.getUserName());
+      }
 
       variables = new ImmutableMap.Builder<String, Object>()
           .put("type", "individual").put("player", z)
-          .put("interactables", interactables).put("markers", markers)
-          .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
-          .build();
+          .put("playerList", idToNames).put("interactables", interactables)
+          .put("markers", markers).put("items", items)
+          .put("weapon", p.getInventory().getActiveWeapon()).build();
       broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
 

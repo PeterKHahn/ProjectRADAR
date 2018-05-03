@@ -12,6 +12,8 @@ public abstract class Interactable extends Entity
     super(id);
   }
 
+  public abstract String getDrawType();
+
   public abstract void hit(Interactable e);
 
   public abstract boolean hits(Interactable e);
