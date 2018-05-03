@@ -16,6 +16,7 @@ import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Interactable;
+import edu.brown.cs.dreamteam.entity.Marker;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
@@ -33,11 +34,13 @@ public class ChunkMap {
   private final int width;
   private final int chunkSize;
 
-  private final int totalWidth;
-  private final int totalHeight;
+  public final int totalWidth;
+  public final int totalHeight;
 
   private Chunk[][] chunks;
   private Board board; // Graph representation of the completed ChunkMap
+
+  private Set<Marker> markers;
 
   private Map<String, GamePlayer> players;
   private Map<String, DynamicEntity> dynamic;
@@ -94,6 +97,7 @@ public class ChunkMap {
     dynamic = new HashMap<String, DynamicEntity>();
     players = new HashMap<String, GamePlayer>();
     staticEntities = new HashSet<StaticEntity>();
+    markers = new HashSet<Marker>();
     initChunks();
 
   }
@@ -136,10 +140,24 @@ public class ChunkMap {
    * Ticks all entities in the Chunk Map.
    */
   public void tick() {
-    for (Entity e : dynamic.values()) {
-      e.tick(this);
+    for (DynamicEntity e : dynamic.values()) {
+      if (e.alive()) {
+        e.tick(this);
+      }
+    }
+    for (DynamicEntity e : dynamic.values()) {
+      if (!inBounds(e)) {
+        e.kill();
+      }
     }
     tickCount++;
+  }
+
+  public boolean inBounds(Entity e) {
+    Vector center = e.center();
+    return (center.x >= 0 && center.x <= getTotalWidth() && center.y >= 0
+        && center.y <= getTotalHeight());
+
   }
 
   public int getChunkRow(double ypos) {
@@ -194,6 +212,14 @@ public class ChunkMap {
   public Collection<Chunk> chunksInRange(Interactable e) {
     return chunksInRange(e, e.reach());
 
+  }
+
+  public void addMarker(Marker marker) {
+    markers.add(marker);
+  }
+
+  public Set<Marker> markers() {
+    return markers;
   }
 
   public Collection<Chunk> chunksInRange(Entity e, double radius) {

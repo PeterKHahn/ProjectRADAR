@@ -7,7 +7,7 @@ import java.util.Map;
 
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.event.ClientState;
-import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.main.Architect;
 import edu.brown.cs.dreamteam.utility.Logger;
 
@@ -33,15 +33,15 @@ public class DummySyncArchitect extends Architect {
   @Override
   public void run() {
     Logger.logMessage("Dummy Architect is now running");
-    GameEngine game = new GameEngine(this);
-    Collection<GamePlayer> players = generatePlayers(1);
-    for (GamePlayer player : players) {
-      Logger.logDebug(player.getId());
-      clientStates.put(player.getId(), new ClientState(player.getId()));
-      game.addPlayer(player);
-    }
+    // GameEngine game = new GameEngine(this);
+    // Collection<GamePlayer> players = generatePlayers(1);
+    // for (GamePlayer player : players) {
+    // Logger.logDebug(player.getId());
+    // clientStates.put(player.getId(), new ClientState(player.getId()));
+    // game.addPlayer(player);
+    // }
 
-    game.run();
+    // game.run();
   }
 
   // @Override
@@ -76,6 +76,12 @@ public class DummySyncArchitect extends Architect {
 
   @Override
   public void initSpark() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void onGameChange(ChunkMap chunks) {
     // TODO Auto-generated method stub
 
   }

@@ -4,8 +4,10 @@ import java.util.Map;
 
 import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.board.Board;
+import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Marker;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
@@ -18,9 +20,11 @@ public class GameEngine implements Runnable {
   private static final int FPS = 30;
   private static final int PRINT_RATE = 3;
 
-  private static final int HEIGHT = 1;
-  private static final int WIDTH = 1;
-  private static final int CHUNK_SIZE = 1000;
+  private final int HEIGHT;
+  private final int WIDTH;
+  private final int CHUNK_SIZE;
+
+  public final Vector CENTER;
 
   private GameEventEmitter eventEmitter;
   private Architect architect;
@@ -36,18 +40,13 @@ public class GameEngine implements Runnable {
    * @param architect
    *          The Architecture that the GameEngine is a part of
    */
-  public GameEngine(Architect architect) {
+  public GameEngine(int height, int width, int chunkSize, Architect room) {
+    this.HEIGHT = height;
+    this.WIDTH = width;
+    this.CHUNK_SIZE = chunkSize;
     this.architect = architect;
+    CENTER = new Vector(WIDTH * CHUNK_SIZE / 2, HEIGHT * CHUNK_SIZE / 2);
     init(WIDTH, HEIGHT, CHUNK_SIZE);
-  }
-
-  /**
-   * Constructor that allows specification of the ChunkMap's width, height, and
-   * chunkSize.
-   */
-  public GameEngine(Architect architect, int width, int height, int chunkSize) {
-    this.architect = architect;
-    init(width, height, chunkSize);
   }
 
   private void init(int width, int height, int chunkSize) {
@@ -123,6 +122,10 @@ public class GameEngine implements Runnable {
     chunks.addItem(item);
   }
 
+  public void addMarker(Marker marker) {
+    chunks.addMarker(marker);
+  }
+
   /**
    * Adds an AI player to the game, assuming that the game board has already
    * been initialized by calling makeBoard().
@@ -130,10 +133,13 @@ public class GameEngine implements Runnable {
    * @param id
    *          The ID of the AI player.
    */
-  public void addAiPlayer(int id) {
-    AiController controller = new AiController(Integer.toString(id),
-        chunks.getBoard());
-    chunks.addDynamic(controller.getPlayer());
+  public void addAiPlayers(int numHumans) {
+    for (int i = 1; i < 5 - numHumans; i++) {
+      AiController controller = new AiController(Integer.toString(i),
+          chunks.getBoard());
+      chunks.addDynamic(controller.getPlayer());
+    }
+
   }
 
   /**

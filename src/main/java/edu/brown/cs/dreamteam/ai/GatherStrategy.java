@@ -30,6 +30,7 @@ import edu.brown.cs.dreamteam.item.Item;
  */
 public class GatherStrategy extends Strategy {
   private Position goal;
+  private Item goalItem;
 
   public GatherStrategy(Board board, AiPlayer player) {
     super(board, player);
@@ -45,30 +46,37 @@ public class GatherStrategy extends Strategy {
       // AI player has enough material to make a radar
       goal = placeRadar(chunks);
     } else {
-      // Reached goal
-      if (goal != null && canPickItem(chunks)) {
-        player.setItemPickedFlag(true);
-      }
       // AI player doesn't have enough material to make a radar
-      Set<Item> items = ChunkMap.itemsFromChunks(chunks);
-      if (items.size() > 0) {
-        // Get position of closest item
-        goal = getGoalItemPosition(items);
-      } else {
-        // No items in visible range
 
-        // Choose a random direction to go in if the goal is not already set
-        // or if the goal position is reached
-        if (goal == null || reachedGoal()) {
-          Vector dir = new Vector(10 * (Math.random() - 0.5),
-              10 * (Math.random() - 0.5));
-          goal = board.getEdgePosition(getCurrentPosition(), dir);
-          System.out
-              .println("AI " + player.getId() + " new goal " + goal.toString());
+      if (goal != null) {
+        // Reached goal, close enough to pick item, or item got picked
+        if (removeGoalItem(chunks) || reachedGoal()) {
+          player.setItemPickedFlag(true);
+          goalItem = null;
+          setNewGoal(chunks);
         }
+      } else {
+        // Goal is currently null
+        setNewGoal(chunks);
       }
     }
+
     moveTo(goal);
+  }
+
+  private void setNewGoal(Collection<Chunk> chunks) {
+    Set<Item> items = ChunkMap.itemsFromChunks(chunks);
+    if (items.size() > 0) {
+      // Get position of closest item
+      goal = getGoalItemPosition(items);
+    } else {
+      // No items in visible range
+
+      // Choose a random direction to go in
+      Vector dir = new Vector(10 * (Math.random() - 0.5),
+          10 * (Math.random() - 0.5));
+      goal = board.getEdgePosition(getCurrentPosition(), dir);
+    }
   }
 
   private boolean reachedGoal() {
@@ -78,20 +86,13 @@ public class GatherStrategy extends Strategy {
     return false;
   }
 
-  private boolean canPickItem(Collection<Chunk> chunks) {
-    Collection<Item> items = ChunkMap.itemsFromChunks(chunks);
-    Item closest = null;
-    for (Item i : items) {
-      if (closest == null) {
-        closest = i;
-      } else {
-        closest = i.center().distance(player.center()) < closest.center()
-            .distance(player.center()) ? i : closest;
+  private boolean removeGoalItem(Collection<Chunk> chunks) {
+    if (goalItem != null) {
+      Collection<Item> items = ChunkMap.itemsFromChunks(chunks);
+      if (goalItem.center().distance(player.center()) < Playable.ITEM_PICK_RANGE
+          || !items.contains(goalItem)) {
+        return true;
       }
-    }
-    if (closest != null && closest.center()
-        .distance(player.center()) < Playable.ITEM_PICK_RANGE) {
-      return true;
     }
     return false;
   }
@@ -113,6 +114,7 @@ public class GatherStrategy extends Strategy {
       if (currDistance < distance) {
         distance = currDistance;
         closest = center;
+        goalItem = item;
       }
     }
     return new Position(closest.x, closest.y);

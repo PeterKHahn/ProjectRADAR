@@ -29,11 +29,11 @@ public class BoardTest {
 
     SystemArchitect architect = new SystemArchitect();
 
-    oneObstacle = new GameEngine(architect, 10, 10, 1);
+    oneObstacle = new GameEngine(10, 10, 1, architect);
     oneObstacle.addStatic(new Obstacle("1", new Vector(5, 5), 0));
     oneObstacle.board();
 
-    multObstacles = new GameEngine(architect, 10, 10, 1);
+    multObstacles = new GameEngine(10, 10, 1, architect);
     multObstacles.addStatic(new Obstacle("1", new Vector(2, 2), 0));
     multObstacles.addStatic(new Obstacle("2", new Vector(7, 7), 1));
 

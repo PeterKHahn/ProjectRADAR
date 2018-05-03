@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -21,12 +24,16 @@ import com.google.gson.JsonObject;
 
 import edu.brown.cs.dreamteam.debug.DummyGameMap;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.utility.Logger;
 import freemarker.template.Configuration;
+import networking.Messenger;
+import networking.PlayerSession;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
 import spark.Request;
@@ -35,10 +42,10 @@ import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
 
-/**
- * The Main Architect for the project, where all functionality integration the
- * many components exist
- *
+/***
+ * The Main Architect for the project,where all functionality integration
+ * the*many components exist**
+ * 
  * @author peter
  *
  */
@@ -48,6 +55,7 @@ public class SystemArchitect extends Architect {
   private GameEngine game;
   private Rooms rooms = new Rooms();
   private Map<String, ClientState> clientStates;
+  private AtomicInteger userID = new AtomicInteger(6);
 
   public SystemArchitect() {
     init();
@@ -61,7 +69,7 @@ public class SystemArchitect extends Architect {
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
-    Spark.webSocket("/xx/websocket", new GameWebSocketHandler(this));
+    Spark.webSocket("/websocket", new GameWebSocketHandler(this));
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
     Spark.get("/game/:roomID", new GameHandler(), freeMarker);
@@ -100,18 +108,63 @@ public class SystemArchitect extends Architect {
   }
 
   @Override
-  public void onGameChange(ChunkMap chunks, int id) {
+  public void onGameChange(ChunkMap chunks) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
-    int once = 0;
     for (GamePlayer p : movingThings) {
-      once++;
       Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
-      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("player", p)
-          .put("entities", chunks.interactableFromChunks(chunksNeeded))
-          .put("items", chunks.itemsFromChunks(chunksNeeded)).build();
-      Messenger.broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
+      Map<String, Object> variables;
+      List<Map<String, Object>> interactables = new ArrayList<>();
+      List<Map<String, Object>> items = new ArrayList<>();
+
+      // parse out interactables
+      for (Interactable x : chunks.interactableFromChunks(chunksNeeded)) {
+
+        variables = new ImmutableMap.Builder<String, Object>()
+            .put("x", x.center().x).put("y", x.center().y)
+            .put("collisionBox", x.collisionBox()).put("hurtBox", x.hurtBox())
+            .put("hitBox", x.hitBox()).build();
+        interactables.add(variables);
+      }
+      // parse out items
+      for (Item i : ChunkMap.itemsFromChunks(chunksNeeded)) {
+        variables = new ImmutableMap.Builder<String, Object>()
+            .put("x", i.center().x).put("y", i.center().y)
+            .put("type", i.getType()).put("id", i.getId()).build();
+        items.add(variables);
+      }
+
+      // parse out player
+      variables = new ImmutableMap.Builder<String, Object>()
+          .put("x", p.center().x).put("y", p.center().y)
+          .put("health", p.getHealth()).put("radius", p.getRadius()).build();
+
+      variables = new ImmutableMap.Builder<String, Object>()
+          .put("type", "individual").put("player", p)
+          .put("interactables", interactables).put("markers", chunks.markers())
+          .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
+          .build();
+      System.out.println("hi");
+      broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
+    }
+
+  }
+
+  public void broadcastIndividualMessage(String sender, String message) {
+    Session relevant = null;
+    for (PlayerSession player : rooms.getPlayers()) {
+      if (player.getId().equals(sender)) {
+        relevant = player.getSession();
+      }
+    }
+
+    if (relevant != null && relevant.getRemote() != null && relevant.isOpen()) {
+      try {
+        relevant.getRemote().sendString(message);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
     }
   }
 
@@ -132,80 +185,140 @@ public class SystemArchitect extends Architect {
 
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
-      Messenger.addUserUserId(user);
-      Messenger.broadcastMessage(sender = "Server",
-          msg = ("Someone joined the chat!"));
+      Map<String, List<String>> params = user.getUpgradeRequest()
+          .getParameterMap();
+      if (params != null && params.containsKey("roomID")) {
+        // As the parameter's value is a List, we use 'get(0)'
+        String roomID = params.get("roomID").get(0);
+        System.out.println("ROOM ID: " + roomID);
+        if (roomID != null) {
+          Room r = rooms.getNotPlayingRoom(roomID);
+          if (r != null) {
+            PlayerSession p = new PlayerSession(
+                new AtomicInteger(userID.getAndIncrement()).toString(), user);
+            r.addPlayer(p);
+            rooms.addPlayers(p);
+            Messenger.broadcastMessage("Someone has joined!", r);
+          }
+        }
+      }
 
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-      String username = Messenger.sessionUserMap.get(user);
-      Messenger.sessionUserMap.remove(user);
-      Messenger.userSessionMap.remove(username);
-      Messenger.broadcastMessage(sender = "Server",
-          msg = (username + " left the chat"));
+      Map<String, List<String>> params = user.getUpgradeRequest()
+          .getParameterMap();
+      if (params != null && params.containsKey("roomID")) {
+        // As the parameter's value is a List, we use 'get(0)'
+        String roomID = params.get("roomID").get(0);
+        Room r = rooms.getPlayingRoom(roomID);
+        r.removePlayer(user);
+        rooms.removePlayer(user);
+        if (r != null) {
+          if (r.getPlayers().isEmpty()) {
+            rooms.stopPlaying(roomID);
+          } else {
+            Messenger.broadcastMessage("Someone has left!", r);
+          }
+        }
+      }
+
     }
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-      // System.out.println(Messenger.sessionUserMap.get(user));
       JsonObject received = GSON.fromJson(message, JsonObject.class);
       ClientState c = null;
-
-      switch (received.get("type").getAsString()) {
-        case "name":
-          break;
-        case "game":
-          Logger.logMessage("Creating a new Game");
-          GameEngine engine = GameBuilder.create(a)
-              .addHumanPlayer(GamePlayer
-                  .player(Messenger.sessionUserMap.get(user), 0.0, 0.0))
-              .generateMap(new DummyGameMap()).complete();
-          new Thread(engine).start();
-          if (Messenger.sessionUserMap.get(user) == null) {
-            System.out.println("CANT FIND THIS USER SUM TING WONG");
-          }
-          putClientState(Messenger.sessionUserMap.get(user),
-              new ClientState(Messenger.sessionUserMap.get(user)));
-          break;
-        case "key":
-          c = clientStates.get(Messenger.sessionUserMap.get(user));
-          if (c != null) {
-            switch (received.get("status").getAsString()) {
-              case "left":
-                c.leftHeld(received.get("held").getAsBoolean());
-                break;
-              case "right":
-                c.rightHeld(received.get("held").getAsBoolean());
-                break;
-              case "up":
-                c.forwardHeld(received.get("held").getAsBoolean());
-                break;
-              case "down":
-                c.backwardHeld(received.get("held").getAsBoolean());
-                break;
-              case "space":
-                c.primaryAction(true);
-                Logger.logDebug("Primary ACtion set to true");
-                break;
-              case "f":
-                c.itemPicked(true);
-                break;
-              case "r":
-                c.itemDropped(0);
-                break;
-              default:
-                break;
+      Map<String, List<String>> params = user.getUpgradeRequest()
+          .getParameterMap();
+      if (params != null && params.containsKey("roomID")) {
+        // As the parameter's value is a List, we use 'get(0)'
+        String roomID = params.get("roomID").get(0);
+        Room r = rooms.getPlayingRoom(roomID);
+        switch (received.get("type").getAsString()) {
+          case "name":
+            break;
+          case "game":
+            r = rooms.getNotPlayingRoom(roomID);
+            rooms.startRoom(roomID, r);
+            Logger.logMessage("Creating a new Game");
+            GameBuilder builder = GameBuilder.create(a)
+                .generateMap(new DummyGameMap());
+            List<PlayerSession> hewwo = r.getPlayers();
+            for (PlayerSession player : hewwo) {
+              builder.addHumanPlayer(player.getId());
             }
-            clientStates.put(Messenger.sessionUserMap.get(user), c);
-          }
+            GameEngine engine = builder.complete();
 
-          break;
-        default:
-          System.out.println("hewwo");
-          break;
+            Thread x = new Thread(engine);
+            x.start();
+            for (PlayerSession person : r.getPlayers()) {
+              System.out.println("ITERATION: " + person.getId());
+              putClientState(person.getId(), new ClientState(person.getId()));
+
+            }
+            Messenger.broadcastMessage("start", r);
+            break;
+          case "key":
+            c = getClient(r, user);
+            if (c != null) {
+              switch (received.get("status").getAsString()) {
+                case "left":
+                  c.leftHeld(received.get("held").getAsBoolean());
+                  break;
+                case "right":
+                  c.rightHeld(received.get("held").getAsBoolean());
+                  break;
+                case "up":
+                  c.forwardHeld(received.get("held").getAsBoolean());
+                  break;
+                case "down":
+                  c.backwardHeld(received.get("held").getAsBoolean());
+                  break;
+                case "space":
+                  c.primaryAction(true);
+                  Logger.logDebug("Primary ACtion set to true");
+                  break;
+                case "f":
+                  c.itemPicked(true);
+                  break;
+                case "r":
+                  c.itemDropped(0);
+                  break;
+                default:
+                  System.out
+                      .println("EWWOW: key sent that isn't an option...wtf");
+                  break;
+              }
+              putClient(user, c);
+            }
+
+            break;
+          default:
+            System.out.println("hewwo");
+            break;
+        }
       }
+    }
+
+    private void putClient(Session user, ClientState c) {
+      for (PlayerSession player : rooms.getPlayers()) {
+        if (user.getRemote().equals(player.getSession().getRemote())
+            && c != null) {
+          clientStates.put(player.getId(), c);
+          System.out.println(player.getId());
+        }
+      }
+    }
+
+    private ClientState getClient(Room r, Session user) {
+      for (PlayerSession player : r.getPlayers()) {
+        if (user.equals(player.getSession())) {
+          return clientStates.get(player.getId());
+        }
+      }
+      return null;
     }
   }
 
@@ -218,9 +331,30 @@ public class SystemArchitect extends Architect {
 
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
-      String room = arg0.params(":roomID");
+      String roomID = arg0.params(":roomID");
+
+      // if there's already a game going on, don't let this guy in.
+      if (rooms.alreadyPlaying(roomID)) {
+
+        Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+            .put("title", "Game R.A.D.A.R.").build();
+        return new ModelAndView(variables, "error.ftl");
+      }
+      // if there's already four players, don't let this guy in.
+      if (rooms.isNotPlaying(roomID)) {
+        Room r = rooms.getNotPlayingRoom(roomID);
+        if (r.numPlayers() == 4) {
+          Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+              .put("title", "Game R.A.D.A.R.").build();
+          return new ModelAndView(variables, "error.ftl");
+        }
+      } else {
+        Room r = new Room(roomID);
+        rooms.addNotPlayingRoom(roomID, r);
+      }
+
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "Game R.A.D.A.R.").put("roomID", room).build();
+          .put("title", "Game R.A.D.A.R.").put("roomID", roomID).build();
       return new ModelAndView(variables, "game.ftl");
     }
   }
@@ -235,6 +369,8 @@ public class SystemArchitect extends Architect {
     @Override
     public ModelAndView handle(Request arg0, Response arg1) throws Exception {
       String newRoomId = rooms.generateNewRoom();
+      Room r = new Room(newRoomId);
+      rooms.addNotPlayingRoom(newRoomId, r);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "R.A.D.A.R.").put("roomID", newRoomId).build();
       return new ModelAndView(variables, "home.ftl");

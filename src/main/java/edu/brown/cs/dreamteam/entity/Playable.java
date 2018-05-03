@@ -19,7 +19,6 @@ public abstract class Playable extends DynamicEntity {
   protected boolean itemPickedFlag;
   protected boolean primaryActionFlag; // whether or not we should fire
 
-  protected boolean isAlive;
   protected double health;
 
   protected Inventory inventory;
@@ -37,12 +36,20 @@ public abstract class Playable extends DynamicEntity {
     init();
   }
 
+  public Inventory getInventory() {
+    return inventory;
+  }
+
   private void init() {
     itemPickedFlag = false;
     primaryActionFlag = false;
     isAlive = true;
     inventory = new Inventory();
     health = MAX_HEALTH;
+  }
+
+  public double getHealth() {
+    return health;
   }
 
   public String getType() {
@@ -104,11 +111,6 @@ public abstract class Playable extends DynamicEntity {
         this.hitBox().reach(), SIZE);
 
     return tmp + speedCap();
-  }
-
-  @Override
-  public void kill() {
-    isAlive = false;
   }
 
   public void pickUpItem(ChunkMap chunkMap, Collection<Chunk> chunksInRange) {

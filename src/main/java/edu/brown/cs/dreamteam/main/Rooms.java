@@ -1,25 +1,49 @@
 package edu.brown.cs.dreamteam.main;
 
-import java.net.Socket;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.eclipse.jetty.websocket.api.Session;
+
+import networking.PlayerSession;
 
 public class Rooms {
 
-  private Set<String> notPlayingYetRoomIDs;
-  private Set<Socket> players;
-  private Set<String> playingRoomIDs;
+  private Map<String, Room> notPlayingYetRoomIDs;
+  private Map<String, Room> playingRoomIDs;
+  private List<PlayerSession> players;
 
   public Rooms() {
-    notPlayingYetRoomIDs = new HashSet<>();
-    playingRoomIDs = new HashSet<>();
+    notPlayingYetRoomIDs = new ConcurrentHashMap<>();
+    playingRoomIDs = new ConcurrentHashMap<>();
+    players = new ArrayList<>();
   }
 
   public Set<String> getNotPlayingYetRoomIDs() {
-    return notPlayingYetRoomIDs;
+    return notPlayingYetRoomIDs.keySet();
   }
 
-  public Set<String> getAllRoomIDs() {
+  public void addPlayers(PlayerSession player) {
+    players.add(player);
+  }
+
+  public Boolean alreadyPlaying(String roomID) {
+    return playingRoomIDs.containsKey(roomID);
+  }
+
+  public Boolean isNotPlaying(String roomID) {
+    return notPlayingYetRoomIDs.containsKey(roomID);
+  }
+
+  public Boolean isRoom(String roomID) {
+    return (notPlayingYetRoomIDs.containsKey(roomID)
+        || playingRoomIDs.containsKey(roomID));
+  }
+
+  public Map<String, Room> getAllRoomIDs() {
     return playingRoomIDs;
   }
 
@@ -35,20 +59,46 @@ public class Rooms {
       }
 
     }
-    while (notPlayingYetRoomIDs.contains(result)) {
+    while (isRoom(result)) {
       result = generateNewRoom();
     }
-    notPlayingYetRoomIDs.add(result);
     return result;
   }
 
-  public void startRoom(String id) {
-    if (notPlayingYetRoomIDs.contains(id)) {
-      notPlayingYetRoomIDs.remove(id);
-      playingRoomIDs.add(id);
-    } else {
-      throw new IllegalArgumentException("This room was never initialized!");
+  public void startRoom(String id, Room r) {
+    notPlayingYetRoomIDs.remove(id);
+    System.out.println("id" + id);
+    System.out.println("room" + r);
+    playingRoomIDs.put(id, r);
+  }
+
+  public Room getNotPlayingRoom(String id) {
+    return notPlayingYetRoomIDs.get(id);
+  }
+
+  public Room getPlayingRoom(String id) {
+    return playingRoomIDs.get(id);
+  }
+
+  public void addNotPlayingRoom(String newRoomId, Room r) {
+    notPlayingYetRoomIDs.put(newRoomId, r);
+  }
+
+  public void stopPlaying(String roomID) {
+    playingRoomIDs.remove(roomID);
+  }
+
+  public void removePlayer(Session user) {
+    for (PlayerSession player : players) {
+      if (player.getSession().getRemote().equals(user.getRemote())) {
+        players.remove(player);
+      }
     }
+
+  }
+
+  public List<PlayerSession> getPlayers() {
+    return players;
   }
 
 }

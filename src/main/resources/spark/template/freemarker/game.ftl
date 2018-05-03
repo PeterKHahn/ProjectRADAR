@@ -35,6 +35,12 @@
 	      <p id="socketStatus"></p>
 	 </div>
 
+	 <div id="gameOver" class="page">   
+	  	 <h1> GAME OVER </h1>
+	    <h3 id="howitgo"> WINNER: <span id="winner"> </span> </h3>
+	 	<a href="/"> start over? </a> 
+	 </div>
+
       
   </body>
 </html>
