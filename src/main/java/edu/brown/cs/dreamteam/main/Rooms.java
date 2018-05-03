@@ -67,8 +67,6 @@ public class Rooms {
 
   public void startRoom(String id, Room r) {
     notPlayingYetRoomIDs.remove(id);
-    System.out.println("id" + id);
-    System.out.println("room" + r);
     playingRoomIDs.put(id, r);
   }
 

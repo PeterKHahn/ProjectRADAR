@@ -14,6 +14,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.main.Room;
 import edu.brown.cs.dreamteam.main.SystemArchitect;
 
 public class BoardTest {
@@ -29,11 +30,11 @@ public class BoardTest {
 
     SystemArchitect architect = new SystemArchitect();
 
-    oneObstacle = new GameEngine(10, 10, 1, architect);
+    oneObstacle = new GameEngine(10, 10, 1, new Room("x"));
     oneObstacle.addStatic(new Obstacle("1", new Vector(5, 5), 0));
     oneObstacle.board();
 
-    multObstacles = new GameEngine(10, 10, 1, architect);
+    multObstacles = new GameEngine(10, 10, 1, new Room("y"));
     multObstacles.addStatic(new Obstacle("1", new Vector(2, 2), 0));
     multObstacles.addStatic(new Obstacle("2", new Vector(7, 7), 1));
 

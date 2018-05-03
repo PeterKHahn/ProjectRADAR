@@ -25,8 +25,8 @@ public class GameBuilder {
 
   private GameEngine engine;
 
-  private GameBuilder(Architect architect) {
-    this.engine = new GameEngine(HEIGHT, WIDTH, CHUNK_SIZE, architect);
+  private GameBuilder(Architect architect, Room r) {
+    this.engine = new GameEngine(HEIGHT, WIDTH, CHUNK_SIZE, r);
 
     init();
   }
@@ -63,8 +63,8 @@ public class GameBuilder {
     return this;
   }
 
-  public static GameBuilder create(Architect architect) {
-    return new GameBuilder(architect);
+  public static GameBuilder create(Architect architect, Room r) {
+    return new GameBuilder(architect, r);
   }
 
   public GameEngine complete() {
