@@ -58,13 +58,16 @@ $(document).ready(() => {
     	} else {
     		if (gameStart) {
     			player = data.player;
-    			entities = data.entities;
+    			interactables = data.interactables;
     			items = data.items;
     			markers = data.markers;
+    			weapon = data.weapon;
 
 	    		clearCanvas();
 	            determineOffset();
-	            drawEntities();
+	            drawInteractables();
+	            drawItems();
+	            drawMarkers();
 	            drawPlayer();
 	            ctx.globalAlpha = "1.0";	
 	    	}
@@ -176,8 +179,6 @@ function init() {
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-
-	//drawPlayer();
 };
 
 function drawPlayer() {
@@ -189,17 +190,19 @@ function drawPlayer() {
 
 	drawHP();
     drawName();
-    drawPlayerHitbox();
+    if (weapon.attack.attacking) {
+    	drawPlayerHitbox();    	
+    }
 }
 
 function drawPlayerHitbox() {
 
-  let boxes = player.inventory.weapon.attack.currentAttackFrame.hitbox.boxes;
+  let boxes = weapon.attack.currentAttackFrame.hitbox.boxes;
   for(let i = 0; i < boxes.length; i++) {
     let xOff = boxes[i].offset.x;
     let yOff = boxes[i].offset.y;
-    let x = xOff + player.center.x;
-    let y = yOff + player.center.y;
+    let x = xOff + player.x;
+    let y = yOff + player.y;
 
     drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
   }
@@ -235,7 +238,7 @@ function drawCircle(x, y, radius, type) {
 	}
 	ctx.lineWidth = 2;
 	//TODO CHANGE OBSTACLE
-	ctx.arc(scale(x), scale(y), radius, 0, 2*Math.PI);
+	ctx.arc(x, y, radius, 0, 2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
 }
@@ -246,6 +249,7 @@ function clearCanvas() {
 
 
 /*** MISCELLANEOUS FUNCTIONS ***/
+
 
 function drawHP() {
 	achepee = player.health;
@@ -261,23 +265,65 @@ function drawName() {
 }
 
 function determineOffset() {
-	 offsetX = convertToCoord(player.center.x) + c.width/2;
-	 offsetY = player.center.y + c.height/2;
+	 offsetX = convertToCoord(player.x) + c.width/2;
+	 offsetY = player.y + c.height/2;
 	// how much we have to offset from (0,0) to keep player at center
 	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
 
-function drawEntities() {
-	for (let i = 0; i < entities.length; i++) {
-		drawCircle(entities[i].center.x+offsetX, convertToCoord(entities[i].center.y)+offsetY, entities[i].radius, "none");
+function drawInteractables() {
+	for (let i = 0; i < interactables.length; i++) {
+		drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, 5, "none");
 	}
-  for(let i = 0 ; i < items.length; i++) {
-    drawCircle(items[i].center.x + offsetX, convertToCoord(items[i].center.y) + offsetY, 3, "item");
-  }
-  for(let i = 0; i < markers.length; i++){
-    drawCircle(markers[i].center.x + offsetX, convertToCoord(markers[i].center.y) + offsetY, 3, "none");
+}
 
-  }
+function drawItems() {
+	for(let i = 0 ; i < items.length; i++) {
+		drawCircle(items[i].x + offsetX, convertToCoord(items[i].y) + offsetY, 3, "item");
+	}
+}
+
+function drawMarkers() {
+	let bigX = 0;
+	let bigY = 0;
+
+	for(let i = 0; i < markers.length; i++) {
+
+	    drawCircle(markers[i].center.x + offsetX, convertToCoord(markers[i].center.y) + offsetY, 3, "none");
+
+	    if (checkMarkers(markers[i].center.x, bigX)) {
+	    	bigX = markers[i].center.x;
+	    }
+
+	    if (checkMarkers(markers[i].center.y, bigY)) {
+	    	bigY = markers[i].center.y;
+	    }
+	}
+
+
+	console.log("drawing borders until "+ bigX + " " + bigY);
+	makeMarkers(0, 0, bigX, 0);
+	makeMarkers(0, 0, 0, bigY);
+	makeMarkers(bigX, bigY, bigX, 0);
+	makeMarkers(bigX, bigY, 0, bigY);
+
+}
+
+function checkMarkers(z, bigZ) {
+	if (z > bigZ) {
+		return true;
+	} else {
+		return false;
+	}
+
+}
+
+function makeMarkers(x1, y1, x2, y2) {
+	ctx.strokeStyle = "#b8dbd9";
+	ctx.beginPath();
+	ctx.moveTo(x1 + offsetX, convertToCoord(y1) + offsetY);
+	ctx.lineTo(x2 + offsetX, convertToCoord(y2) + offsetY);
+	ctx.stroke();
 }
 
 function convertToCoord(y) {
