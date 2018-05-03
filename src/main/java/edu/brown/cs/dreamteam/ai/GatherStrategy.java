@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.ai;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
@@ -60,6 +61,7 @@ public class GatherStrategy extends Strategy {
         setNewGoal(chunks);
       }
     }
+    System.out.println(player.getId());
     moveTo(goal);
   }
 
@@ -72,8 +74,8 @@ public class GatherStrategy extends Strategy {
       // No items in visible range
 
       // Choose a random direction to go in
-      Vector dir = new Vector(10 * (Math.random() - 0.5),
-          10 * (Math.random() - 0.5));
+      Vector dir = new Vector(10 * (new Random().nextDouble() - 0.5),
+          10 * (new Random().nextDouble() - 0.5));
       goal = board.getEdgePosition(getCurrentPosition(), dir);
     }
   }

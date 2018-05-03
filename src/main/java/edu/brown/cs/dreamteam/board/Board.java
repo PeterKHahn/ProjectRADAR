@@ -97,7 +97,7 @@ public class Board {
 
   private void makeItemPositions(ChunkMap chunks) {
     List<Position> added = new ArrayList<>();
-    Set<Item> items = chunks
+    Set<Item> items = ChunkMap
         .itemsFromChunks(chunks.chunksInRange(0, height - 1, 0, width - 1));
     for (Item item : items) {
       Position itemPos = new Position(item.center().x, item.center().y);
@@ -109,11 +109,6 @@ public class Board {
     for (Position pos : added) {
       addEdgesFor(pos, true);
     }
-  }
-
-  public void removeItem(Item item) {
-    // removePosition(itemPositions.get(item));
-    itemPositions.remove(item);
   }
 
   public void removePosition(Position position) {
@@ -157,10 +152,11 @@ public class Board {
 
   private Collection<Position> addObstacleCorners(
       List<StaticEntity> addedObstacles, StaticEntity obstacle) {
-    // Get the reach and center of the obstacle. Adds the AiPlayer size to the
-    // reach to ensure the player won't collide, because the available Positions
-    // represent where the center of the AiPlayer can traverse to
-    double reach = obstacle.reach() + entitySize;
+    // Get the reach and center of the obstacle. Adds the AiPlayer size and an
+    // extra 1 to the reach to ensure the player won't collide, because the
+    // available Positions represent where the center of the AiPlayer can
+    // traverse to
+    double reach = obstacle.reach() + entitySize + 1;
     Vector center = obstacle.center();
 
     // Make one Position at each corner, extending the circular collision box

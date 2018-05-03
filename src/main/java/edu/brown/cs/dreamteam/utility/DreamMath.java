@@ -59,7 +59,12 @@ public class DreamMath {
     if (a1.cross(a2) == 0) {
       // Collinear
       if (pos2.subtract(pos1).cross(a1) == 0) {
-        return pos1.add(a1);
+        double t0 = pos2.add(a2).subtract(pos1).innerProduct(a1)
+            / a1.innerProduct(a1);
+        double t1 = pos2.subtract(pos1).innerProduct(a1) / a1.innerProduct(a1);
+        if ((t1 >= 0 && t1 <= 1) || (t0 >= 0 && t0 <= 1)) {
+          return pos1.add(a1.scalarMultiply(t0));
+        }
       }
       // No intersection
       return null;

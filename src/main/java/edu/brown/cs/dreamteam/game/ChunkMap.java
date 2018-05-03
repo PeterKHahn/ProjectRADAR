@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.brown.cs.dreamteam.board.Board;
-import edu.brown.cs.dreamteam.board.Position;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
@@ -188,7 +187,6 @@ public class ChunkMap {
   public void removeItem(Item item) {
     Chunk c = chunkFromPosition(item.center());
     c.removeItem(item);
-    board.removePosition(new Position(item.center().x, item.center().y));
   }
 
   public Collection<Chunk> chunksInRange(Interactable e) {
