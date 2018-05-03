@@ -145,11 +145,19 @@ public class SystemArchitect extends Architect {
       Map<String, List<String>> params = user.getUpgradeRequest()
           .getParameterMap();
       if (params != null && params.containsKey("roomID")) {
-        // As the parameter's value is a List, we use 'get(0)'
         String roomID = params.get("roomID").get(0);
         Room r = rooms.getPlayingRoom(roomID);
         switch (received.get("type").getAsString()) {
           case "name":
+            r = rooms.getNotPlayingRoom(roomID);
+            if (r != null) {
+              String username = received.get("status").getAsString();
+              for (PlayerSession p : r.getPlayers()) {
+                if (p.getSession().equals(user)) {
+                  p.setUserName(username);
+                }
+              }
+            }
             break;
           case "game":
             r = rooms.getNotPlayingRoom(roomID);
