@@ -2,7 +2,7 @@
 /*** Define global variables ***/
 
 let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
-let scale = 5;
+let scalar = 1.5;
 let gameStart = false;
 
 $(document).ready(() => {
@@ -211,7 +211,7 @@ function drawCircle(x, y, radius, type) {
 	}
 	ctx.lineWidth = 2;
 	//TODO CHANGE OBSTACLE
-	ctx.arc(x, y, radius, 0, 2*Math.PI);
+	ctx.arc(scale(x), scale(y), radius, 0, 2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
 }
@@ -253,4 +253,8 @@ function drawEntities() {
 
 function convertToCoord(y) {
 	return -1*y;
+}
+
+function scale(x) {
+	return scalar*x;
 }
