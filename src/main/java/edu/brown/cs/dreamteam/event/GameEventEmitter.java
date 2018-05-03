@@ -15,14 +15,14 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
  */
 public class GameEventEmitter {
   private static AtomicInteger num = new AtomicInteger();
-  private Collection<GameEventListenerThread> listeners;
+  private Collection<GameEventListener> listeners;
 
   public GameEventEmitter() {
     init();
   }
 
   private void init() {
-    listeners = new LinkedList<GameEventListenerThread>();
+    listeners = new LinkedList<GameEventListener>();
   }
 
   /**
@@ -32,7 +32,7 @@ public class GameEventEmitter {
    * @param listener
    */
   public void addGameEventListener(GameEventListener listener) {
-    listeners.add(new GameEventListenerThread(listener));
+    listeners.add(listener);
   }
 
   /**
@@ -43,41 +43,10 @@ public class GameEventEmitter {
    *          the ChunkMap to emit
    */
   public void emit(ChunkMap chunks) {
-    for (GameEventListenerThread listener : listeners) {
-      listener.setChunk(chunks);
-      new Thread(listener).start();
+    for (GameEventListener listener : listeners) {
+      listener.onGameChange(chunks);
 
     }
-  }
-
-  /**
-   * A wrapper class to support multithreading for each of the listeners
-   *
-   * @author peter
-   *
-   */
-  private class GameEventListenerThread implements Runnable {
-
-    private GameEventListener listener;
-    private ChunkMap chunks;
-    public int id;
-
-    private GameEventListenerThread(GameEventListener listener) {
-      this.listener = listener;
-      this.id = num.incrementAndGet();
-
-    }
-
-    private void setChunk(ChunkMap chunks) {
-      this.chunks = chunks;
-    }
-
-    @Override
-    public void run() {
-      listener.onGameChange(chunks, this.id);
-
-    }
-
   }
 
 }

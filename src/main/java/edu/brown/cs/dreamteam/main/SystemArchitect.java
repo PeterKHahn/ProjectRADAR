@@ -106,7 +106,7 @@ public class SystemArchitect extends Architect {
   }
 
   @Override
-  public void onGameChange(ChunkMap chunks, int id) {
+  public void onGameChange(ChunkMap chunks) {
     Collection<GamePlayer> movingThings = chunks.getPlayers();
     Double radius = 5.0;
     Room r = threadIDToRoomMap.get(Thread.currentThread().getId());

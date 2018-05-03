@@ -2,9 +2,9 @@ package edu.brown.cs.dreamteam.main;
 
 import edu.brown.cs.dreamteam.debug.DummySyncArchitect;
 
-/**
- * The Debug mode that can be used for testing different architects with
- * different implementations
+/***
+ * The Debug mode that can be used for testing different architects
+ * with*different implementations**
  * 
  * @author peter
  *
