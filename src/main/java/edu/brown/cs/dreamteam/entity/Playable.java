@@ -166,7 +166,6 @@ public abstract class Playable extends DynamicEntity {
 
     if (placeRadarFlag) {
       inventory.dropRadar(center());
-      Logger.logDebug("RADAR PLACED");
     }
 
     // checks collision and hits them
