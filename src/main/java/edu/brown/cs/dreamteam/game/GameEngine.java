@@ -40,7 +40,7 @@ public class GameEngine implements Runnable {
    * @param architect
    *          The Architecture that the GameEngine is a part of
    */
-  public GameEngine(int height, int width, int chunkSize, Architect architect) {
+  public GameEngine(int height, int width, int chunkSize, Architect room) {
     this.HEIGHT = height;
     this.WIDTH = width;
     this.CHUNK_SIZE = chunkSize;

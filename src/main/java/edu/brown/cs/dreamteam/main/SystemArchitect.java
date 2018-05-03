@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +24,12 @@ import com.google.gson.JsonObject;
 
 import edu.brown.cs.dreamteam.debug.DummyGameMap;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
+import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.utility.Logger;
 import freemarker.template.Configuration;
 import networking.Messenger;
@@ -110,11 +113,37 @@ public class SystemArchitect extends Architect {
     Double radius = 5.0;
     for (GamePlayer p : movingThings) {
       Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
-      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+      Map<String, Object> variables;
+      List<Map<String, Object>> interactables = new ArrayList<>();
+      List<Map<String, Object>> items = new ArrayList<>();
+
+      // parse out interactables
+      for (Interactable x : chunks.interactableFromChunks(chunksNeeded)) {
+
+        variables = new ImmutableMap.Builder<String, Object>()
+            .put("x", x.center().x).put("y", x.center().y)
+            .put("collisionBox", x.collisionBox()).put("hurtBox", x.hurtBox())
+            .put("hitBox", x.hitBox()).build();
+        interactables.add(variables);
+      }
+      // parse out items
+      for (Item i : ChunkMap.itemsFromChunks(chunksNeeded)) {
+        variables = new ImmutableMap.Builder<String, Object>()
+            .put("x", i.center().x).put("y", i.center().y)
+            .put("type", i.getType()).put("id", i.getId()).build();
+        items.add(variables);
+      }
+
+      // parse out player
+      variables = new ImmutableMap.Builder<String, Object>()
+          .put("x", p.center().x).put("y", p.center().y)
+          .put("health", p.getHealth()).put("radius", p.getRadius()).build();
+
+      variables = new ImmutableMap.Builder<String, Object>()
           .put("type", "individual").put("player", p)
-          .put("entities", chunks.interactableFromChunks(chunksNeeded))
-          .put("markers", chunks.markers())
-          .put("items", ChunkMap.itemsFromChunks(chunksNeeded)).build();
+          .put("interactables", interactables).put("markers", chunks.markers())
+          .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
+          .build();
       broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
     }
 

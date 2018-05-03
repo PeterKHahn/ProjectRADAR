@@ -36,12 +36,20 @@ public abstract class Playable extends DynamicEntity {
     init();
   }
 
+  public Inventory getInventory() {
+    return inventory;
+  }
+
   private void init() {
     itemPickedFlag = false;
     primaryActionFlag = false;
     isAlive = true;
     inventory = new Inventory();
     health = MAX_HEALTH;
+  }
+
+  public double getHealth() {
+    return health;
   }
 
   public String getType() {
