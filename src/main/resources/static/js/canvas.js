@@ -47,7 +47,7 @@ $(document).ready(() => {
 		    	gameStart = true;
 		    	init();
 
-    		} 
+    		}
     		if (data.message === "Someone has left!" && data.userlist.length === 1) {
     			console.log(data.userlist);
     			gameStart = false;
@@ -69,10 +69,10 @@ $(document).ready(() => {
 	            drawItems();
 	            drawMarkers();
 	            drawPlayer();
-	            ctx.globalAlpha = "1.0";	
+	            ctx.globalAlpha = "1.0";
 	    	}
     	}
-    	
+
     };
 
     webSocket.onclose = function () {
@@ -191,7 +191,7 @@ function drawPlayer() {
 	drawHP();
     drawName();
     if (weapon.attack.attacking) {
-    	drawPlayerHitbox();    	
+    	drawPlayerHitbox();
     }
 }
 

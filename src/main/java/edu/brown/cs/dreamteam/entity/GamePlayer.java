@@ -53,6 +53,7 @@ public class GamePlayer extends Playable {
   private void updatePlayer(ClientState state) {
     itemPickedFlag = state.retrieveItemPicked();
     primaryActionFlag = state.retrievePrimaryAction();
+    placeRadarFlag = state.retrieveRadar();
   }
 
   @Override

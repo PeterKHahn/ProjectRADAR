@@ -17,8 +17,8 @@ public class GameBuilder {
 
   private static final int NUM_PLAYERS = 4;
 
-  private static final int HEIGHT = 4;
-  private static final int WIDTH = 4;
+  private static final int HEIGHT = 6;
+  private static final int WIDTH = 6;
   private static final int CHUNK_SIZE = 50;
 
   private int numHumanPlayers = 0;
@@ -26,7 +26,7 @@ public class GameBuilder {
 
   private GameEngine engine;
 
-  private GameBuilder(Architect architect, Room r) {
+  private GameBuilder(Room r) {
     this.engine = new GameEngine(HEIGHT, WIDTH, CHUNK_SIZE, r);
 
     init();
@@ -66,8 +66,8 @@ public class GameBuilder {
     return this;
   }
 
-  public static GameBuilder create(Architect architect, Room r) {
-    return new GameBuilder(architect, r);
+  public static GameBuilder create(Room r) {
+    return new GameBuilder(r);
   }
 
   public GameEngine complete() {

@@ -18,6 +18,7 @@ public abstract class Playable extends DynamicEntity {
 
   protected boolean itemPickedFlag;
   protected boolean primaryActionFlag; // whether or not we should fire
+  protected boolean placeRadarFlag;
 
   protected double health;
 
@@ -161,6 +162,11 @@ public abstract class Playable extends DynamicEntity {
     if (itemPickedFlag) {
       pickUpItem(chunkMap, chunksInRange);
 
+    }
+
+    if (placeRadarFlag) {
+      inventory.dropRadar(center());
+      Logger.logDebug("RADAR PLACED");
     }
 
     // checks collision and hits them

@@ -10,6 +10,7 @@ import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.KeyItem;
 import edu.brown.cs.dreamteam.item.Type;
+import edu.brown.cs.dreamteam.radar.RadarPiece;
 import edu.brown.cs.dreamteam.weapon.ClapWeapon;
 import edu.brown.cs.dreamteam.weapon.DrStrangeWeapon;
 import edu.brown.cs.dreamteam.weapon.EnergyBlast;
@@ -34,23 +35,25 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public Collection<Item> getItems() {
-    Item a = new Item("Item1", new Vector(73, 60), Type.WEAPON,
+    Item a = new Item("Item1", new Vector(73, 160), Type.WEAPON,
         new EnergyBlast());
-    Item b = new Item("Item2", new Vector(73, 90), Type.WEAPON,
+    Item b = new Item("Item2", new Vector(73, 180), Type.WEAPON,
         new ClapWeapon());
-    Item c = new Item("Item3", new Vector(103, 60), Type.WEAPON,
+    Item c = new Item("Item3", new Vector(103, 160), Type.WEAPON,
         new DrStrangeWeapon());
+    Item d = new Item("Item4", new Vector(103, 180), Type.RADAR_PIECE,
+        new RadarPiece());
     List<Item> z = new ArrayList<Item>();
     z.add(a);
     z.add(b);
     z.add(c);
+    z.add(d);
 
     return z;
   }
 
   @Override
   public KeyItem getKeyItem() {
-    // TODO Auto-generated method stub
     return new KeyItem("key", new Vector(75, 75));
   }
 

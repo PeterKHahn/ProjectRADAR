@@ -14,6 +14,7 @@ public class Inventory {
   private int numRadars;
 
   private Collection<Radar> radars;
+  private int delta = 0;
 
   public Inventory() {
     init();
@@ -26,10 +27,8 @@ public class Inventory {
   }
 
   public boolean hasWeapon() {
-    if (!(weapon instanceof DefaultWeapon)) {
-      return true;
-    }
-    return false;
+    return !(weapon instanceof DefaultWeapon);
+
   }
 
   public Weapon getActiveWeapon() {
@@ -38,6 +37,7 @@ public class Inventory {
 
   public void tick() {
     weapon.tick();
+    delta++;
   }
 
   public void addWeapon(Weapon weapon) {
@@ -48,11 +48,16 @@ public class Inventory {
     numRadars++;
   }
 
+  public boolean canDropRadar() {
+    return numRadars > 0 && delta > 3;
+  }
+
   public void dropRadar(Vector center) {
-    if (numRadars > 0) {
+    if (canDropRadar()) {
       Radar res = new Radar(center);
       numRadars--;
       radars.add(res);
+      delta = 0;
     }
 
   }
