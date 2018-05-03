@@ -213,6 +213,12 @@ public class ChunkMap {
     c.addItem(item);
   }
 
+  public void addKeyItem(Item item) {
+    Chunk c = chunkFromPosition(item.center());
+    c.addItem(item);
+
+  }
+
   public void removeItem(Item item) {
     Chunk c = chunkFromPosition(item.center());
     c.removeItem(item);

@@ -10,6 +10,7 @@ import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.game.GameMap;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.item.KeyItem;
 import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameBuilder {
@@ -59,6 +60,8 @@ public class GameBuilder {
     for (Item i : items) {
       engine.addItem(i);
     }
+    KeyItem key = map.getKeyItem();
+    engine.addKeyItem(key);
     engine.board();
     return this;
   }
