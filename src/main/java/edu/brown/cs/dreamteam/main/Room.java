@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Interactable;
+import edu.brown.cs.dreamteam.entity.Marker;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.game.Chunk;
@@ -128,6 +129,7 @@ public class Room implements GameEventListener {
       Map<String, Object> variables;
       List<Map<String, Object>> interactables = new ArrayList<>();
       List<Map<String, Object>> items = new ArrayList<>();
+      List<Map<String, Object>> markers = new ArrayList<>();
 
       // parse out interactables
       for (Interactable x : chunks.interactableFromChunks(chunksNeeded)) {
@@ -151,9 +153,16 @@ public class Room implements GameEventListener {
           .put("x", p.center().x).put("y", p.center().y)
           .put("health", p.getHealth()).put("radius", p.getRadius()).build();
 
+      for (Marker m : chunks.markers()) {
+        variables = new ImmutableMap.Builder<String, Object>()
+            .put("x", m.center().x).put("y", m.center().y)
+            .put("radius", m.getRadius()).build();
+        markers.add(variables);
+      }
+
       variables = new ImmutableMap.Builder<String, Object>()
           .put("type", "individual").put("player", z)
-          .put("interactables", interactables).put("markers", chunks.markers())
+          .put("interactables", interactables).put("markers", markers)
           .put("items", items).put("weapon", p.getInventory().getActiveWeapon())
           .build();
       broadcastIndividualMessage(p.getId(), GSON.toJson(variables));
