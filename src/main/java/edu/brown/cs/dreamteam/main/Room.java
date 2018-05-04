@@ -112,6 +112,10 @@ public class Room implements GameEventListener {
   public void removePlayer(Session user) {
     for (PlayerSession player : players.values()) {
       if (player.getSession().equals(user)) {
+        Session s = player.getSession();
+        String id = player.getId();
+        s.close();
+        clientStates.remove(id);
         players.remove(player.getId());
       }
     }
