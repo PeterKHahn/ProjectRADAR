@@ -6,8 +6,8 @@ import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
-import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Marker;
+import edu.brown.cs.dreamteam.entity.Playable;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.event.GameEventEmitter;
@@ -105,7 +105,7 @@ public class GameEngine implements Runnable {
    * @param p
    *          the player to add
    */
-  public void addPlayer(GamePlayer p) {
+  public void addPlayer(Playable p) {
     chunks.addPlayer(p);
 
   }
@@ -143,6 +143,7 @@ public class GameEngine implements Runnable {
       AiController controller = new AiController(Integer.toString(i),
           chunks.getBoard());
       chunks.addDynamic(controller.getPlayer());
+      chunks.addPlayer(controller.getPlayer());
     }
 
   }

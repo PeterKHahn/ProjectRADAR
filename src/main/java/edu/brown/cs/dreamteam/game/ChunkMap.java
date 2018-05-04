@@ -14,7 +14,6 @@ import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.entity.Entity;
-import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.entity.Marker;
 import edu.brown.cs.dreamteam.entity.Playable;
@@ -135,7 +134,9 @@ public class ChunkMap {
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
       String clientId = entry.getKey();
       Playable player = players.get(clientId);
-      player.update(entry.getValue());
+      if (player != null) {
+        player.update(entry.getValue());
+      }
 
     }
   }
@@ -148,6 +149,7 @@ public class ChunkMap {
     while (iter.hasNext()) {
       DynamicEntity e = iter.next();
       if (!e.alive()) {
+        players.remove(e.getId());
         Collection<Chunk> inRange = chunksInRange(e);
         for (Chunk c : inRange) {
           c.removeDynamic(e);
@@ -189,7 +191,7 @@ public class ChunkMap {
    * @param player
    *          the game player to be added
    */
-  public void addPlayer(GamePlayer player) {
+  public void addPlayer(Playable player) {
     players.put(player.getId(), player);
     dynamic.add(player);
 

@@ -1,33 +1,21 @@
 package edu.brown.cs.dreamteam.main;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.eclipse.jetty.websocket.api.Session;
-
-import networking.PlayerSession;
 
 public class Rooms {
 
   private Map<String, Room> notPlayingYetRoomIDs;
   private Map<String, Room> playingRoomIDs;
-  private List<PlayerSession> players;
 
   public Rooms() {
     notPlayingYetRoomIDs = new ConcurrentHashMap<>();
     playingRoomIDs = new ConcurrentHashMap<>();
-    players = new ArrayList<>();
   }
 
   public Set<String> getNotPlayingYetRoomIDs() {
     return notPlayingYetRoomIDs.keySet();
-  }
-
-  public void addPlayers(PlayerSession player) {
-    players.add(player);
   }
 
   public Boolean alreadyPlaying(String roomID) {
@@ -84,19 +72,6 @@ public class Rooms {
 
   public void stopPlaying(String roomID) {
     playingRoomIDs.remove(roomID);
-  }
-
-  public void removePlayer(Session user) {
-    for (PlayerSession player : players) {
-      if (player.getSession().getRemote().equals(user.getRemote())) {
-        players.remove(player);
-      }
-    }
-
-  }
-
-  public List<PlayerSession> getPlayers() {
-    return players;
   }
 
 }

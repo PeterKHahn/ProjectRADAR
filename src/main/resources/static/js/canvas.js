@@ -13,12 +13,13 @@ $(document).ready(() => {
 
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
+	  $("#gameOver").hide();
+		$("#game").hide();
+		$("#waitingRoom").hide();
+		$("#getName").show();
 	};
 
-	$("#gameOver").hide();
-	$("#game").hide();
-	$("#waitingRoom").hide();
-	$("#getName").show();
+	
 
 
     // Send message if enter is pressed in the input field
@@ -39,7 +40,6 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
-    	console.log(data);
     	if (data.type === "gameMessage") {
     		if (data.message === "start") {
     			$("#waitingRoom").fadeOut();
@@ -48,11 +48,12 @@ $(document).ready(() => {
 		    	init();
 
     		}
-    		if (data.message === "Someone has left!" && data.userlist.length === 1) {
-    			console.log(data.userlist);
+    		if (data.message.substring(0, 9) === "GAME OVER") {
     			gameStart = false;
+    			$("#waitingRoom").hide();
+				$("#getName").hide();
     			$("#game").fadeOut();
-		    	$("#winner").text(data.userlist[0]);
+		    	$("#winner").text(data.message.substring(11, data.message.length));
 		    	$("#gameOver").fadeIn();
     		}
     	} else {
