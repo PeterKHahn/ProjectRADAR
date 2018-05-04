@@ -37,6 +37,7 @@ public class DefensiveStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
+    System.out.println("AI " + player.getId() + " defense");
     // Get the goal node to run to
     if (goal == null || reachedGoal(goal)) {
       updateEscapeGoal(chunks);
@@ -55,7 +56,16 @@ public class DefensiveStrategy extends Strategy {
 
     // Get the next position in the shortest path to the farthest position in
     // the escape direction
-    goal = board.getEdgePosition(curr, escape);
+    Position newGoal = board.getEdgePosition(curr, escape);
+
+    // AI is chased to a corner
+    if (newGoal.equals(goal)) {
+      // Choose a random direction to escape in
+      Vector newEscapeDir = new Vector(new Random().nextDouble(),
+          new Random().nextDouble());
+      newGoal = board.getEdgePosition(curr, newEscapeDir);
+    }
+    goal = newGoal;
   }
 
   private Vector getEscapeDir(Collection<Chunk> chunks) {
