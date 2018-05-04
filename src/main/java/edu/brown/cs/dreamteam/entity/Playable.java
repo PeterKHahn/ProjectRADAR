@@ -26,7 +26,7 @@ public abstract class Playable extends DynamicEntity {
 
   private String type;
 
-  public static final double VISIBLE_RANGE = 10;
+  public static final double VISIBLE_RANGE = 100;
   public static final double SIZE = 5;
   public static final int MAX_HEALTH = 100;
   public static final int ITEM_PICK_RANGE = 3;
