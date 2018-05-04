@@ -131,6 +131,7 @@ public class Room implements GameEventListener {
     Map<String, Object> variables;
     System.out.println("PLAYERS:");
     System.out.println(movingThings.keySet());
+
     for (String id : movingThings.keySet()) {
       if (players.size() == 1 && movingThings.size() == 1) {
         Messenger.broadcastMessage(
