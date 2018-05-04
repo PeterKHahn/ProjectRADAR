@@ -7,6 +7,7 @@ import edu.brown.cs.dreamteam.box.Box;
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.Inventory;
@@ -188,5 +189,7 @@ public abstract class Playable extends DynamicEntity {
       }
     }
   }
+
+  public abstract void update(ClientState state);
 
 }

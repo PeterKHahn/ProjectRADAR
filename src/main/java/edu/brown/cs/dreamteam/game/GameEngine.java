@@ -14,7 +14,6 @@ import edu.brown.cs.dreamteam.event.GameEventEmitter;
 import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.KeyItem;
-import edu.brown.cs.dreamteam.main.Architect;
 import edu.brown.cs.dreamteam.main.Room;
 
 public class GameEngine implements Runnable {
@@ -29,7 +28,6 @@ public class GameEngine implements Runnable {
   public final Vector CENTER;
 
   private GameEventEmitter eventEmitter;
-  // private Architect architect;
   private Room room;
   private ChunkMap chunks;
 

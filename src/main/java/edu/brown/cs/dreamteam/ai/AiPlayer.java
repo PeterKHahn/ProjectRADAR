@@ -3,6 +3,7 @@ package edu.brown.cs.dreamteam.ai;
 import com.google.gson.Gson;
 
 import edu.brown.cs.dreamteam.entity.Playable;
+import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 
 /**
@@ -47,6 +48,12 @@ public class AiPlayer extends Playable {
   @Override
   public String getDrawType() {
     return "ai";
+  }
+
+  @Override
+  public void update(ClientState state) {
+    return;
+
   }
 
 }

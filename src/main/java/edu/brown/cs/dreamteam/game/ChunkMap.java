@@ -17,6 +17,7 @@ import edu.brown.cs.dreamteam.entity.Entity;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Interactable;
 import edu.brown.cs.dreamteam.entity.Marker;
+import edu.brown.cs.dreamteam.entity.Playable;
 import edu.brown.cs.dreamteam.entity.StaticEntity;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.item.Item;
@@ -43,7 +44,7 @@ public class ChunkMap {
 
   private Set<Marker> markers;
 
-  private Map<String, GamePlayer> players;
+  private Map<String, Playable> players;
   private Set<DynamicEntity> dynamic;
 
   private Set<StaticEntity> staticEntities;
@@ -98,7 +99,7 @@ public class ChunkMap {
   private void init() {
     chunks = new Chunk[height][width];
     dynamic = new HashSet<DynamicEntity>();
-    players = new HashMap<String, GamePlayer>();
+    players = new HashMap<String, Playable>();
     staticEntities = new HashSet<StaticEntity>();
     markers = new HashSet<Marker>();
     initChunks();
@@ -133,7 +134,7 @@ public class ChunkMap {
 
     for (Entry<String, ClientState> entry : clientStates.entrySet()) {
       String clientId = entry.getKey();
-      GamePlayer player = players.get(clientId);
+      Playable player = players.get(clientId);
       player.update(entry.getValue());
 
     }
@@ -322,7 +323,7 @@ public class ChunkMap {
     return res;
   }
 
-  public Map<String, GamePlayer> getPlayers() {
+  public Map<String, Playable> getPlayers() {
     return players;
   }
 

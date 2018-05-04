@@ -14,4 +14,10 @@ public interface GameMap {
 
   public KeyItem getKeyItem();
 
+  public int getHeight();
+
+  public int getWidth();
+
+  public int getChunkSize();
+
 }

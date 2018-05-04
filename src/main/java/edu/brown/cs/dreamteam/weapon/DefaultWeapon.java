@@ -12,7 +12,7 @@ public class DefaultWeapon extends Weapon {
   }
 
   private void init() {
-    attack = Attack.create().addInactive(1).build();
+    attack = Attack.create().addInactive(3).build();
   }
 
 }
