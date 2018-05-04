@@ -176,6 +176,15 @@ function websocketSend(webSocket, type, status, held) {
 	webSocket.send(JSON.stringify(x));
 }
 
+WebFont.load({
+  google: {
+    families: ['Gugi']
+  },
+  active: function() {
+    displayText();
+  }
+});
+
 
 /*** CANVAS SPECIFIC FUNCTIONS ***/
 
@@ -284,16 +293,17 @@ function clearCanvas() {
 
 function drawHP() {
 	achepee = player.health;
-	ctx.font = "25px Arial";
+	ctx.fillStyle = "#DDE392";
+	ctx.font = "25px Gugi";
 	ctx.textAlign = "left";
-	ctx.strokeText(achepee,20,30);
+	ctx.fillText(achepee,20,30);
 }
 
 function drawName() {
-	ctx.strokeStyle = "#b8dbd9";
-	ctx.font = "13px Arial";
+	ctx.fillStyle = "#DDE392";
+	ctx.font = "13px Gugi";
 	ctx.textAlign = "center"
-	ctx.fillText(name, c.width/2, c.height/2 - 15);
+	ctx.fillText(name, c.width/2, c.height/2 - 12);
 }
 
 function determineOffset() {
@@ -364,11 +374,12 @@ function checkMarkers(z, bigZ) {
 
 // this is where we visualize the items we have, like radars and weapon type
 function drawHeldItems() {
+	ctx.fillStyle = "#DDE392";
 	console.log("drawing held items!");
-	ctx.font = "25px Arial";
+	ctx.font = "25px Gugi";
 	ctx.textAlign = "right";
-	ctx.strokeText("weapon: "+weapon.type, 480, 30);
-	ctx.strokeText("inventory: "+inventory, 480, 60);
+	ctx.fillText("weapon: "+weapon.type, 480, 30);
+	ctx.fillText("inventory: "+inventory, 480, 60);
 	// radars are stored in inventory, placed radars are in items
 	// weapon info is in weapon
 }
