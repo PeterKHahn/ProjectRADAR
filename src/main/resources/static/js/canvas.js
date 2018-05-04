@@ -1,7 +1,6 @@
 
 /*** Define global variables ***/
 
-<<<<<<< HEAD
 let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, inventory;
 let name = "Guest";
 let scalar = 1.5;
