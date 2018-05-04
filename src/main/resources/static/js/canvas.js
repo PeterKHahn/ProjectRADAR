@@ -272,7 +272,16 @@ function determineOffset() {
 
 function drawInteractables() {
 	for (let i = 0; i < interactables.length; i++) {
-		drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, interactables[i].collisionBox.reach, interactables[i].drawType);
+		for(let j = 0; j < interactables[i].collisionBox.boxes.length; j++) {
+			let radius = interactables[i].collisionBox.boxes[j].radius;
+			console.log("drawing radius"+radius)
+
+			console.log("x: "+interactables[i].x)
+			console.log("y: "+interactables[i].y)
+
+			drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, radius, interactables[i].drawType);
+
+		}
 	}
 }
 

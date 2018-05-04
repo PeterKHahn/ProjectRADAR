@@ -58,7 +58,7 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public KeyItem getKeyItem() {
-    return new KeyItem("key", new Vector(75, 75));
+    return new KeyItem("key", new Vector(220, 220));
   }
 
   @Override
