@@ -218,7 +218,7 @@ public class Room implements GameEventListener {
       }
     }
 
-    if (relevant != null && relevant.getRemote() != null && relevant.isOpen()) {
+    if (relevant != null && relevant.isOpen()) {
       try {
         relevant.getRemote().sendString(message);
       } catch (Exception e) {
