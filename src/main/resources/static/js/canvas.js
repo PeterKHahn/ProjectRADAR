@@ -1,7 +1,9 @@
 
 /*** Define global variables ***/
 
-let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, name, inventory;
+<<<<<<< HEAD
+let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, inventory;
+let name = "Guest";
 let scalar = 1.5;
 let gameStart = false;
 
@@ -60,6 +62,10 @@ $(document).ready(() => {
     		}
     	} else {
     		if (gameStart) {
+    			$("#waitingRoom").hide();
+				$("#getName").hide();
+				$("#gameOver").hide();
+
     			player = data.player;
     			interactables = data.interactables;
     			items = data.items;
@@ -83,6 +89,8 @@ $(document).ready(() => {
     webSocket.onclose = function () {
     	console.log("websocket connection closed.")
     	gameStart = false;
+    	$("#waitingRoom").hide();
+		$("#getName").hide();
     	$("#game").fadeOut();
     	$("#winner").text("not you!");
     	$("#gameOver").fadeIn();

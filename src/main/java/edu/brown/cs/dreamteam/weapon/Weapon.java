@@ -39,4 +39,6 @@ public abstract class Weapon extends InventoryItem implements HitBoxed {
     inventory.addWeapon(this);
   }
 
+  public abstract String getName();
+
 }

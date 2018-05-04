@@ -23,6 +23,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.radar.Radar;
+import edu.brown.cs.dreamteam.utility.Logger;
 import networking.Messenger;
 import networking.PlayerSession;
 
@@ -129,8 +130,7 @@ public class Room implements GameEventListener {
     Map<String, Playable> movingThings = chunks.getPlayers();
     double radius = 300.0;
     Map<String, Object> variables;
-    System.out.println("PLAYERS:");
-    System.out.println(movingThings.keySet());
+
     for (String id : movingThings.keySet()) {
       if (players.size() == 1 && movingThings.size() == 1) {
         Messenger.broadcastMessage(
@@ -139,8 +139,7 @@ public class Room implements GameEventListener {
       }
       if (players.get(id) != null) {
         GamePlayer p = (GamePlayer) movingThings.get(id);
-        System.out.println(id);
-        System.out.println(p.isAlive());
+
         if (!p.isAlive() || !players.get(id).getSession().isOpen()) {
           String username = players.get(id).getUserName();
           Session s = players.get(id).getSession();
@@ -223,7 +222,7 @@ public class Room implements GameEventListener {
       try {
         relevant.getRemote().sendString(message);
       } catch (Exception e) {
-        System.out.println(
+        Logger.logError(
             "somehow after all these checks you somehow managed to try to send a message to a session that was null or not open. well done.");
         e.printStackTrace();
       }

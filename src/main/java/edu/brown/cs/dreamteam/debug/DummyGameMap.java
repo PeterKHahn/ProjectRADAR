@@ -19,8 +19,8 @@ import edu.brown.cs.dreamteam.weapon.EnergyBlast;
 // unless we want the pick-up items to be literal specks
 public class DummyGameMap implements GameMap {
 
-  private static final int HEIGHT = 6;
-  private static final int WIDTH = 6;
+  private static final int HEIGHT = 10;
+  private static final int WIDTH = 10;
   private static final int CHUNK_SIZE = 50;
 
   @Override
@@ -31,6 +31,14 @@ public class DummyGameMap implements GameMap {
     Obstacle z = new Obstacle("z", new Vector(50, 85), 10);
 
     List<Obstacle> ls = new ArrayList<>();
+    for (int i = 1; i < WIDTH / 2; i++) {
+      for (int j = 1; j < HEIGHT / 2; j++) {
+        Obstacle o = new Obstacle("Ob" + (i * HEIGHT / 2 + j),
+            new Vector(i * CHUNK_SIZE * 2, j * CHUNK_SIZE * 2), 10);
+        ls.add(o);
+      }
+
+    }
     ls.add(x);
     // ls.add(y);
     ls.add(z);
@@ -47,13 +55,31 @@ public class DummyGameMap implements GameMap {
         new DrStrangeWeapon());
     Item d = new Item("Item4", new Vector(103, 180), Type.RADAR_PIECE,
         new RadarPiece());
-    List<Item> z = new ArrayList<Item>();
-    z.add(a);
-    z.add(b);
-    z.add(c);
-    z.add(d);
+    List<Item> ls = new ArrayList<Item>();
+    for (int i = 1; i < WIDTH / 2; i++) {
+      for (int j = 1; j < HEIGHT / 2; j++) {
 
-    return z;
+        if (i * j % 2 == 0) {
+          Item it = Item.random("Item" + (i * HEIGHT / 2 + j),
+              new Vector(i * CHUNK_SIZE * 2 + CHUNK_SIZE / 2,
+                  j * CHUNK_SIZE * 2 + CHUNK_SIZE / 2));
+          ls.add(it);
+        } else {
+          Item it = Item.random("Item" + (i * HEIGHT / 2 + j),
+              new Vector(i * CHUNK_SIZE * 2 + CHUNK_SIZE / 2,
+                  j * CHUNK_SIZE * 2 + CHUNK_SIZE / 2));
+          ls.add(it);
+        }
+
+      }
+
+    }
+    ls.add(a);
+    ls.add(b);
+    ls.add(c);
+    ls.add(d);
+
+    return ls;
   }
 
   @Override

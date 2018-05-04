@@ -69,4 +69,9 @@ public class DrStrangeWeapon extends Weapon {
         .addAttackFrame(a6).addAttackFrame(a3).addAttackFrame(a7).build();
 
   }
+
+  @Override
+  public String getName() {
+    return "Dr. Strange Weapon";
+  }
 }

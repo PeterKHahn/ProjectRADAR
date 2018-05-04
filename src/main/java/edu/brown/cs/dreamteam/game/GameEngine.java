@@ -141,7 +141,7 @@ public class GameEngine implements Runnable {
   public void addAiPlayers(int numHumans) {
     for (int i = 1; i < 5 - numHumans; i++) {
       AiController controller = new AiController(Integer.toString(i),
-          chunks.getBoard());
+          chunks.getBoard(), CENTER.x, CENTER.y);
       chunks.addDynamic(controller.getPlayer());
       chunks.addPlayer(controller.getPlayer());
     }
