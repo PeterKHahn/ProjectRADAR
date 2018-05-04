@@ -123,7 +123,7 @@ public abstract class Playable extends DynamicEntity {
 
   @Override
   public void kill() {
-    System.out.println(getId() + " killed");
+    Logger.logDebug(getId() + " killed");
     isAlive = false;
   }
 

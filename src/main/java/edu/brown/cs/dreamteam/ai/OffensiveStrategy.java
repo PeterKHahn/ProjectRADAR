@@ -9,6 +9,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.DynamicEntity;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * <p>
@@ -42,7 +43,7 @@ public class OffensiveStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
-    System.out.println("AI " + player.getId() + " offense");
+    Logger.logDebug("AI " + player.getId() + " offense");
     // Choose the closest encountered player as the target.
     if (target == null || !target.isAlive()) {
       chooseTarget(chunks);
