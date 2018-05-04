@@ -1,9 +1,7 @@
 
 /*** Define global variables ***/
 
-<<<<<<< HEAD
-let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, inventory;
-let name = "Guest";
+let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, name; 
 let scalar = 1.5;
 let gameStart = false;
 
@@ -42,8 +40,6 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
-    	// console.log(data);
-
     	if (data.type === "gameMessage") {
     		if (data.message === "start") {
     			$("#waitingRoom").fadeOut();
@@ -62,16 +58,12 @@ $(document).ready(() => {
     		}
     	} else {
     		if (gameStart) {
-    			$("#waitingRoom").hide();
-				$("#getName").hide();
-				$("#gameOver").hide();
-
     			player = data.player;
     			interactables = data.interactables;
+					console.log(interactables.length)
     			items = data.items;
     			markers = data.markers;
     			weapon = data.weapon;
-    			inventory = data.inventory;
 
 	    		clearCanvas();
 	            determineOffset();
@@ -79,7 +71,6 @@ $(document).ready(() => {
 	            drawItems();
 	            drawMarkers();
 	            drawPlayer();
-	            drawHeldItems();
 	            ctx.globalAlpha = "1.0";
 	    	}
     	}
@@ -89,8 +80,6 @@ $(document).ready(() => {
     webSocket.onclose = function () {
     	console.log("websocket connection closed.")
     	gameStart = false;
-    	$("#waitingRoom").hide();
-		$("#getName").hide();
     	$("#game").fadeOut();
     	$("#winner").text("not you!");
     	$("#gameOver").fadeIn();
@@ -157,10 +146,8 @@ $(document).ready(() => {
 		        case " ": // space for fighting
 		          	websocketSend(webSocket, "key", "space", true);	break;
 				case "f": // f for items
-					console.log("getting an item!");
 					websocketSend(webSocket, "key", "f", false); break;
 				case "r": // r for radar
-					console.log("placing a radar!");
 					websocketSend(webSocket, "key", "r", false); break;
 			}
 		}
@@ -213,6 +200,7 @@ function drawPlayerHitbox() {
     let x = xOff + player.x;
     let y = yOff + player.y;
 
+
     drawCircle(x,y, boxes[i].radius, "hitbox");
   }
 }
@@ -236,10 +224,6 @@ function drawCircle(x, y, radius, type) {
 		case "WEAPON":
 			ctx.strokeStyle = "#CF1259";
 			ctx.fillStyle = "#CF1259";
-			break;
-		case "RADAR_PIECE":
-			ctx.strokeStyle = "yellow";
-			ctx.fillStyle = "#yellow";
 			break;
 	    case "hitbox":
 	      ctx.strokeStyle = "red";
@@ -272,7 +256,6 @@ function drawCircle(x, y, radius, type) {
 	ctx.arc(x + xOffset, convertToCoord(y) + yOffset, radius, 0, 2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
-	ctx.globalAlpha = "1.0";
 }
 
 function clearCanvas() {
@@ -286,8 +269,7 @@ function clearCanvas() {
 function drawHP() {
 	achepee = player.health;
 	ctx.font = "25px Arial";
-	ctx.textAlign = "left";
-	ctx.strokeText(achepee,20,30);
+	ctx.strokeText(achepee,30,30);
 }
 
 function drawName() {
@@ -350,7 +332,6 @@ function drawMarkers() {
 	ctx.rect(0 + xOffset, 0 + yOffset, bigX, convertToCoord(bigY));
 	ctx.fill();
 	ctx.stroke();
-	ctx.globalAlpha = "1";
 
 }
 
@@ -361,17 +342,6 @@ function checkMarkers(z, bigZ) {
 		return false;
 	}
 
-}
-
-// this is where we visualize the items we have, like radars and weapon type
-function drawHeldItems() {
-	console.log("drawing held items!");
-	ctx.font = "25px Arial";
-	ctx.textAlign = "right";
-	ctx.strokeText("weapon: "+weapon.type, 480, 30);
-	ctx.strokeText("inventory: "+inventory, 480, 60);
-	// radars are stored in inventory, placed radars are in items
-	// weapon info is in weapon
 }
 
 function convertToCoord(y) {

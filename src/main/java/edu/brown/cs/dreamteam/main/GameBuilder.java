@@ -3,6 +3,7 @@ package edu.brown.cs.dreamteam.main;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Marker;
@@ -24,6 +25,9 @@ public class GameBuilder {
   private int numHumanPlayers = 0;
   private Collection<GamePlayer> players;
 
+  private Vector[] startPositions;
+  private int startIndex = 0;
+
   private GameEngine engine;
 
   private GameBuilder(GameMap gm, Room r) {
@@ -31,6 +35,12 @@ public class GameBuilder {
     this.width = gm.getWidth();
     this.chunkSize = gm.getChunkSize();
     this.engine = new GameEngine(height, width, chunkSize, r);
+    startPositions = new Vector[4];
+    startPositions[0] = engine.CENTER.add(new Vector(10, 0));
+    startPositions[1] = engine.CENTER.add(new Vector(-10, 0));
+    startPositions[2] = engine.CENTER.add(new Vector(0, -10));
+    startPositions[3] = engine.CENTER.add(new Vector(0, 10));
+
     Collection<Obstacle> obs = gm.getObstacles();
     for (Obstacle ob : obs) {
       engine.addStatic(ob);
@@ -51,12 +61,16 @@ public class GameBuilder {
   }
 
   public GameBuilder addHumanPlayer(String sessionId) {
-    GamePlayer p = GamePlayer.player(sessionId, engine.CENTER.x,
-        engine.CENTER.y);
+
     if (players.size() > 3) {
       Logger.logError("Only 4 players can be in a game. Not all players added");
       return this;
     }
+    Vector center = startPositions[startIndex];
+    startIndex++;
+
+    GamePlayer p = GamePlayer.player(sessionId, center.x, center.y);
+
     engine.addPlayer(p);
 
     numHumanPlayers++;
@@ -69,10 +83,15 @@ public class GameBuilder {
   }
 
   public GameEngine complete() {
-    while (numHumanPlayers < NUM_PLAYERS) {
-      engine.addAiPlayers(numHumanPlayers);
-      numHumanPlayers++;
+
+    for (int i = numHumanPlayers; i < NUM_PLAYERS; i++) {
+      AiController controller = new AiController(Integer.toString(i),
+          engine.getBoard(), startPositions[startIndex].x,
+          startPositions[startIndex].y);
+      engine.addAiPlayer(controller);
+      startIndex++;
     }
+
     Marker bottomLeft = new Marker(new Vector(0, 0));
     Marker bottomRight = new Marker(new Vector(width * chunkSize, 0));
     Marker topLeft = new Marker(new Vector(0, height * chunkSize));
