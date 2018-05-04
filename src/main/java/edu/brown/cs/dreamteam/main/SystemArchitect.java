@@ -164,8 +164,7 @@ public class SystemArchitect extends Architect {
             if (r != null) {
               rooms.startRoom(roomID, r);
               Logger.logMessage("Creating a new Game");
-              GameBuilder builder = GameBuilder.create(r)
-                  .generateMap(new DummyGameMap());
+              GameBuilder builder = GameBuilder.create(new DummyGameMap(), r);
               List<PlayerSession> hewwo = r.getPlayers();
               for (PlayerSession player : hewwo) {
                 builder.addHumanPlayer(player.getId());
