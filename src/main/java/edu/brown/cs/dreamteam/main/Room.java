@@ -22,6 +22,7 @@ import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.radar.Radar;
+import networking.Messenger;
 import networking.PlayerSession;
 
 public class Room implements GameEventListener {
@@ -124,11 +125,26 @@ public class Room implements GameEventListener {
 
   @Override
   public void onGameChange(ChunkMap chunks) {
-    Collection<GamePlayer> movingThings = chunks.getPlayers();
+    Map<String, GamePlayer> movingThings = chunks.getPlayers();
     double radius = 300.0;
-    for (GamePlayer p : movingThings) {
+    Map<String, Object> variables;
+    for (String id : movingThings.keySet()) {
+      GamePlayer p = movingThings.get(id);
+      if (!p.isAlive()) {
+        for (int i = 0; i < players.size(); i++) {
+          if (players.get(i).getId().equals(id)) {
+            String username = players.get(i).getUserName();
+            Session s = players.get(i).getSession();
+            s.close();
+            clientStates.remove(id);
+            players.remove(i);
+            Messenger.broadcastMessage(username + " dead.", this);
+
+          }
+        }
+
+      }
       Collection<Chunk> chunksNeeded = chunks.chunksInRange(p, radius);
-      Map<String, Object> variables;
       List<Map<String, Object>> interactables = new ArrayList<>();
       List<Map<String, Object>> items = new ArrayList<>();
       List<Map<String, Object>> markers = new ArrayList<>();
