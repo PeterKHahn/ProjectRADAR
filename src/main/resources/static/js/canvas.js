@@ -380,8 +380,7 @@ function drawHeldItems() {
 	ctx.textAlign = "right";
 	ctx.fillText("weapon: "+weapon.type, 480, 30);
 	ctx.fillText("inventory: "+inventory, 480, 60);
-	// radars are stored in inventory, placed radars are in items
-	// weapon info is in weapon
+	// radars are stored in inventory, placed radars are in items, weapon info is in weapon
 }
 
 function convertToCoord(y) {
