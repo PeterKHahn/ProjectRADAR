@@ -40,6 +40,8 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
+    	console.log(data);
+
     	if (data.type === "gameMessage") {
     		if (data.message === "start") {
     			$("#waitingRoom").fadeOut();
@@ -60,7 +62,6 @@ $(document).ready(() => {
     		if (gameStart) {
     			player = data.player;
     			interactables = data.interactables;
-					console.log(interactables.length)
     			items = data.items;
     			markers = data.markers;
     			weapon = data.weapon;
@@ -256,6 +257,7 @@ function drawCircle(x, y, radius, type) {
 	ctx.arc(x + xOffset, convertToCoord(y) + yOffset, radius, 0, 2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
+	ctx.globalAlpha = "1.0";
 }
 
 function clearCanvas() {
@@ -332,6 +334,7 @@ function drawMarkers() {
 	ctx.rect(0 + xOffset, 0 + yOffset, bigX, convertToCoord(bigY));
 	ctx.fill();
 	ctx.stroke();
+	ctx.globalAlpha = "1";
 
 }
 
