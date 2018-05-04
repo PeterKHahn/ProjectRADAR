@@ -1,7 +1,7 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, entities, markers, items, data, player, name;
+let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, name;
 let scalar = 1.5;
 let gameStart = false;
 
@@ -171,8 +171,8 @@ function init() {
 	ctx = c.getContext("2d", {alpha: false});
 	c.width = 500;
 	c.height = 500;
-	offsetX = 0;
-	offsetY = 0;
+	xOffset = 0;
+	yOffset = 0;
 };
 
 function drawPlayer() {
@@ -197,9 +197,26 @@ function drawPlayerHitbox() {
     let yOff = boxes[i].offset.y;
     let x = xOff + player.x;
     let y = yOff + player.y;
+		console.log("DRAWING PLAYER")
+		console.log("Radius: " + boxes[i].radius)
+		console.log("x: "+x + " y: "+y)
 
-    drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
+    drawCircle(x,y, boxes[i].radius, "hitbox");
   }
+}
+
+function drawHitbox(interactable) {
+	let boxes = interactable.hitBox.boxes
+	for(let i = 0; i < boxes.length; i++) {
+		console.log("DRAWING")
+
+		let xOff = boxes[i].offset.x;
+		let yOff = boxes[i].offset.y;
+		let x = xOff + interactable.x;
+    let y = yOff + interactable.y;
+
+    drawCircle(x,y, boxes[i].radius, "hitbox");
+	}
 }
 
 function drawCircle(x, y, radius, type) {
@@ -237,7 +254,7 @@ function drawCircle(x, y, radius, type) {
 	}
 	ctx.lineWidth = 2;
 	//TODO CHANGE OBSTACLE
-	ctx.arc(x, y, radius, 0, 2*Math.PI);
+	ctx.arc(x + xOffset, convertToCoord(y) + yOffset, radius, 0, 2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
 }
@@ -264,8 +281,8 @@ function drawName() {
 }
 
 function determineOffset() {
-	 offsetX = convertToCoord(player.x) + c.width/2;
-	 offsetY = player.y + c.height/2;
+	 xOffset = convertToCoord(player.x) + c.width/2;
+	 yOffset = player.y + c.height/2;
 	// how much we have to offset from (0,0) to keep player at center
 	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
@@ -274,20 +291,19 @@ function drawInteractables() {
 	for (let i = 0; i < interactables.length; i++) {
 		for(let j = 0; j < interactables[i].collisionBox.boxes.length; j++) {
 			let radius = interactables[i].collisionBox.boxes[j].radius;
-			console.log("drawing radius"+radius)
 
-			console.log("x: "+interactables[i].x)
-			console.log("y: "+interactables[i].y)
 
-			drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, radius, interactables[i].drawType);
+			drawCircle(interactables[i].x, interactables[i].y, radius, interactables[i].drawType);
+
 
 		}
+		drawHitbox(interactables[i])
 	}
 }
 
 function drawItems() {
 	for(let i = 0 ; i < items.length; i++) {
-		drawCircle(items[i].x + offsetX, convertToCoord(items[i].y) + offsetY, 3, items[i].type);
+		drawCircle(items[i].x, items[i].y, 3, items[i].type);
 	}
 }
 
@@ -297,7 +313,7 @@ function drawMarkers() {
 
 	for(let i = 0; i < markers.length; i++) {
 
-	    drawCircle(markers[i].x + offsetX, convertToCoord(markers[i].y) + offsetY, 3, "markers");
+	    drawCircle(markers[i].x, markers[i].y, 3, "markers");
 
 	    if (checkMarkers(markers[i].x, bigX)) {
 	    	bigX = markers[i].x;
@@ -315,7 +331,7 @@ function drawMarkers() {
 	ctx.strokeStyle = "#b8dbd9";
 	ctx.beginPath();
 	ctx.globalAlpha = "0.05";
-	ctx.rect(0 + offsetX, 0 + offsetY, bigX, convertToCoord(bigY));
+	ctx.rect(0 + xOffset, 0 + yOffset, bigX, convertToCoord(bigY));
 	ctx.fill();
 	ctx.stroke();
 
