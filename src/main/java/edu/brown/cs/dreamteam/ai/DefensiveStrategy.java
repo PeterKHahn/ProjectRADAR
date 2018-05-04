@@ -37,6 +37,7 @@ public class DefensiveStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
+    System.out.println("AI " + player.getId() + " gather");
     // Get the goal node to run to
     if (goal == null || reachedGoal(goal)) {
       updateEscapeGoal(chunks);

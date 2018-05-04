@@ -40,6 +40,7 @@ public class Board {
   private List<Position> positions;
   private Map<StaticEntity, List<Position>> obstacleCorners;
   private static double entitySize = Playable.SIZE;
+  private static double padding = entitySize + 1;
 
   /**
    * Constructs the graph using the given entity information at the beginning of
@@ -65,6 +66,7 @@ public class Board {
    */
   public static void setEntitySize(double size) {
     entitySize = size;
+    padding = entitySize + 1;
   }
 
   public List<Position> getPositions() {
@@ -128,23 +130,58 @@ public class Board {
 
   private void makeMapEdgePositions() {
     List<Position> added = new ArrayList<>();
-    // One new position at the border of every chunk on the edge of the map.
+    double maxX = width * chunkSize - padding;
+    double maxY = height * chunkSize - padding;
+    boolean trCorner = false;
+    boolean brCorner = false;
+    boolean blCorner = false;
+    boolean tlCorner = false;
+    // One new position at the border of every chunk on the edge of the map,
+    // with a padding to prevent AI players from going past the edge of the map
     for (int i = 0; i < width; i++) {
-      // Top edge
-      Position pos = new Position(i * chunkSize, height * chunkSize);
-      added.add(pos);
+      Position pos;
+      if (!trCorner) {
+        if (i * chunkSize + padding >= maxX) {
+          trCorner = true;
+        } else {
+          // Top edge
+          pos = new Position(Math.min(i * chunkSize + padding, maxX),
+              height * chunkSize - padding);
+          added.add(pos);
+        }
+      }
 
-      // Right edge
-      pos = new Position(width * chunkSize, (width - i) * chunkSize);
-      added.add(pos);
+      if (!brCorner) {
+        if ((height - i) * chunkSize - padding <= padding) {
+          brCorner = true;
+        } else {
+          // Right edge
+          pos = new Position(width * chunkSize - padding,
+              Math.max((height - i) * chunkSize - padding, padding));
+          added.add(pos);
+        }
+      }
 
-      // Bottom edge
-      pos = new Position((width - i) * chunkSize, 0);
-      added.add(pos);
+      if (!blCorner) {
+        if ((width - i) * chunkSize - padding <= padding) {
+          blCorner = true;
+        } else {
+          // Bottom edge
+          pos = new Position(
+              Math.max((width - i) * chunkSize - padding, padding), padding);
+          added.add(pos);
+        }
+      }
 
-      // Left edge
-      pos = new Position(0, i * chunkSize);
-      added.add(pos);
+      if (!tlCorner) {
+        if (i * chunkSize + padding >= maxY) {
+          tlCorner = true;
+        } else {
+          // Left edge
+          pos = new Position(padding, Math.min(i * chunkSize + padding, maxY));
+          added.add(pos);
+        }
+      }
     }
 
     // Add edges between newly added positions
@@ -160,7 +197,7 @@ public class Board {
     // extra 1 to the reach to ensure the player won't collide, because the
     // available Positions represent where the center of the AiPlayer can
     // traverse to
-    double reach = obstacle.reach() + entitySize + 1;
+    double reach = obstacle.reach() + padding;
     Vector center = obstacle.center();
 
     // Make one Position at each corner, extending the circular collision box
@@ -391,6 +428,8 @@ public class Board {
     // Get the nearest neighbor to the center position
     Position edgePos = tree.kNearestNeighbors(1, center, false).get(0);
 
+    // System.out.println("Position closest to " + pos.toString()
+    // + " going in dir " + dir.toString() + " is " + edgePos.toString());
     return edgePos;
   }
 
