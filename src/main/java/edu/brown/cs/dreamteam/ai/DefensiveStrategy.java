@@ -39,9 +39,7 @@ public class DefensiveStrategy extends Strategy {
   void makeNextMove(Collection<Chunk> chunks) {
     System.out.println("AI " + player.getId() + " defense");
     // Get the goal node to run to
-    if (goal == null || reachedGoal(goal)) {
-      updateEscapeGoal(chunks);
-    }
+    updateEscapeGoal(chunks);
     moveTo(goal, false);
 
     // Attack while running away to ward off enemies
@@ -52,20 +50,25 @@ public class DefensiveStrategy extends Strategy {
     // Determine the direction to escape in
     Vector escape = getEscapeDir(chunks);
     Position curr = getCurrentPosition();
-    board.addEdgesFor(curr, false);
+    if (goal == null || escape.angle(goal.subtract(curr)) > Math.PI / 12) {
+      // Previously set goal is in a very different direction
+      board.addEdgesFor(curr, false);
 
-    // Get the next position in the shortest path to the farthest position in
-    // the escape direction
-    Position newGoal = board.getEdgePosition(curr, escape);
+      // Get the next position in the shortest path to the farthest position in
+      // the escape direction
+      Position newGoal = board.getEdgePosition(curr, escape);
 
-    // AI is chased to a corner
-    if (newGoal.equals(goal)) {
-      // Choose a random direction to escape in
-      Vector newEscapeDir = new Vector(new Random().nextDouble(),
-          new Random().nextDouble());
-      newGoal = board.getEdgePosition(curr, newEscapeDir);
+      // AI is chased to a corner
+      if (newGoal.equals(goal)) {
+        System.out.println("AI is in a corner");
+        // Choose another direction to escape in
+        Vector newEscapeDir = new Vector(new Random().nextDouble() - 0.5,
+            new Random().nextDouble() - 0.5);
+        newGoal = board.getEdgePosition(curr, newEscapeDir);
+      }
+      goal = newGoal;
+      System.out.println("New goal " + goal.toString());
     }
-    goal = newGoal;
   }
 
   private Vector getEscapeDir(Collection<Chunk> chunks) {
@@ -83,7 +86,7 @@ public class DefensiveStrategy extends Strategy {
       escapeY += enemy.getYVelocity();
     }
 
-    // The enemies' directions cancelled each other out
+    // The enemies' directions cancelled each other out or no enemies are moving
     if (Double.compare(escapeX, 0) == 0 && Double.compare(escapeY, 0) == 0) {
       escapeX = new Random().nextDouble();
       escapeY = new Random().nextDouble();
