@@ -8,9 +8,13 @@ let gameStart = false;
 
 $(document).ready(() => {
 
+
+
 	/*** Establish the WebSocket connection and set up event handlers ***/
 	pathname = location.pathname.substring(6, location.pathname.length);
     var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websocket?roomID=" + pathname);
+    
+    $("#url").val(location.href);
 
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
@@ -18,10 +22,16 @@ $(document).ready(() => {
 		$("#game").hide();
 		$("#waitingRoom").hide();
 		$("#getName").show();
+
 	};
 
 
+	$("#copy").click(event => {
+		$("#url").select();
+        document.execCommand("copy");
+        $("#copied").innerHTML = "copied link to clipboard!";
 
+	})
 
     // Send message if enter is pressed in the input field
     $("#codename").keypress(event => {
@@ -42,6 +52,10 @@ $(document).ready(() => {
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
     	if (data.type === "gameMessage") {
+    		$("#users").empty();
+    		for (let i = 0; i < data.userlist.length; i++) {
+    			$("<li>").html(data.userlist[i]).appendTo($("#users"));
+    		}
     		if (data.message === "start") {
     			$("#waitingRoom").fadeOut();
 		    	$("#game").fadeIn();

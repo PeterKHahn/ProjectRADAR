@@ -123,8 +123,14 @@ public class SystemArchitect extends Architect {
       if (params != null && params.containsKey("roomID")) {
         // As the parameter's value is a List, we use 'get(0)'
         String roomID = params.get("roomID").get(0);
-        Room r = rooms.getPlayingRoom(roomID);
-        r.removePlayer(user);
+        Room r = rooms.getNotPlayingRoom(roomID);
+        if (r == null) {
+          r = rooms.getPlayingRoom(roomID);
+        }
+        if (r != null) {
+          r.removePlayer(user);
+        }
+
         if (r != null) {
           if (r.getPlayers().isEmpty()) {
             rooms.stopPlaying(roomID);
@@ -156,6 +162,7 @@ public class SystemArchitect extends Architect {
                 }
               }
             }
+            Messenger.broadcastMessage("new name", r);
             break;
           case "game":
             r = rooms.getNotPlayingRoom(roomID);

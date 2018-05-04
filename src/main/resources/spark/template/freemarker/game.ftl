@@ -19,8 +19,11 @@
 	 
 	 	<h1> waiting room </h1>
 	 	
-	 	<a href="/game/${roomID}"> link to join </a> 
-	 
+	 	<!-- <a href="/game/${roomID}"> link to join </a>  -->
+	 	<input type="textarea" id="url"> 
+	    <input type="button" value="Copy Url To ClipBoard" id="copy" />
+	    <p id="copied"> </p>
+
 	 	<ul id="users">
 	 	</ul> 
 	 	
