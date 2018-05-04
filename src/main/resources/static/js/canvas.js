@@ -340,8 +340,17 @@ function checkMarkers(z, bigZ) {
 		return true;
 	} else {
 		return false;
-	} 
+	}
 
+// this is where we visualize the items we have, like radars and weapon type
+function drawHeldItems() {
+	ctx.fillStyle = "#DDE392";
+	console.log("drawing held items!");
+	ctx.font = "25px Gugi";
+	ctx.textAlign = "right";
+	ctx.fillText("weapon: "+weapon.type, 480, 30);
+	ctx.fillText("inventory: "+inventory, 480, 60);
+	// radars are stored in inventory, placed radars are in items, weapon info is in weapon
 }
 
 function convertToCoord(y) {
