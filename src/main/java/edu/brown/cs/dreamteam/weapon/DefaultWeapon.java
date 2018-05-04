@@ -15,4 +15,9 @@ public class DefaultWeapon extends Weapon {
     attack = Attack.create().addInactive(3).build();
   }
 
+  @Override
+  public String getName() {
+    return "No Weapon";
+  }
+
 }

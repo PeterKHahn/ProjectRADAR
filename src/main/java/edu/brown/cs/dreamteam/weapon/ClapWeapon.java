@@ -43,4 +43,9 @@ public class ClapWeapon extends Weapon {
         .addAttackFrame(a3).addAttackFrame(a4).addInactive(3).build();
   }
 
+  @Override
+  public String getName() {
+    return "Clap Weapon";
+  }
+
 }

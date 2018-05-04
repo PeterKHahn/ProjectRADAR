@@ -13,4 +13,9 @@ public class EnergyBlast extends Weapon {
         .addCircle(6, BASE_DAMAGE * 1.5, 7).addInactive(5).build();
   }
 
+  @Override
+  public String getName() {
+    return "Energy Blast";
+  }
+
 }
