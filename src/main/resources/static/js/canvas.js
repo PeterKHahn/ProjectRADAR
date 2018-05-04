@@ -1,7 +1,7 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, entities, markers, items, data, player, name;
+let c, ctx, xOffset, yOffset, mapHeight, entities, markers, items, data, player, name;
 let scalar = 1.5;
 let gameStart = false;
 
@@ -13,12 +13,13 @@ $(document).ready(() => {
 
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
+	  $("#gameOver").hide();
+		$("#game").hide();
+		$("#waitingRoom").hide();
+		$("#getName").show();
 	};
 
-	$("#gameOver").hide();
-	$("#game").hide();
-	$("#waitingRoom").hide();
-	$("#getName").show();
+
 
 
     // Send message if enter is pressed in the input field
@@ -39,7 +40,6 @@ $(document).ready(() => {
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
-    	console.log(data);
     	if (data.type === "gameMessage") {
     		if (data.message === "start") {
     			$("#waitingRoom").fadeOut();
@@ -48,17 +48,19 @@ $(document).ready(() => {
 		    	init();
 
     		}
-    		if (data.message === "Someone has left!" && data.userlist.length === 1) {
-    			console.log(data.userlist);
+    		if (data.message.substring(0, 9) === "GAME OVER") {
     			gameStart = false;
+    			$("#waitingRoom").hide();
+				$("#getName").hide();
     			$("#game").fadeOut();
-		    	$("#winner").text(data.userlist[0]);
+		    	$("#winner").text(data.message.substring(11, data.message.length));
 		    	$("#gameOver").fadeIn();
     		}
     	} else {
     		if (gameStart) {
     			player = data.player;
     			interactables = data.interactables;
+					console.log(interactables.length)
     			items = data.items;
     			markers = data.markers;
     			weapon = data.weapon;
@@ -171,8 +173,8 @@ function init() {
 	ctx = c.getContext("2d", {alpha: false});
 	c.width = 500;
 	c.height = 500;
-	offsetX = 0;
-	offsetY = 0;
+	xOffset = 0;
+	yOffset = 0;
 };
 
 function drawPlayer() {
@@ -198,8 +200,22 @@ function drawPlayerHitbox() {
     let x = xOff + player.x;
     let y = yOff + player.y;
 
-    drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
+
+    drawCircle(x,y, boxes[i].radius, "hitbox");
   }
+}
+
+function drawHitbox(interactable) {
+	let boxes = interactable.hitBox.boxes
+	for(let i = 0; i < boxes.length; i++) {
+
+		let xOff = boxes[i].offset.x;
+		let yOff = boxes[i].offset.y;
+		let x = xOff + interactable.x;
+    let y = yOff + interactable.y;
+
+    drawCircle(x,y, boxes[i].radius, "hitbox");
+	}
 }
 
 function drawCircle(x, y, radius, type) {
@@ -237,7 +253,7 @@ function drawCircle(x, y, radius, type) {
 	}
 	ctx.lineWidth = 2;
 	//TODO CHANGE OBSTACLE
-	ctx.arc(x, y, radius, 0, 2*Math.PI);
+	ctx.arc(x + xOffset, convertToCoord(y) + yOffset, radius, 0, 2*Math.PI);
 	ctx.stroke();
 	ctx.fill();
 }
@@ -264,21 +280,29 @@ function drawName() {
 }
 
 function determineOffset() {
-	 offsetX = convertToCoord(player.x) + c.width/2;
-	 offsetY = player.y + c.height/2;
+	 xOffset = convertToCoord(player.x) + c.width/2;
+	 yOffset = player.y + c.height/2;
 	// how much we have to offset from (0,0) to keep player at center
 	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
 
 function drawInteractables() {
 	for (let i = 0; i < interactables.length; i++) {
-		drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, interactables[i].collisionBox.reach, interactables[i].drawType);
+		for(let j = 0; j < interactables[i].collisionBox.boxes.length; j++) {
+			let radius = interactables[i].collisionBox.boxes[j].radius;
+
+
+			drawCircle(interactables[i].x, interactables[i].y, radius, interactables[i].drawType);
+
+
+		}
+		drawHitbox(interactables[i])
 	}
 }
 
 function drawItems() {
 	for(let i = 0 ; i < items.length; i++) {
-		drawCircle(items[i].x + offsetX, convertToCoord(items[i].y) + offsetY, 3, items[i].type);
+		drawCircle(items[i].x, items[i].y, 3, items[i].type);
 	}
 }
 
@@ -288,7 +312,7 @@ function drawMarkers() {
 
 	for(let i = 0; i < markers.length; i++) {
 
-	    drawCircle(markers[i].x + offsetX, convertToCoord(markers[i].y) + offsetY, 3, "markers");
+	    drawCircle(markers[i].x, markers[i].y, 3, "markers");
 
 	    if (checkMarkers(markers[i].x, bigX)) {
 	    	bigX = markers[i].x;
@@ -300,13 +324,12 @@ function drawMarkers() {
 	}
 
 
-	console.log("drawing borders until "+ bigX + " " + bigY);
 	// make a transparent square
 
 	ctx.strokeStyle = "#b8dbd9";
 	ctx.beginPath();
 	ctx.globalAlpha = "0.05";
-	ctx.rect(0 + offsetX, 0 + offsetY, bigX, convertToCoord(bigY));
+	ctx.rect(0 + xOffset, 0 + yOffset, bigX, convertToCoord(bigY));
 	ctx.fill();
 	ctx.stroke();
 

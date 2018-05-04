@@ -17,18 +17,31 @@ public class GameBuilder {
 
   private static final int NUM_PLAYERS = 4;
 
-  private static final int HEIGHT = 10;
-  private static final int WIDTH = 10;
-  private static final int CHUNK_SIZE = 50;
+  private int height;
+  private int width;
+  private int chunkSize;
 
   private int numHumanPlayers = 0;
   private Collection<GamePlayer> players;
 
   private GameEngine engine;
 
-  private GameBuilder(Room r) {
-    this.engine = new GameEngine(HEIGHT, WIDTH, CHUNK_SIZE, r);
-
+  private GameBuilder(GameMap gm, Room r) {
+    this.height = gm.getHeight();
+    this.width = gm.getWidth();
+    this.chunkSize = gm.getChunkSize();
+    this.engine = new GameEngine(height, width, chunkSize, r);
+    Collection<Obstacle> obs = gm.getObstacles();
+    for (Obstacle ob : obs) {
+      engine.addStatic(ob);
+    }
+    Collection<Item> items = gm.getItems();
+    for (Item i : items) {
+      engine.addItem(i);
+    }
+    KeyItem key = gm.getKeyItem();
+    engine.addKeyItem(key);
+    engine.board();
     init();
   }
 
@@ -51,23 +64,8 @@ public class GameBuilder {
 
   }
 
-  public GameBuilder generateMap(GameMap map) {
-    Collection<Obstacle> obs = map.getObstacles();
-    for (Obstacle ob : obs) {
-      engine.addStatic(ob);
-    }
-    Collection<Item> items = map.getItems();
-    for (Item i : items) {
-      engine.addItem(i);
-    }
-    KeyItem key = map.getKeyItem();
-    engine.addKeyItem(key);
-    engine.board();
-    return this;
-  }
-
-  public static GameBuilder create(Room r) {
-    return new GameBuilder(r);
+  public static GameBuilder create(GameMap gm, Room r) {
+    return new GameBuilder(gm, r);
   }
 
   public GameEngine complete() {
@@ -76,10 +74,10 @@ public class GameBuilder {
       numHumanPlayers++;
     }
     Marker bottomLeft = new Marker(new Vector(0, 0));
-    Marker bottomRight = new Marker(new Vector(WIDTH * CHUNK_SIZE, 0));
-    Marker topLeft = new Marker(new Vector(0, WIDTH * CHUNK_SIZE));
+    Marker bottomRight = new Marker(new Vector(width * chunkSize, 0));
+    Marker topLeft = new Marker(new Vector(0, height * chunkSize));
     Marker topRight = new Marker(
-        new Vector(WIDTH * CHUNK_SIZE, WIDTH * CHUNK_SIZE));
+        new Vector(width * chunkSize, height * chunkSize));
 
     engine.addMarker(bottomLeft);
     engine.addMarker(topLeft);

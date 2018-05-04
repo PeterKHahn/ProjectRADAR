@@ -2,7 +2,6 @@ package networking;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -15,7 +14,6 @@ public class Messenger {
   // Sends a message from one user to all users, along with a list of current
   // usernames
   public static void broadcastMessage(String message, Room r) {
-    Map<String, Object> variables;
     List<String> playerNames = new ArrayList<>();
     for (PlayerSession player : r.getPlayers()) {
       playerNames.add(player.getUserName());

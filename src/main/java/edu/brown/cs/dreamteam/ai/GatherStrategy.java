@@ -12,6 +12,7 @@ import edu.brown.cs.dreamteam.entity.Playable;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.utility.Logger;
 
 /**
  * Strategy to gather as many items as possible. No other players are in the
@@ -44,7 +45,7 @@ public class GatherStrategy extends Strategy {
 
   @Override
   void makeNextMove(Collection<Chunk> chunks) {
-    System.out.println("AI " + player.getId() + " gather");
+    Logger.logDebug("AI " + player.getId() + " gather");
     if (canMakeRadar()) {
       // AI player has enough material to make a radar
       goal = placeRadar(chunks);

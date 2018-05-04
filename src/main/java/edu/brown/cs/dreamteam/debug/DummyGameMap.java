@@ -19,6 +19,10 @@ import edu.brown.cs.dreamteam.weapon.EnergyBlast;
 // unless we want the pick-up items to be literal specks
 public class DummyGameMap implements GameMap {
 
+  private static final int HEIGHT = 6;
+  private static final int WIDTH = 6;
+  private static final int CHUNK_SIZE = 50;
+
   @Override
   public Collection<Obstacle> getObstacles() {
 
@@ -54,7 +58,22 @@ public class DummyGameMap implements GameMap {
 
   @Override
   public KeyItem getKeyItem() {
-    return new KeyItem("key", new Vector(75, 75));
+    return new KeyItem("key", new Vector(220, 220));
+  }
+
+  @Override
+  public int getHeight() {
+    return HEIGHT;
+  }
+
+  @Override
+  public int getWidth() {
+    return WIDTH;
+  }
+
+  @Override
+  public int getChunkSize() {
+    return CHUNK_SIZE;
   }
 
 }

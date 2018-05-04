@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,14 +103,12 @@ public class SystemArchitect extends Architect {
       if (params != null && params.containsKey("roomID")) {
         // As the parameter's value is a List, we use 'get(0)'
         String roomID = params.get("roomID").get(0);
-        System.out.println("ROOM ID: " + roomID);
         if (roomID != null) {
           Room r = rooms.getNotPlayingRoom(roomID);
           if (r != null) {
             PlayerSession p = new PlayerSession(
                 new AtomicInteger(userID.getAndIncrement()).toString(), user);
             r.addPlayer(p);
-            rooms.addPlayers(p);
             Messenger.broadcastMessage("Someone has joined!", r);
           }
         }
@@ -126,7 +125,6 @@ public class SystemArchitect extends Architect {
         String roomID = params.get("roomID").get(0);
         Room r = rooms.getPlayingRoom(roomID);
         r.removePlayer(user);
-        rooms.removePlayer(user);
         if (r != null) {
           if (r.getPlayers().isEmpty()) {
             rooms.stopPlaying(roomID);
@@ -164,21 +162,15 @@ public class SystemArchitect extends Architect {
             if (r != null) {
               rooms.startRoom(roomID, r);
               Logger.logMessage("Creating a new Game");
-              GameBuilder builder = GameBuilder.create(r)
-                  .generateMap(new DummyGameMap());
-              List<PlayerSession> hewwo = r.getPlayers();
+              GameBuilder builder = GameBuilder.create(new DummyGameMap(), r);
+              Collection<PlayerSession> hewwo = r.getPlayers();
               for (PlayerSession player : hewwo) {
                 builder.addHumanPlayer(player.getId());
+                r.putNewClient(player.getId(), user);
               }
               GameEngine engine = builder.complete();
-
               Thread x = new Thread(engine);
               x.start();
-              for (PlayerSession person : r.getPlayers()) {
-                System.out.println("ITERATION: " + person.getId());
-                r.putNewClient(person.getId(), user);
-
-              }
               Messenger.broadcastMessage("start", r);
             } else {
               throw new IllegalArgumentException("BAD ROOM??");
