@@ -19,7 +19,7 @@ $(document).ready(() => {
 		$("#getName").show();
 	};
 
-	
+
 
 
     // Send message if enter is pressed in the input field
@@ -60,6 +60,7 @@ $(document).ready(() => {
     		if (gameStart) {
     			player = data.player;
     			interactables = data.interactables;
+					console.log(interactables.length)
     			items = data.items;
     			markers = data.markers;
     			weapon = data.weapon;
@@ -198,9 +199,7 @@ function drawPlayerHitbox() {
     let yOff = boxes[i].offset.y;
     let x = xOff + player.x;
     let y = yOff + player.y;
-		console.log("DRAWING PLAYER")
-		console.log("Radius: " + boxes[i].radius)
-		console.log("x: "+x + " y: "+y)
+
 
     drawCircle(x,y, boxes[i].radius, "hitbox");
   }
@@ -209,7 +208,6 @@ function drawPlayerHitbox() {
 function drawHitbox(interactable) {
 	let boxes = interactable.hitBox.boxes
 	for(let i = 0; i < boxes.length; i++) {
-		console.log("DRAWING")
 
 		let xOff = boxes[i].offset.x;
 		let yOff = boxes[i].offset.y;
@@ -326,7 +324,6 @@ function drawMarkers() {
 	}
 
 
-	console.log("drawing borders until "+ bigX + " " + bigY);
 	// make a transparent square
 
 	ctx.strokeStyle = "#b8dbd9";
