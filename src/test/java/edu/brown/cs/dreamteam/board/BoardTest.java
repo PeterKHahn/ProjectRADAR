@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ public class BoardTest {
   private static ChunkMap emptyChunks;
   private static GameEngine oneObstacle;
   private static GameEngine multObstacles;
+  private static GameEngine obstacleOffMap;
 
   @Before
   public void setup() {
@@ -38,6 +40,10 @@ public class BoardTest {
     multObstacles.addStatic(new Obstacle("2", new Vector(7, 7), 1));
 
     multObstacles.board();
+
+    obstacleOffMap = new GameEngine(10, 10, 1, dummyRoom);
+    obstacleOffMap.addStatic(new Obstacle("1", new Vector(2, 2), 0));
+    obstacleOffMap.board();
   }
 
   @Test
@@ -49,14 +55,14 @@ public class BoardTest {
   @Test
   public void testPositionsInEmptyBoard() {
     Board b = new Board(emptyChunks);
-    List<Position> positions = b.getPositions();
+    Set<Position> positions = b.getPositions();
     assertEquals(24, positions.size());
   }
 
   @Test
   public void testEdgesInEmptyBoard() {
     Board b = new Board(emptyChunks);
-    List<Position> positions = b.getPositions();
+    Set<Position> positions = b.getPositions();
     for (Position pos : positions) {
       List<Move> edges = pos.getEdges();
       for (Position otherPos : positions) {
@@ -78,7 +84,7 @@ public class BoardTest {
     Position test = new Position(5, 5);
     b.addEdgesFor(test, false);
     List<Move> edges = test.getEdges();
-    List<Position> boardPositions = b.getPositions();
+    Set<Position> boardPositions = b.getPositions();
     assertEquals(24, edges.size());
     for (Position position : boardPositions) {
       Move move = new Move(test, position);
@@ -89,7 +95,7 @@ public class BoardTest {
   @Test
   public void testPositionsWithOneObstacle() {
     Board b = oneObstacle.getBoard();
-    List<Position> positions = b.getPositions();
+    Set<Position> positions = b.getPositions();
     assertEquals(28, positions.size());
   }
 
@@ -180,6 +186,13 @@ public class BoardTest {
     b.addEdgesFor(test, false);
     Position next = b.getMoveTo(test, new Position(8, 8));
     assertEquals(new Position(3, 3), next);
+  }
+
+  @Test
+  public void testObstacleOffMap() {
+    Board b = obstacleOffMap.getBoard();
+    Set<Position> positions = b.getPositions();
+    assertEquals(25, positions.size());
   }
 
 }

@@ -60,7 +60,7 @@ public abstract class Strategy {
   }
 
   protected boolean reachedGoal(Position goal) {
-    if (goal.distance(player.center()) < 1) {
+    if (goal.distance(player.center()) < 2) {
       return true;
     }
     return false;

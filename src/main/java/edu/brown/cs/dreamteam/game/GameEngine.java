@@ -153,7 +153,6 @@ public class GameEngine implements Runnable {
    */
   public void board() {
     chunks.makeBoard();
-    ;
   }
 
   public Board getBoard() {
