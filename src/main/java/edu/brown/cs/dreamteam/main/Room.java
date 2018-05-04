@@ -20,8 +20,8 @@ import edu.brown.cs.dreamteam.event.GameEventListener;
 import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
-import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.radar.Radar;
 import networking.PlayerSession;
 
 public class Room implements GameEventListener {
@@ -134,7 +134,12 @@ public class Room implements GameEventListener {
       List<Map<String, Object>> markers = new ArrayList<>();
       List<Map<String, Object>> inventory = new ArrayList<>();
 
-      Inventory b = p.getInventory();
+      for (Radar c : p.getInventory().getRadars()) {
+        variables = new ImmutableMap.Builder<String, Object>()
+            .put("x", c.center().x).put("y", c.center().y)
+            .put("rad", c.distance(chunks.getKeyItem())).build();
+        inventory.add(variables);
+      }
 
       // parse out interactables
       for (Interactable x : chunks.interactableFromChunks(chunksNeeded)) {

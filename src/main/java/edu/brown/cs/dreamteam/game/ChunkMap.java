@@ -350,4 +350,8 @@ public class ChunkMap {
     return enemies;
   }
 
+  public KeyItem getKeyItem() {
+    return keyItem;
+  }
+
 }

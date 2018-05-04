@@ -11,6 +11,10 @@ public class Radar {
     this.center = center;
   }
 
+  public Vector center() {
+    return center;
+  }
+
   public double distance(KeyItem item) {
     return item.center().distance(this.center);
 

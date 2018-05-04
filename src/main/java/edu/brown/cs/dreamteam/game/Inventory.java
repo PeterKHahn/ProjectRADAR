@@ -20,6 +20,10 @@ public class Inventory {
     init();
   }
 
+  public Collection<Radar> getRadars() {
+    return radars;
+  }
+
   private void init() {
     weapon = new DefaultWeapon();
     radars = new LinkedList<Radar>();
