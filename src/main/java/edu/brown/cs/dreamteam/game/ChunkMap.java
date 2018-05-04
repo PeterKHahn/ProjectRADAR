@@ -322,8 +322,8 @@ public class ChunkMap {
     return res;
   }
 
-  public Collection<GamePlayer> getPlayers() {
-    return players.values();
+  public Map<String, GamePlayer> getPlayers() {
+    return players;
   }
 
   public Set<StaticEntity> getStaticEntities() {
