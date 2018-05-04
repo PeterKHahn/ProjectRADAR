@@ -5,6 +5,7 @@ body {
 	color: #b8dbd9;
 	font-family: "Gugi", "Courier New";
 	text-align: center;
+	overflow: hidden;
 }
 
 
