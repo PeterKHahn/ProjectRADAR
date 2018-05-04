@@ -29,6 +29,7 @@ public class DummyGameMap implements GameMap {
     Obstacle x = new Obstacle("x", new Vector(50, 15), 10);
     Obstacle y = new Obstacle("y", new Vector(50, 50), 10);
     Obstacle z = new Obstacle("z", new Vector(50, 85), 10);
+    Obstacle off = new Obstacle("off", new Vector(0, 0), 50);
 
     List<Obstacle> ls = new ArrayList<>();
     for (int i = 1; i < WIDTH / 2; i++) {
@@ -42,6 +43,7 @@ public class DummyGameMap implements GameMap {
     ls.add(x);
     // ls.add(y);
     ls.add(z);
+    ls.add(off);
     return ls;
   }
 

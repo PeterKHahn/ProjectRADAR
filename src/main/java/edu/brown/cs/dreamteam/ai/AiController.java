@@ -88,12 +88,12 @@ public class AiController {
     if (enemies.size() > 0 && player.hasWeapon()) {
       // There is an enemy in the visible range and the player has a weapon
       // already
-      if (player.getHealth() > OffensiveStrategy.BASELINE_HEALTH) {
-        // Player's health is above the baseline for it to attack
-        strategy = StrategyType.OFFENSE;
-      } else {
-        strategy = StrategyType.DEFENSE;
-      }
+      // if (player.getHealth() > OffensiveStrategy.BASELINE_HEALTH) {
+      // // Player's health is above the baseline for it to attack
+      // strategy = StrategyType.OFFENSE;
+      // } else {
+      strategy = StrategyType.DEFENSE;
+      // }
     } else {
       // No enemy in visible range or the player doesn't have a weapon yet
       // TODO Check if the goal is revealed

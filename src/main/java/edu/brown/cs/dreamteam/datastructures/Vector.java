@@ -74,6 +74,11 @@ public class Vector {
     return new Vector(x1, y1);
   }
 
+  // The angle between this Vector and the given Vector
+  public double angle(Vector v) {
+    return Math.acos(innerProduct(v) / (magnitude() * v.magnitude()));
+  }
+
   @Override
   public String toString() {
     return "<" + x + ", " + y + ">";

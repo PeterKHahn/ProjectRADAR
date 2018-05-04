@@ -39,12 +39,14 @@ public class Position extends Vector
    * given Position and this Position.
    * 
    * @param other
-   *          The Position to add an edge to.
+   *          The Position to add an edge to. Will do nothing if other is null.
    */
   public void addEdge(Position other) {
-    Move edge = new Move(this, other);
-    edge.setWeight(other.distanceTo(this));
-    edges.add(edge);
+    if (other != null) {
+      Move edge = new Move(this, other);
+      edge.setWeight(other.distanceTo(this));
+      edges.add(edge);
+    }
   }
 
   /**

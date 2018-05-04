@@ -3,6 +3,7 @@ package edu.brown.cs.dreamteam.board;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class Board {
 
   private AStarSearch<Position, Move> search;
   private KDTree<Position> tree;
-  private List<Position> positions;
+  private Set<Position> positions;
   private Map<StaticEntity, List<Position>> obstacleCorners;
   private static double entitySize = Playable.SIZE;
   private static double padding = entitySize + 1;
@@ -69,7 +70,7 @@ public class Board {
     padding = entitySize + 1;
   }
 
-  public List<Position> getPositions() {
+  public Set<Position> getPositions() {
     return positions;
   }
 
@@ -79,7 +80,7 @@ public class Board {
 
   private void constructGraph(ChunkMap chunks) {
     obstacleCorners = new HashMap<>();
-    positions = new ArrayList<>();
+    positions = new HashSet<>();
     itemPositions = new HashMap<>();
 
     // Get all obstacles from chunks
@@ -202,10 +203,24 @@ public class Board {
 
     // Make one Position at each corner, extending the circular collision box
     // to a square
-    Position bottomLeft = new Position(center.x - reach, center.y - reach);
-    Position topLeft = new Position(center.x - reach, center.y + reach);
-    Position bottomRight = new Position(center.x + reach, center.y - reach);
-    Position topRight = new Position(center.x + reach, center.y + reach);
+    double left = center.x - reach <= padding ? padding : center.x - reach;
+    double top = center.y + reach >= totalHeight - padding
+        ? totalHeight - padding : center.y + reach;
+    double right = center.x + reach >= totalWidth - padding
+        ? totalWidth - padding : center.x + reach;
+    double bottom = center.y - reach <= padding ? padding : center.y - reach;
+    Position bottomLeft = new Position(left, bottom);
+    Position topLeft = new Position(left, top);
+    Position bottomRight = new Position(right, bottom);
+    Position topRight = new Position(right, top);
+    if (top == bottom) {
+      bottomLeft = null;
+      bottomRight = null;
+    }
+    if (left == right) {
+      bottomLeft = null;
+      topLeft = null;
+    }
     List<Position> corners = new ArrayList<>();
     corners.add(bottomLeft);
     corners.add(topLeft);
@@ -214,14 +229,22 @@ public class Board {
     obstacleCorners.put(obstacle, corners);
 
     // Add edges between the edges that don't cross the obstacle
-    bottomLeft.addEdge(topLeft);
-    bottomLeft.addEdge(bottomRight);
-    topLeft.addEdge(bottomLeft);
-    topLeft.addEdge(topRight);
-    bottomRight.addEdge(bottomLeft);
-    bottomRight.addEdge(topLeft);
-    topRight.addEdge(topLeft);
-    topRight.addEdge(bottomRight);
+    if (bottomLeft != null) {
+      bottomLeft.addEdge(topLeft);
+      bottomLeft.addEdge(bottomRight);
+    }
+    if (topLeft != null) {
+      topLeft.addEdge(bottomLeft);
+      topLeft.addEdge(topRight);
+    }
+    if (bottomRight != null) {
+      bottomRight.addEdge(bottomLeft);
+      bottomRight.addEdge(topLeft);
+    }
+    if (topRight != null) {
+      topRight.addEdge(topLeft);
+      topRight.addEdge(bottomRight);
+    }
 
     // Add edges between new corners and previous obstacles' corners in toAdd.
     for (StaticEntity otherObstacle : addedObstacles) {
@@ -238,25 +261,28 @@ public class Board {
 
   private void addEdgeBetweenCorners(List<StaticEntity> addedObstacles,
       StaticEntity obstacle, Position curr) {
-    List<Position> corners = obstacleCorners.get(obstacle);
-    // Add edges against each of the corners
-    for (Position corner : corners) {
-      Vector dir = curr.subtract(corner);
-      boolean canAddEdge = true;
-      // Check whether any other obstacle is in the way
-      for (StaticEntity otherObstacle : addedObstacles) {
-        if (obstacle != otherObstacle) {
-          if (!obstacleNotInLine(otherObstacle, corner, dir)) {
-            canAddEdge = false;
-            break;
+    if (curr != null) {
+      List<Position> corners = obstacleCorners.get(obstacle);
+      // Add edges against each of the corners
+      for (Position corner : corners) {
+        Vector dir = curr.subtract(corner);
+        boolean canAddEdge = true;
+        // Check whether any other obstacle is in the way
+        for (StaticEntity otherObstacle : addedObstacles) {
+          if (obstacle != otherObstacle) {
+            if (!obstacleNotInLine(otherObstacle, corner, dir)) {
+              canAddEdge = false;
+              break;
+            }
           }
         }
+        // No obstacles were in the way
+        if (canAddEdge) {
+          corner.addEdge(curr);
+          curr.addEdge(corner);
+        }
       }
-      // No obstacles were in the way
-      if (canAddEdge) {
-        corner.addEdge(curr);
-        curr.addEdge(corner);
-      }
+
     }
   }
 
@@ -293,22 +319,36 @@ public class Board {
     intersects.put("br", false);
     intersects.put("tr", false);
 
-    // Check intersection at bottom left corner or bottom and left sides
-    checkIntersection(bottomLeft, new Vector(0, topLeft.y - bottomLeft.y),
-        new Vector(bottomRight.x - bottomLeft.x, 0), start, dir, intersects,
-        "bl", "l", "b", "tl", "br");
-    // Check intersection at top left corner or top and left sides
-    checkIntersection(topLeft, new Vector(0, bottomLeft.y - topLeft.y),
-        new Vector(topRight.x - topLeft.x, 0), start, dir, intersects, "tl",
-        "l", "t", "bl", "tr");
-    // Check intersection at top right corner or top and right sides
-    checkIntersection(topRight, new Vector(0, bottomRight.y - topRight.y),
-        new Vector(topLeft.x - topRight.x, 0), start, dir, intersects, "tr",
-        "r", "t", "br", "tl");
-    // Check intersection at bottom right corner or bottom and right sides
-    checkIntersection(bottomRight, new Vector(0, topRight.y - bottomRight.y),
-        new Vector(bottomLeft.x - bottomRight.x, 0), start, dir, intersects,
-        "br", "r", "b", "tr", "bl");
+    if (bottomLeft != null && topLeft != null && bottomRight != null) {
+      // Check intersection at bottom left corner or bottom and left sides
+      checkIntersection(bottomLeft, new Vector(0, topLeft.y - bottomLeft.y),
+          new Vector(bottomRight.x - bottomLeft.x, 0), start, dir, intersects,
+          "bl", "l", "b", "tl", "br");
+    }
+
+    if (topLeft != null && bottomLeft != null && topRight != null) {
+      // Check intersection at top left corner or top and left sides
+      checkIntersection(topLeft, new Vector(0, bottomLeft.y - topLeft.y),
+          new Vector(topRight.x - topLeft.x, 0), start, dir, intersects, "tl",
+          "l", "t", "bl", "tr");
+
+    }
+
+    if (topRight != null && bottomRight != null && topLeft != null) {
+      // Check intersection at top right corner or top and right sides
+      checkIntersection(topRight, new Vector(0, bottomRight.y - topRight.y),
+          new Vector(topLeft.x - topRight.x, 0), start, dir, intersects, "tr",
+          "r", "t", "br", "tl");
+
+    }
+
+    if (bottomRight != null && topRight != null && bottomLeft != null) {
+      // Check intersection at bottom right corner or bottom and right sides
+      checkIntersection(bottomRight, new Vector(0, topRight.y - bottomRight.y),
+          new Vector(bottomLeft.x - bottomRight.x, 0), start, dir, intersects,
+          "br", "r", "b", "tr", "bl");
+
+    }
 
     int numIntersect = 0;
     Iterator<Boolean> it = intersects.values().iterator();
@@ -416,8 +456,9 @@ public class Board {
    *         defined by pos and dir.
    */
   public Position getEdgePosition(Position pos, Vector dir) {
-    double xFactor = (totalWidth - pos.x) / Math.abs(dir.x);
-    double yFactor = (totalHeight - pos.y) / Math.abs(dir.y);
+    System.out.println(dir.toString());
+    double xFactor = (totalWidth - 2 * padding - pos.x) / Math.abs(dir.x);
+    double yFactor = (totalHeight - 2 * padding - pos.y) / Math.abs(dir.y);
     double factor = xFactor > yFactor ? yFactor : xFactor;
 
     // Use the Position that is as close to either border as the center of

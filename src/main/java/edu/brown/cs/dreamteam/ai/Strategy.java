@@ -46,6 +46,8 @@ public abstract class Strategy {
     Position curr = getCurrentPosition();
     board.addEdgesFor(curr, false);
     Position next = board.getMoveTo(curr, goal);
+    System.out.println("Goal " + goal.toString() + " curr " + curr.toString()
+        + " next " + next.toString());
 
     // Update player to go in direction of next
     player.updateDynamic(next.subtract(curr));
@@ -60,7 +62,7 @@ public abstract class Strategy {
   }
 
   protected boolean reachedGoal(Position goal) {
-    if (goal.distance(player.center()) < 1) {
+    if (goal.distance(player.center()) < 2) {
       return true;
     }
     return false;
