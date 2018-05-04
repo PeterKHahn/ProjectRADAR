@@ -14,6 +14,7 @@ import edu.brown.cs.dreamteam.datastructures.Vector;
 import edu.brown.cs.dreamteam.entity.Obstacle;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.main.Room;
 import edu.brown.cs.dreamteam.main.SystemArchitect;
 
 public class BoardTest {
@@ -29,11 +30,11 @@ public class BoardTest {
 
     SystemArchitect architect = new SystemArchitect();
 
-    oneObstacle = new GameEngine(architect, 10, 10, 1);
+    oneObstacle = new GameEngine(10, 10, 1, new Room("x"));
     oneObstacle.addStatic(new Obstacle("1", new Vector(5, 5), 0));
     oneObstacle.board();
 
-    multObstacles = new GameEngine(architect, 10, 10, 1);
+    multObstacles = new GameEngine(10, 10, 1, new Room("y"));
     multObstacles.addStatic(new Obstacle("1", new Vector(2, 2), 0));
     multObstacles.addStatic(new Obstacle("2", new Vector(7, 7), 1));
 
@@ -102,40 +103,64 @@ public class BoardTest {
       curr = new Position(i, 10);
       b.addEdgesFor(curr, false);
       List<Move> edges = curr.getEdges();
-      if (i == 0 || i == 4 || i == 6) {
-        assertEquals(35, edges.size());
+      if (i == 0) {
+        assertEquals(31, edges.size());
+      } else if (i == 3 || i == 7) {
+        assertEquals(29, edges.size());
+      } else if (i == 4 || i == 6) {
+        assertEquals(28, edges.size());
+      } else if (i == 5) {
+        assertEquals(26, edges.size());
       } else {
-        assertEquals(36, edges.size());
+        assertEquals(30, edges.size());
       }
 
       // Position on right edge
       curr = new Position(10, 10 - i);
       b.addEdgesFor(curr, false);
       edges = curr.getEdges();
-      if (i == 0 || i == 4 || i == 6) {
-        assertEquals(35, edges.size());
+      if (i == 0) {
+        assertEquals(31, edges.size());
+      } else if (i == 3 || i == 7) {
+        assertEquals(29, edges.size());
+      } else if (i == 4 || i == 6) {
+        assertEquals(28, edges.size());
+      } else if (i == 5) {
+        assertEquals(26, edges.size());
       } else {
-        assertEquals(36, edges.size());
+        assertEquals(30, edges.size());
       }
 
       // Position on bottom edge
       curr = new Position(10 - i, 0);
       b.addEdgesFor(curr, false);
       edges = curr.getEdges();
-      if (i == 0 || i == 4 || i == 6) {
-        assertEquals(35, edges.size());
+      if (i == 0) {
+        assertEquals(31, edges.size());
+      } else if (i == 3 || i == 7) {
+        assertEquals(29, edges.size());
+      } else if (i == 4 || i == 6) {
+        assertEquals(28, edges.size());
+      } else if (i == 5) {
+        assertEquals(26, edges.size());
       } else {
-        assertEquals(36, edges.size());
+        assertEquals(30, edges.size());
       }
 
       // Position on left edge
       curr = new Position(0, i);
       b.addEdgesFor(curr, false);
       edges = curr.getEdges();
-      if (i == 0 || i == 4 || i == 6) {
-        assertEquals(35, edges.size());
+      if (i == 0) {
+        assertEquals(31, edges.size());
+      } else if (i == 3 || i == 7) {
+        assertEquals(29, edges.size());
+      } else if (i == 4 || i == 6) {
+        assertEquals(28, edges.size());
+      } else if (i == 5) {
+        assertEquals(26, edges.size());
       } else {
-        assertEquals(36, edges.size());
+        assertEquals(30, edges.size());
       }
     }
   }
@@ -146,7 +171,7 @@ public class BoardTest {
     Position test = new Position(2, 2);
     b.addEdgesFor(test, false);
     List<Move> edges = test.getEdges();
-    assertEquals(36, edges.size());
+    assertEquals(30, edges.size());
   }
 
   @Test
@@ -155,7 +180,7 @@ public class BoardTest {
     Position test = new Position(2, 2);
     b.addEdgesFor(test, false);
     Position next = b.getMoveTo(test, new Position(10, 10));
-    assertEquals(new Position(4, 6), next);
+    assertEquals(new Position(3, 7), next);
   }
 
 }

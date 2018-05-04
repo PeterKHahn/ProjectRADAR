@@ -23,9 +23,15 @@ public class GoalStrategy extends Strategy {
   void makeNextMove(Collection<Chunk> chunks) {
     // TODO get goal
     Position goal = new Position(0, 0);
-    moveTo(goal);
+    moveTo(goal, false);
 
     // TODO Attack
+  }
+
+  @Override
+  public void reset() {
+    // TODO Auto-generated method stub
+
   }
 
 }

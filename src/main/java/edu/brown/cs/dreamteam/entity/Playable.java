@@ -18,8 +18,8 @@ public abstract class Playable extends DynamicEntity {
 
   protected boolean itemPickedFlag;
   protected boolean primaryActionFlag; // whether or not we should fire
+  protected boolean placeRadarFlag;
 
-  protected boolean isAlive;
   protected double health;
 
   protected Inventory inventory;
@@ -37,6 +37,10 @@ public abstract class Playable extends DynamicEntity {
     init();
   }
 
+  public Inventory getInventory() {
+    return inventory;
+  }
+
   private void init() {
     itemPickedFlag = false;
     primaryActionFlag = false;
@@ -45,8 +49,16 @@ public abstract class Playable extends DynamicEntity {
     health = MAX_HEALTH;
   }
 
+  public double getHealth() {
+    return health;
+  }
+
   public String getType() {
     return type;
+  }
+
+  public boolean hasWeapon() {
+    return inventory.hasWeapon();
   }
 
   @Override
@@ -89,13 +101,11 @@ public abstract class Playable extends DynamicEntity {
     if (health < 0) {
       kill();
     }
-
   }
 
   @Override
   public BoxSet hitBox() {
     return inventory.getActiveWeapon().hitBox();
-
   }
 
   @Override
@@ -106,13 +116,18 @@ public abstract class Playable extends DynamicEntity {
     return tmp + speedCap();
   }
 
+  public boolean isAlive() {
+    return isAlive;
+  }
+
   @Override
   public void kill() {
+    System.out.println(getId() + " killed");
     isAlive = false;
   }
 
   public void pickUpItem(ChunkMap chunkMap, Collection<Chunk> chunksInRange) {
-    Collection<Item> items = chunkMap.itemsFromChunks(chunksInRange);
+    Collection<Item> items = ChunkMap.itemsFromChunks(chunksInRange);
     Item closest = null;
     for (Item i : items) {
       if (closest == null) {
@@ -125,7 +140,7 @@ public abstract class Playable extends DynamicEntity {
     if (closest != null
         && closest.center().distance(center()) < ITEM_PICK_RANGE) {
       Logger.logDebug("Picked up an item");
-      inventory.addItem(closest);
+      closest.getItem().add(inventory);
       chunkMap.removeItem(closest);
 
     }
@@ -149,11 +164,16 @@ public abstract class Playable extends DynamicEntity {
 
     }
 
+    if (placeRadarFlag) {
+      inventory.dropRadar(center());
+    }
+
     // checks collision and hits them
     Set<Interactable> interactables = chunkMap
         .interactableFromChunks(chunksInRange);
     for (Interactable e : interactables) {
       if (hits(e)) {
+        Logger.logDebug("GOT A HIT: " + e);
         this.hit(e);
       }
     }

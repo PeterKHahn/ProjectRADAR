@@ -1,19 +1,21 @@
 
 /*** Define global variables ***/
 
-let c, ctx, offsetX, offsetY, mapHeight, entities, items, data, player, name;
-let scale = 5;
+let c, ctx, offsetX, offsetY, mapHeight, entities, markers, items, data, player, name;
+let scalar = 1.5;
 let gameStart = false;
 
 $(document).ready(() => {
 
 	/*** Establish the WebSocket connection and set up event handlers ***/
-    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/xx/websocket");
+	pathname = location.pathname.substring(6, location.pathname.length);
+    var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/websocket?roomID=" + pathname);
 
    	webSocket.onopen = function(event) {
 	  $("#socketStatus").innerHTML = 'Connected to: ' + event.currentTarget.url;
 	};
 
+	$("#gameOver").hide();
 	$("#game").hide();
 	$("#waitingRoom").hide();
 	$("#getName").show();
@@ -32,29 +34,54 @@ $(document).ready(() => {
     //starts game when start button clicked.
     $("#start").click(event => {
     	websocketSend(webSocket, "game", "start", false);
-    	$("#waitingRoom").fadeOut();
-    	$("#game").fadeIn();
-    	gameStart = true;
-    	init();
     })
 
 
     webSocket.onmessage = function (msg) {
     	data = JSON.parse(msg.data);
-    	// console.log(data);
-    	player = data.player;
-    	entities = data.entities;
-      items = data.items;
-    	if (gameStart) {
-    		clearCanvas();
-    		determineOffset();
-    		drawEntities();
-			drawPlayer();
+    	console.log(data);
+    	if (data.type === "gameMessage") {
+    		if (data.message === "start") {
+    			$("#waitingRoom").fadeOut();
+		    	$("#game").fadeIn();
+		    	gameStart = true;
+		    	init();
+
+    		}
+    		if (data.message === "Someone has left!" && data.userlist.length === 1) {
+    			console.log(data.userlist);
+    			gameStart = false;
+    			$("#game").fadeOut();
+		    	$("#winner").text(data.userlist[0]);
+		    	$("#gameOver").fadeIn();
+    		}
+    	} else {
+    		if (gameStart) {
+    			player = data.player;
+    			interactables = data.interactables;
+    			items = data.items;
+    			markers = data.markers;
+    			weapon = data.weapon;
+
+	    		clearCanvas();
+	            determineOffset();
+	            drawInteractables();
+	            drawItems();
+	            drawMarkers();
+	            drawPlayer();
+	            ctx.globalAlpha = "1.0";
+	    	}
     	}
+
     };
 
     webSocket.onclose = function () {
     	console.log("websocket connection closed.")
+    	gameStart = false;
+    	$("#game").fadeOut();
+    	$("#winner").text("not you!");
+    	$("#gameOver").fadeIn();
+
     };
 
 	webSocket.onerror = function(error) {
@@ -83,18 +110,11 @@ $(document).ready(() => {
 				case "ArrowRight":
 					websocketSend(webSocket, "key", "down", true);
 					break;
-        case " ":
-          websocketSend(webSocket, "key", "space", true);
-          break;
-        case "f":
-          websocketSend(webSocket, "key", "f", true);
-          break;
 			}
 		}
 	})
 
 	$(document).keyup(event => {
-
 		if (gameStart) {
 			switch(event.key){
 				case "a": // a for wasd
@@ -120,9 +140,9 @@ $(document).ready(() => {
 
 	$(document).keypress(event => {
 		if (gameStart) {
-			switch(event.keyCode){
-				// case " ": // space bar for attack
-				// 	websocketSend(webSocket, "key", "space", false); break;
+			switch(event.key) {
+		        case " ": // space for fighting
+		          	websocketSend(webSocket, "key", "space", true);	break;
 				case "f": // f for items
 					websocketSend(webSocket, "key", "f", false); break;
 				case "r": // r for radar
@@ -148,35 +168,35 @@ function websocketSend(webSocket, type, status, held) {
 //initializes canvas with context
 function init() {
 	c = document.getElementById("gameCanvas");
-	ctx = c.getContext("2d");
+	ctx = c.getContext("2d", {alpha: false});
 	c.width = 500;
 	c.height = 500;
 	offsetX = 0;
 	offsetY = 0;
-
-	//drawPlayer();
 };
 
 function drawPlayer() {
 	ctx.beginPath();
-	ctx.strokeStyle = "#b8dbd9";
+	ctx.strokeStyle = "#DDE392";
 	ctx.lineWidth = 2;
 	ctx.arc(c.width/2, c.height/2, 5, 0, 2*Math.PI);
 	ctx.stroke();
 
 	drawHP();
-    drawPlayerHitbox();
     drawName();
+    if (weapon.attack.attacking) {
+    	drawPlayerHitbox();
+    }
 }
 
 function drawPlayerHitbox() {
 
-  let boxes = player.inventory.weapon.attack.currentAttackFrame.hitbox.boxes;
+  let boxes = weapon.attack.currentAttackFrame.hitbox.boxes;
   for(let i = 0; i < boxes.length; i++) {
     let xOff = boxes[i].offset.x;
     let yOff = boxes[i].offset.y;
-    let x = xOff + player.center.x;
-    let y = yOff + player.center.y;
+    let x = xOff + player.x;
+    let y = yOff + player.y;
 
     drawCircle(offsetX + x, offsetY + convertToCoord(y), boxes[i].radius, "hitbox");
   }
@@ -185,28 +205,34 @@ function drawPlayerHitbox() {
 function drawCircle(x, y, radius, type) {
 	ctx.beginPath();
 	switch(type) {
-		case "weapon":
-			ctx.strokeStyle = "red";
-			ctx.fillStyle = "red";
-			// maybe change color?? can pick up
+		case "WEAPON":
+			ctx.strokeStyle = "#CF1259";
+			ctx.fillStyle = "#CF1259";
 			break;
-    case "hitbox":
-      ctx.strokeStyle = "red";
-      ctx.fillStyle = "red";
-      break;
+	    case "hitbox":
+	      ctx.strokeStyle = "red";
+	      ctx.globalAlpha = "0.5";
+	      ctx.fillStyle = "red";
+      	  break;
 		case "item":
 			ctx.strokeStyle = "white";
 			ctx.fillStyle = "white";
-			// change color ??? can pick up
 			break;
-		case "deco":
-			ctx.strokeStyle = "green";
-			ctx.fillStyle = "green";
-			// change color ??? can pick up
+		case "obstacle":
+			ctx.strokeStyle = "#657C73";
+			ctx.fillStyle = "#657C73";
 			break;
-		case "none":
-			ctx.strokeStyle = "orange";
-			ctx.fillStyle = "orange";
+		case "markers":
+			ctx.strokeStyle = "#b8dbd9";
+			ctx.fillStyle = "#b8dbd9";
+			break;
+		case "ai":
+			// ctx.strokeStyle = "#B2E6E8";
+			// ctx.fillStyle = "#B2E6E8";
+			// break;
+		case "human":
+			ctx.strokeStyle = "#DDE392";
+			ctx.fillStyle = "#DDE392";
 			break;
 	}
 	ctx.lineWidth = 2;
@@ -223,34 +249,82 @@ function clearCanvas() {
 
 /*** MISCELLANEOUS FUNCTIONS ***/
 
+
 function drawHP() {
 	achepee = player.health;
-	ctx.font = "25px Lucida Sans Unicode";
+	ctx.font = "25px Arial";
 	ctx.strokeText(achepee,30,30);
 }
 
 function drawName() {
-	ctx.font = "10px Arial";
+	ctx.strokeStyle = "#b8dbd9";
+	ctx.font = "13px Arial";
 	ctx.textAlign = "center"
-	ctx.fillText(name, c.width/2, c.height/2 - 10);
+	ctx.fillText(name, c.width/2, c.height/2 - 15);
 }
 
 function determineOffset() {
-	 offsetX = convertToCoord(player.center.x) + c.width/2;
-	 offsetY = player.center.y + c.height/2;
+	 offsetX = convertToCoord(player.x) + c.width/2;
+	 offsetY = player.y + c.height/2;
 	// how much we have to offset from (0,0) to keep player at center
 	// that is the offset, ADD to each number so that we can keep it visible onscreen + properly displayed
 }
 
-function drawEntities() {
-	for (let i = 0; i < entities.length; i++) {
-		drawCircle(entities[i].center.x+offsetX, convertToCoord(entities[i].center.y)+offsetY, entities[i].radius, "none");
+function drawInteractables() {
+	for (let i = 0; i < interactables.length; i++) {
+		drawCircle(interactables[i].x+offsetX, convertToCoord(interactables[i].y)+offsetY, interactables[i].collisionBox.reach, interactables[i].drawType);
 	}
-  for(let i = 0 ; i < items.length; i++) {
-    drawCircle(items[i].center.x + offsetX, convertToCoord(items[i].center.y) + offsetY, 3, "item");
-  }
+}
+
+function drawItems() {
+	for(let i = 0 ; i < items.length; i++) {
+		drawCircle(items[i].x + offsetX, convertToCoord(items[i].y) + offsetY, 3, items[i].type);
+	}
+}
+
+function drawMarkers() {
+	let bigX = 0;
+	let bigY = 0;
+
+	for(let i = 0; i < markers.length; i++) {
+
+	    drawCircle(markers[i].x + offsetX, convertToCoord(markers[i].y) + offsetY, 3, "markers");
+
+	    if (checkMarkers(markers[i].x, bigX)) {
+	    	bigX = markers[i].x;
+	    }
+
+	    if (checkMarkers(markers[i].y, bigY)) {
+	    	bigY = markers[i].y;
+	    }
+	}
+
+
+	console.log("drawing borders until "+ bigX + " " + bigY);
+	// make a transparent square
+
+	ctx.strokeStyle = "#b8dbd9";
+	ctx.beginPath();
+	ctx.globalAlpha = "0.05";
+	ctx.rect(0 + offsetX, 0 + offsetY, bigX, convertToCoord(bigY));
+	ctx.fill();
+	ctx.stroke();
+
+}
+
+function checkMarkers(z, bigZ) {
+	if (z > bigZ) {
+		return true;
+	} else {
+		return false;
+	}
+
 }
 
 function convertToCoord(y) {
 	return -1*y;
+}
+
+function scale(x) {
+	return scalar*x;
 }

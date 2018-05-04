@@ -2,6 +2,7 @@ package edu.brown.cs.dreamteam.weapon;
 
 import edu.brown.cs.dreamteam.box.BoxSet;
 import edu.brown.cs.dreamteam.box.HitBoxed;
+import edu.brown.cs.dreamteam.game.Inventory;
 import edu.brown.cs.dreamteam.item.InventoryItem;
 
 public abstract class Weapon extends InventoryItem implements HitBoxed {
@@ -31,6 +32,11 @@ public abstract class Weapon extends InventoryItem implements HitBoxed {
   @Override
   public BoxSet hitBox() {
     return attack.hitBox();
+  }
+
+  @Override
+  public void add(Inventory inventory) {
+    inventory.addWeapon(this);
   }
 
 }

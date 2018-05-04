@@ -1,10 +1,5 @@
 package edu.brown.cs.dreamteam.main;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.eclipse.jetty.websocket.api.Session;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.Spark;
@@ -14,11 +9,6 @@ public class Main {
   private static final int DEFAULT_PORT = 4567;
   private String[] args;
   private Architect a;
-
-  // EXPERIMENTAL
-  static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
-  static int nextUserNumber = 1; // Used for creating the next username
-  // EXPERIMENTAL
 
   private DebugMode debugMode;
 
