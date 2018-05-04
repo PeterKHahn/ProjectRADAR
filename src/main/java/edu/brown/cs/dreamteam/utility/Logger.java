@@ -12,7 +12,7 @@ public final class Logger {
 
   }
 
-  private static boolean debug = true;
+  private static boolean debug = false;
 
   /**
    * Sets the debug state to the specified value. Setting to this value to true
@@ -60,7 +60,7 @@ public final class Logger {
    *          The objects that fit the formatted string.
    */
   public static void logMessage(String message, Object... args) {
-    // System.out.printf(message, args);
+    System.out.printf(message, args);
   }
 
   /**
@@ -70,7 +70,7 @@ public final class Logger {
    *          the message associated with the error
    */
   public static void logError(String message) {
-    // System.out.println("ERROR: " + message);
+    System.out.println("ERROR: " + message);
   }
 
   /**

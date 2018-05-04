@@ -130,6 +130,7 @@ public class Room implements GameEventListener {
     Map<String, Playable> movingThings = chunks.getPlayers();
     double radius = 300.0;
     Map<String, Object> variables;
+
     for (String id : movingThings.keySet()) {
       if (players.size() == 1 && movingThings.size() == 1) {
         Messenger.broadcastMessage(

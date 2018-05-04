@@ -37,9 +37,9 @@ public class AiController {
    * @param board
    *          The graph representation of this game.
    */
-  public AiController(String id, Board board) {
+  public AiController(String id, Board board, double x, double y) {
     // TODO update starting position
-    player = new AiPlayer(id, 100, 100, Playable.SIZE);
+    player = new AiPlayer(id, x, y, Playable.SIZE);
     player.setController(this);
 
     // Initialize strategies

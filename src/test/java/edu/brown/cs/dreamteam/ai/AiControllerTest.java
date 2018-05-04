@@ -20,7 +20,7 @@ public class AiControllerTest {
 
   @Test
   public void testConstruction() {
-    AiController s = new AiController("1", emptyBoard);
+    AiController s = new AiController("1", emptyBoard, 0, 0);
     assertNotNull(s);
   }
 
