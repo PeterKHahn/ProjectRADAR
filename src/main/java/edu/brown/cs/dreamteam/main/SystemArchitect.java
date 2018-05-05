@@ -20,17 +20,21 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import edu.brown.cs.dreamteam.debug.DummyGameMap;
 import edu.brown.cs.dreamteam.event.ClientState;
 import edu.brown.cs.dreamteam.game.GameEngine;
+import edu.brown.cs.dreamteam.game.GameMap;
+import edu.brown.cs.dreamteam.map.ItemGameMap;
+import edu.brown.cs.dreamteam.map.MainGameMap;
+import edu.brown.cs.dreamteam.networking.Messenger;
+import edu.brown.cs.dreamteam.networking.PlayerSession;
 import edu.brown.cs.dreamteam.utility.Logger;
 import freemarker.template.Configuration;
-import networking.Messenger;
-import networking.PlayerSession;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
+import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -49,7 +53,10 @@ public class SystemArchitect extends Architect {
   private Rooms rooms;
   private AtomicInteger userID;
 
+  private GameMap map;
+
   public SystemArchitect() {
+    map = new MainGameMap();
     rooms = new Rooms();
     userID = new AtomicInteger(6);
   }
@@ -61,6 +68,8 @@ public class SystemArchitect extends Architect {
     Spark.webSocket("/websocket", new GameWebSocketHandler(this));
     // Setup Spark Routes
     Spark.get("/", new HomeHandler(), freeMarker);
+    Spark.get("/debug", new DebugHandler(), freeMarker);
+    Spark.post("/change-map", new ChangeMapHandler());
     Spark.get("/game/:roomID", new GameHandler(), freeMarker);
     // Spark.post("/giveStatus", new SendStatusHandler(this));
     Spark.exception(Exception.class, (e, r, er) -> {
@@ -169,13 +178,8 @@ public class SystemArchitect extends Architect {
             if (r != null) {
               rooms.startRoom(roomID, r);
               Logger.logMessage("Creating a new Game");
-              GameBuilder builder = GameBuilder.create(new DummyGameMap(), r);
-              Collection<PlayerSession> hewwo = r.getPlayers();
-              for (PlayerSession player : hewwo) {
-                builder.addHumanPlayer(player.getId());
-                r.putNewClient(player.getId(), user);
-              }
-              GameEngine engine = builder.complete();
+
+              GameEngine engine = getEngine(r, user);
               Thread x = new Thread(engine);
               x.start();
               Messenger.broadcastMessage("start", r);
@@ -226,6 +230,24 @@ public class SystemArchitect extends Architect {
 
   }
 
+  public GameEngine getEngine(Room r, Session user) {
+    GameBuilder builder = GameBuilder.create(getGameMap(), r);
+    Collection<PlayerSession> hewwo = r.getPlayers();
+    for (PlayerSession player : hewwo) {
+      builder.addHumanPlayer(player.getId());
+      r.putNewClient(player.getId(), user);
+    }
+    return builder.complete();
+  }
+
+  public synchronized GameMap getGameMap() {
+    return map;
+  }
+
+  public synchronized void setGameMap(GameMap gameMap) {
+    this.map = gameMap;
+  }
+
   /**
    * the handler for on start of the game page.
    *
@@ -261,6 +283,39 @@ public class SystemArchitect extends Architect {
           .put("title", "Game R.A.D.A.R.").put("roomID", roomID).build();
       return new ModelAndView(variables, "game.ftl");
     }
+  }
+
+  private class DebugHandler implements TemplateViewRoute {
+
+    @Override
+    public ModelAndView handle(Request req, Response res) throws Exception {
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("title", "Debug Page").build();
+      return new ModelAndView(variables, "debug.ftl");
+    }
+
+  }
+
+  private class ChangeMapHandler implements Route {
+
+    @Override
+    public Object handle(Request req, Response res) throws Exception {
+      QueryParamsMap qm = req.queryMap();
+      String map = qm.value("map");
+      System.out.println(map);
+      switch (map) {
+        case "main":
+          setGameMap(new MainGameMap());
+          break;
+        case "items":
+          setGameMap(new ItemGameMap());
+          break;
+        default:
+          break;
+      }
+      return null;
+    }
+
   }
 
   /**

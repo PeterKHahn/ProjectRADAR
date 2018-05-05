@@ -1,25 +1,16 @@
-$(document).ready(function(){
-	// $("#create").click({command: "create"}, submitName);
-	// $("#join").click({command: "join"}, submitName);
+$(document).ready(() => {
+	let mapChanger = $("#map-changer");
 
+	$("#submit-button").click(() => {
+		let vl = $("input[name=map]:checked").val()
+		const postParameters = {
+			map : vl
+		}
+		console.log(vl)
 
-	// function submitName(event) {
-	// 	const postParameters = {
-	// 		codename: $("#codename").val(),
-	// 	}
-	// 	var c = event.data.command;
-	// 	if (c === "join") {
-	// 		$.post("/join", postParameters, responseJSON => {
+		$.post('/change-map', postParameters, responseJSON => {
 
-	// 		})
-	// 	} else if (c === "create") {
-	// 		$.post("/create", postParameters, responseJSON => {
-	// 	 		//const resObj = JSON.parse(responseJSON);
+		})
+	})
 
-	// 		});
-	// 	}
-		
-
-	// }
 });
-

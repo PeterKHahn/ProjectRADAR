@@ -20,4 +20,8 @@ public interface GameMap {
 
   public int getChunkSize();
 
+  public int numPlayers();
+
+  public int numDummyPlayers();
+
 }

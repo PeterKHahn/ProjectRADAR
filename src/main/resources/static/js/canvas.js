@@ -58,6 +58,7 @@ $(document).ready(() => {
     		}
     	} else {
     		if (gameStart) {
+					console.log(data)
     			player = data.player;
     			interactables = data.interactables;
 					console.log(interactables.length)
@@ -189,6 +190,10 @@ function drawPlayer() {
     if (weapon.attack.attacking) {
     	drawPlayerHitbox();
     }
+	for(let i = 0; i < data.inventory.length; i++){
+		let radar = data.inventory[i];
+		drawCircle(radar.x, radar.y, radar.rad);
+	}
 }
 
 function drawPlayerHitbox() {
@@ -341,6 +346,8 @@ function checkMarkers(z, bigZ) {
 	} else {
 		return false;
 	}
+
+}
 
 // this is where we visualize the items we have, like radars and weapon type
 function drawHeldItems() {

@@ -1,4 +1,4 @@
-package networking;
+package edu.brown.cs.dreamteam.networking;
 
 import java.util.ArrayList;
 import java.util.List;

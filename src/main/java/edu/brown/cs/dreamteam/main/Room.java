@@ -22,10 +22,10 @@ import edu.brown.cs.dreamteam.game.Chunk;
 import edu.brown.cs.dreamteam.game.ChunkMap;
 import edu.brown.cs.dreamteam.game.GameEngine;
 import edu.brown.cs.dreamteam.item.Item;
+import edu.brown.cs.dreamteam.networking.Messenger;
+import edu.brown.cs.dreamteam.networking.PlayerSession;
 import edu.brown.cs.dreamteam.radar.Radar;
 import edu.brown.cs.dreamteam.utility.Logger;
-import networking.Messenger;
-import networking.PlayerSession;
 
 public class Room implements GameEventListener {
   private String roomID;

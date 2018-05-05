@@ -1,4 +1,4 @@
-package networking;
+package edu.brown.cs.dreamteam.networking;
 
 import org.eclipse.jetty.websocket.api.Session;
 

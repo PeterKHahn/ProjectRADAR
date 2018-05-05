@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.datastructures.Vector;
+import edu.brown.cs.dreamteam.entity.DummyPlayer;
 import edu.brown.cs.dreamteam.entity.GamePlayer;
 import edu.brown.cs.dreamteam.entity.Marker;
 import edu.brown.cs.dreamteam.entity.Obstacle;
@@ -16,7 +17,8 @@ import edu.brown.cs.dreamteam.utility.Logger;
 
 public class GameBuilder {
 
-  private static final int NUM_PLAYERS = 4;
+  private int numPlayers;
+  private int numDummyPlayers;
 
   private int height;
   private int width;
@@ -34,6 +36,8 @@ public class GameBuilder {
     this.height = gm.getHeight();
     this.width = gm.getWidth();
     this.chunkSize = gm.getChunkSize();
+    this.numPlayers = gm.numPlayers();
+    this.numDummyPlayers = gm.numDummyPlayers();
     this.engine = new GameEngine(height, width, chunkSize, r);
     startPositions = new Vector[4];
     startPositions[0] = engine.CENTER.add(new Vector(10, 0));
@@ -84,12 +88,16 @@ public class GameBuilder {
 
   public GameEngine complete() {
 
-    for (int i = numHumanPlayers; i < NUM_PLAYERS; i++) {
+    for (int i = numHumanPlayers; i < numPlayers; i++) {
       AiController controller = new AiController(Integer.toString(i),
           engine.getBoard(), startPositions[startIndex].x,
           startPositions[startIndex].y);
       engine.addAiPlayer(controller);
       startIndex++;
+    }
+    for (int i = 0; i < numDummyPlayers; i++) {
+      engine.addPlayer(
+          new DummyPlayer("dum" + i, engine.CENTER.x, engine.CENTER.y));
     }
 
     Marker bottomLeft = new Marker(new Vector(0, 0));

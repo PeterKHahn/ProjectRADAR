@@ -1,8 +1,6 @@
 package edu.brown.cs.dreamteam.main;
 
-import edu.brown.cs.dreamteam.debug.DummySyncArchitect;
-
-/***
+/**
  * The Debug mode that can be used for testing different architects
  * with*different implementations**
  * 
@@ -10,7 +8,7 @@ import edu.brown.cs.dreamteam.debug.DummySyncArchitect;
  *
  */
 public enum DebugMode {
-  DEFAULT(new SystemArchitect()), GAME_SYNC(new DummySyncArchitect());
+  DEFAULT(new SystemArchitect());
 
   private Architect architect;
 
