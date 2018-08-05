@@ -68,7 +68,7 @@ public class Path<V extends Vertex<V, E>, E extends Edge<V, E>> {
      * @return vertex of cl
      */
     public V getLastVertex() {
-        return (V) bridges.get(bridges.size() - 1).getDest();
+        return bridges.get(bridges.size() - 1).getDest();
     }
 
 
