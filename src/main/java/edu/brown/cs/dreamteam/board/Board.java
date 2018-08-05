@@ -425,8 +425,14 @@ public class Board {
      */
     public Position getMoveTo(Position start, Position end) {
         Path<Position, Move> path = search.getShortestPath(start, end);
-        Move first = path.getConnections().get(0);
-        return first.getDest();
+        List<Move> moves = path.getConnections();
+
+        // FIXME Added this if else statement to avoid an Array Index Out of Bounds
+        if (moves.isEmpty()) {
+            return end;
+        } else {
+            return moves.get(0).getDest();
+        }
     }
 
     /**
