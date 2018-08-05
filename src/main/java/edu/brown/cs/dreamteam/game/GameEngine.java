@@ -1,7 +1,5 @@
 package edu.brown.cs.dreamteam.game;
 
-import java.util.Map;
-
 import edu.brown.cs.dreamteam.ai.AiController;
 import edu.brown.cs.dreamteam.board.Board;
 import edu.brown.cs.dreamteam.datastructures.Vector;
@@ -16,145 +14,146 @@ import edu.brown.cs.dreamteam.item.Item;
 import edu.brown.cs.dreamteam.item.KeyItem;
 import edu.brown.cs.dreamteam.main.Room;
 
+import java.util.Map;
+
 public class GameEngine implements Runnable {
 
-  private static final int FPS = 30;
-  private static final int PRINT_RATE = 3;
+    private static final int FPS = 30;
+    private static final int PRINT_RATE = 3;
 
-  private final int HEIGHT;
-  private final int WIDTH;
-  private final int CHUNK_SIZE;
+    private final int HEIGHT;
+    private final int WIDTH;
+    private final int CHUNK_SIZE;
 
-  public final Vector CENTER;
+    public final Vector CENTER;
 
-  private GameEventEmitter eventEmitter;
-  private Room room;
-  private ChunkMap chunks;
+    private GameEventEmitter eventEmitter;
+    private Room room;
+    private ChunkMap chunks;
 
-  private boolean running = false;
-  private int ticks = 0;
+    private boolean running = false;
+    private int ticks = 0;
 
-  /**
-   * Creates a GameEngine given an Architect.
-   *
-   * @param architect
-   *          The Architecture that the GameEngine is a part of
-   */
-  public GameEngine(int height, int width, int chunkSize, Room r) {
-    this.HEIGHT = height;
-    this.WIDTH = width;
-    this.CHUNK_SIZE = chunkSize;
-    this.room = r;
-    CENTER = new Vector(WIDTH * CHUNK_SIZE / 2, HEIGHT * CHUNK_SIZE / 2);
-    init(WIDTH, HEIGHT, CHUNK_SIZE);
-  }
+    /**
+     * The GameEngine constructor, initializing a game for a given room
+     *
+     * @param height    The height of the game, measured in chunks
+     * @param width     The width of the game, measured in chunks
+     * @param chunkSize The size of the chunks, in game units
+     * @param r         the room where the game is placed
+     */
+    public GameEngine(int height, int width, int chunkSize, Room r) {
+        this.HEIGHT = height;
+        this.WIDTH = width;
+        this.CHUNK_SIZE = chunkSize;
+        this.room = r;
+        CENTER = new Vector(WIDTH * CHUNK_SIZE / 2, HEIGHT * CHUNK_SIZE / 2);
+        init(WIDTH, HEIGHT, CHUNK_SIZE);
+    }
 
-  private void init(int width, int height, int chunkSize) {
-    chunks = new ChunkMap(width, height, chunkSize);
-    eventEmitter = new GameEventEmitter();
-    this.addGameEventListener(room);
-  }
+    private void init(int width, int height, int chunkSize) {
+        chunks = new ChunkMap(width, height, chunkSize);
+        eventEmitter = new GameEventEmitter();
+        this.addGameEventListener(room);
+    }
 
-  @Override
-  public void run() {
-    running = true;
-    long lastTime = System.nanoTime();
-    double nsPerTick = 1000000000.0 / FPS;
-    double delta = 0;
+    @Override
+    public void run() {
+        running = true;
+        long lastTime = System.nanoTime();
+        double nsPerTick = 1000000000.0 / FPS;
+        double delta = 0;
 
-    while (running) {
-      long now = System.nanoTime();
-      delta += (now - lastTime) / nsPerTick;
-      lastTime = now;
-      while (delta >= 1) {
-        ticks++;
-        tick();
-        if (ticks % PRINT_RATE == 0) {
-          log();
+        while (running) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / nsPerTick;
+            lastTime = now;
+            while (delta >= 1) {
+                ticks++;
+                tick();
+                if (ticks % PRINT_RATE == 0) {
+                    log();
+                }
+                delta -= 1.0;
+                eventEmitter.emit(chunks);
+            }
+
         }
-        delta -= 1.0;
-        eventEmitter.emit(chunks);
-      }
+    }
+
+    /**
+     * Adds a listener to the game engine's GameEventEmitter.
+     *
+     * @param listener the listener to add
+     */
+    public void addGameEventListener(GameEventListener listener) {
+        eventEmitter.addGameEventListener(listener);
+    }
+
+    /**
+     * Represents a change in game event, by updating internal states.
+     */
+    private void tick() {
+        Map<String, ClientState> updatedClientStates = room.retrieveClientStates();
+
+        chunks.updateClients(updatedClientStates);
+        chunks.tick();
+    }
+
+    /**
+     * Adds a player to the Game.
+     *
+     * @param p the player to add
+     */
+    public void addPlayer(Playable p) {
+        chunks.addPlayer(p);
 
     }
-  }
 
-  /**
-   * Adds a listener to the game engine's GameEventEmitter.
-   *
-   * @param listener
-   *          the listener to add
-   */
-  public void addGameEventListener(GameEventListener listener) {
-    eventEmitter.addGameEventListener(listener);
-  }
+    public void addStatic(StaticEntity e) {
+        chunks.addStatic(e);
+    }
 
-  /**
-   * Represents a change in game event, by updating internal states.
-   */
-  private void tick() {
-    Map<String, ClientState> updatedClientStates = room.retrieveClientStates();
+    public void addDynamic(DynamicEntity e) {
+        chunks.addDynamic(e);
+    }
 
-    chunks.updateClients(updatedClientStates);
-    chunks.tick();
-  }
+    public void addItem(Item item) {
+        chunks.addItem(item);
+    }
 
-  /**
-   * Adds a player to the Game.
-   *
-   * @param p
-   *          the player to add
-   */
-  public void addPlayer(Playable p) {
-    chunks.addPlayer(p);
+    public void addKeyItem(KeyItem item) {
+        chunks.addKeyItem(item);
 
-  }
+    }
 
-  public void addStatic(StaticEntity e) {
-    chunks.addStatic(e);
-  }
+    public void addMarker(Marker marker) {
+        chunks.addMarker(marker);
+    }
 
-  public void addDynamic(DynamicEntity e) {
-    chunks.addDynamic(e);
-  }
+    /**
+     * Adds an AI player to the game, assuming that the game board has already
+     * been initialized by calling makeBoard().
+     *
+     * @param ai The AI controller that we are adding
+     */
+    public void addAiPlayer(AiController ai) {
+        chunks.addDynamic(ai.getPlayer());
+        chunks.addPlayer(ai.getPlayer());
+    }
 
-  public void addItem(Item item) {
-    chunks.addItem(item);
-  }
+    /**
+     * Initializes the Board representation of the GameMap for AI players to use.
+     */
+    public void board() {
+        chunks.makeBoard();
+    }
 
-  public void addKeyItem(KeyItem item) {
-    chunks.addKeyItem(item);
+    public Board getBoard() {
+        return chunks.getBoard();
+    }
 
-  }
-
-  public void addMarker(Marker marker) {
-    chunks.addMarker(marker);
-  }
-
-  /**
-   * Adds an AI player to the game, assuming that the game board has already
-   * been initialized by calling makeBoard().
-   *
-   * @param id
-   *          The ID of the AI player.
-   */
-  public void addAiPlayer(AiController ai) {
-    chunks.addDynamic(ai.getPlayer());
-    chunks.addPlayer(ai.getPlayer());
-  }
-
-  /**
-   * Initializes the Board representation of the GameMap for AI players to use.
-   */
-  public void board() {
-    chunks.makeBoard();
-  }
-
-  public Board getBoard() {
-    return chunks.getBoard();
-  }
-
-  private void log() {
-    // System.out.println("Ticks: " + ticks);
-  }
+    private void log() {
+        // System.out.println("Ticks: " + ticks);
+    }
 }
