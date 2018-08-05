@@ -5,3 +5,6 @@
 *.uxf
 */.DS_Store
 .mvn-classpath
+
+
+.idea/*
